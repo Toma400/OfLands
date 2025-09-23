@@ -4,6 +4,7 @@
 //  - only one tileset will be used
 //  - only .png tileset files are supported
 // Extension requires your .oldata file to have the same name as tileset image
+// Palette file needs to be named "[tileset name]_palette" to work correctly
 
 var olmMapFormat = {
     name: "Of Lands Map format",
@@ -14,10 +15,12 @@ var olmMapFormat = {
         var tilesets     = map.usedTilesets();
         var tileset_name = tilesets[0].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
         var tileset_data = tileset_name[0].replace(".png", ".oldata");              // sets .oldata to have the same name as tileset image
+        var tileset_pal  = tileset_name[0].replace(".png", "_palette.png");         // palette has name of tileset + "_palette"
 
         var out = "";
-        out = out + "tileset_img  = " + String.raw`"${tileset_name[0]}"` + "\n"; // for some reason `match` yields two same entries
-        out = out + "tileset_data = " + String.raw`"${tileset_data}"` + "\n";
+        out = out + "tileset_img     = " + String.raw`"${tileset_name[0]}"` + "\n"; // for some reason `match` yields two same entries
+        out = out + "tileset_data    = " + String.raw`"${tileset_data}"` + "\n";
+        out = out + "tileset_palette = " + String.raw`"${tileset_pal}"` + "\n";
         out = out + "map = [" + "\n";
 
         var layer = map.layerAt(0); // only first layer is used

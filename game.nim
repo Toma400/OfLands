@@ -7,13 +7,14 @@ import parsetoml
 # nico specifics
 import nico
 
-const TL = 32 # tile width/length
+const TL* = 32 # tile width/length
 
 type
   Tile* = object
     name* : string
   MapData* = object
     tileset* : string                        # tileset name
+    palette* : string                        # palette name
     defs*    : OrderedTable[int, Tile]       # tile definitions | index, Tile object
     mapping* : OrderedTable[(int, int), int] # tile mapping     | (coords), index
     size*    : (int, int)                    # size             | (width, length)
@@ -25,6 +26,9 @@ type
     XMap      = 1
     XFeatures = 2
     XGrid     = 3
+
+proc getPalette* (map: Map): Palette =
+    return loadPaletteFromImage(fmt"tilesets/{map.data.palette}")
 
 proc parseOLDATA (oldata_file: string): OrderedTable[int, Tile] =
     # parses .oldata file and returns tile definitions in an OrderedTable
@@ -45,9 +49,10 @@ proc parseOLM (olm_file: string): MapData =
         if olm.hasKey(k) == false: raise newException(Exception, fmt"Map file doesn't have all required keys! Key missing: {k}")
 
     result.tileset = olm["tileset_img"].getStr()
+    result.palette = olm["tileset_palette"].getStr()
     var defs_path  = olm["tileset_data"].getStr()
     # before files are used, we ensure they exist
-    for f in [result.tileset, defs_path]:
+    for f in [result.tileset, result.palette, defs_path]:
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
     result.defs    = parseOLDATA(defs_path)
     # tile mapping
@@ -69,6 +74,7 @@ proc newMap* (olm_file: string, map_index: int = 1): Map =
     #discard loadPaletteFromImage(fmt"tilesets/{result.data.tileset}")
 
 proc drawMap* (map: Map) =
+    setPalette(getPalette(map))
     setSpritesheet(map.index)
     if len(map.data.mapping) < 900: # temporary measure, we need to just center the map and adjust it to size
         raise newException(Exception, fmt"Map file has too little tiles!") # similarly we need to limit the draw (make it via two seqs with more x/y coord system?)
@@ -78,10 +84,8 @@ proc drawMap* (map: Map) =
             # map.data.mapping[tile, row] - current Tile (without data for now, just index)
             spr(map.data.mapping[(tile + map.move[0], row + map.move[1])], tile * TL, row * TL)
 
-    #setSpritesheet(3) # grid drawing
-    #spr(0, 0, 0)
-
 proc moveMap* (map: var Map, shift: (int, int)) =
+    # moves the starting coordinates if the boundaries are not outside 0..map_size range
     if map.move[0] + 30 + shift[0] <= map.data.size[0] and
        map.move[1] + 30 + shift[1] <= map.data.size[1] and
        map.move[0] + shift[0] >= 0 and
@@ -90,4 +94,5 @@ proc moveMap* (map: var Map, shift: (int, int)) =
         map.move[1] += shift[1]
 
 proc drawGrid* () =
-    discard
+    setSpritesheet(3) # grid drawing
+    spr(0, 0, 0)

@@ -7,3 +7,5 @@ Versions:
 - Made base game structure with ability to interpret .olm files
   - This includes loading maps of any size
 - Wrote `tiled.js`, Tiled plugin to export its maps into .olm format
+- Created custom cursor
+- Made map used by game configurable through .ini
