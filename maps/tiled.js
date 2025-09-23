@@ -2,6 +2,8 @@
 // working on Of Lands maps through Tiled has few limitations:
 //  - only first layer will be exported
 //  - only one tileset will be used
+//  - only .png tileset files are supported
+// Extension requires your .oldata file to have the same name as tileset image
 
 var olmMapFormat = {
     name: "Of Lands Map format",
@@ -20,12 +22,11 @@ var olmMapFormat = {
 
         var layer = map.layerAt(0); // only first layer is used
         if (layer.isTileLayer) {
-            var rows = [];
             for (y = 0; y < layer.height; ++y) {
-                out = out + "    ";
+                out = out + "    [";
                 for (x = 0; x < layer.width; ++x)
                     out = out + layer.cellAt(x, y).tileId + ",";
-                out = out + "\n";
+                out = out + "],\n";
             }
         }
 

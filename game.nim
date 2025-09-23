@@ -13,13 +13,15 @@ type
   Tile* = object
     name* : string
   MapData* = object
-    tileset* : string                  # tileset name
-    defs*    : OrderedTable[int, Tile] # tile definitions
-    mapping* : seq[int]                # tile mapping
+    tileset* : string                        # tileset name
+    defs*    : OrderedTable[int, Tile]       # tile definitions | index, Tile object
+    mapping* : OrderedTable[(int, int), int] # tile mapping     | (coords), index
+    size*    : (int, int)                    # size             | (width, length)
   Map* = object
     index* : int
     data*  : MapData
-  Indexes* = enum # spreadsheet indexes
+    move*  : (int, int) # cell move from (0,0)
+  Indexes* = enum # spreadsheet indexes (to be later reconceptualised)
     XMap      = 1
     XFeatures = 2
     XGrid     = 3
@@ -49,15 +51,20 @@ proc parseOLM (olm_file: string): MapData =
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
     result.defs    = parseOLDATA(defs_path)
     # tile mapping
-    for i in olm["map"].getElems():
-        result.mapping.add(i.getInt())
+    for y, row in olm["map"].getElems().pairs:
+        for x, ix in row.getElems().pairs:
+            # ix = tile index; x/y = coordinates
+            result.mapping[(x, y)] = ix.getInt()
+            if result.size[1] == 0: # sets itself only once
+                result.size[0] += 1
+        result.size[1] += 1
 
 proc newMap* (olm_file: string, map_index: int = 1): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
-                        # index -1 is grid
     result.data  = parseOLM(olm_file)
     result.index = map_index
+    result.move  = (0, 0)
     loadSpritesheet(result.index, fmt"tilesets/{result.data.tileset}", TL, TL)
     #discard loadPaletteFromImage(fmt"tilesets/{result.data.tileset}")
 
@@ -66,14 +73,21 @@ proc drawMap* (map: Map) =
     if len(map.data.mapping) < 900: # temporary measure, we need to just center the map and adjust it to size
         raise newException(Exception, fmt"Map file has too little tiles!") # similarly we need to limit the draw (make it via two seqs with more x/y coord system?)
                                                                 # for when we would use bigger maps
-    for row in 0..30: # 30 x 30 map area
-        for tile in 0..30:
-            let tile_index = row*30 + tile
-            if tile_index < 900:
-                spr(map.data.mapping[tile_index], tile * TL, row * TL)
+    for row in 0..<30:      # 30 x 30 map area, adjusted to moved map
+        for tile in 0..<30:                   # adjusted to moved map
+            # map.data.mapping[tile, row] - current Tile (without data for now, just index)
+            spr(map.data.mapping[(tile + map.move[0], row + map.move[1])], tile * TL, row * TL)
 
     #setSpritesheet(3) # grid drawing
     #spr(0, 0, 0)
+
+proc moveMap* (map: var Map, shift: (int, int)) =
+    if map.move[0] + 30 + shift[0] <= map.data.size[0] and
+       map.move[1] + 30 + shift[1] <= map.data.size[1] and
+       map.move[0] + shift[0] >= 0 and
+       map.move[1] + shift[1] >= 0:
+        map.move[0] += shift[0]
+        map.move[1] += shift[1]
 
 proc drawGrid* () =
     discard
