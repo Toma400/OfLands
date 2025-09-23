@@ -1,19 +1,23 @@
-import std/strformat
+import std/parsecfg
 import nico
 import game
+import gui
 
 ###########################################
 const GAME_NAME = "Of Lands"
 const GAME_VER  = "0.1.0"
 ###########################################
-const MAP_PICKED = "default2.olm"
+let cfg = loadConfig("oflands.ini")
 
-var map = newMap(MAP_PICKED)
+var map = newMap(getSectionValue(cfg, "", "map"))
 
 proc gameInit() =
-    assetPath = basePath # resets so folder structure can be fully configured
-    setPalette(loadPaletteFromImage(fmt"tilesets/example_palette.png"))
-    loadSpritesheet(3, "gui/grid.png", 960, 960) # grid setup
+    assetPath = basePath  # resets so folder structure can be fully configured
+    block palettePreload: # initial palette start
+      setPalette(getPalette(map)) # map
+      setPalette(getGUIPalette()) # GUI
+    loadSpritesheet(2, "gui/gui.png", 32, 32) # gui
+    # loadSpritesheet(3, "gui/grid.png", 960, 960) # grid setup
 
 proc gameUpdate(dt: float32) =
     if btn(pcLeft):  moveMap(map, (-1,  0))
@@ -24,7 +28,8 @@ proc gameUpdate(dt: float32) =
 proc gameDraw() =
     cls()
     drawMap(map)
+    drawGUI()
 
 nico.init(org="Toma400", app=GAME_NAME)
-nico.createWindow(GAME_NAME, 960, 960, 1, false)
+nico.createWindow(GAME_NAME, W, H, 1, false)
 nico.run(gameInit, gameUpdate, gameDraw)
