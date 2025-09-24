@@ -1,7 +1,7 @@
 import std/tables
 
 type
-  RoadAccess = tuple[left: bool, up: bool, right: bool, down: bool]
+  RoadAccess = tuple[left, up, right, down: bool]
   #[ RoadAccess | indicates connections possible from the tile - no connection means the tile is isolated and thus doesn't support road building
                 | notes: rivers wouldn't support roads at all - bridge would be separate structure (location) that enables that
                 |        e.g. river going horizontally would create bridge looking like that: ||

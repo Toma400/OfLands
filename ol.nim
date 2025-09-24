@@ -1,6 +1,10 @@
+import std/strformat
 import std/parsecfg
+import std/tables
+import nico/backends/common
 import nico
 import kingdom
+import render
 import game
 import gui
 
@@ -16,10 +20,13 @@ var ses = newSession()
 proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
     block palettePreload: # initial palette start
-      setPalette(getPalette(map)) # map
-      setPalette(getGUIPalette()) # GUI
-    loadSpritesheet(2, "gui/gui.png",   32,  32) # gui
-    loadSpritesheet(3, "gui/grid.png", 960, 960) # grid
+      setMapPalette(fmt"tilesets/{map.data.tileset}"); # index: 1
+      setGUIPalette("gui/gui.png")                     # index: 2
+      setPalette(getMapPalette()) # 1: map
+      setPalette(getGUIPalette()) # 2: GUI
+    loadSpritesheet(XMap.ord,  fmt"tilesets/{map.data.tileset}",  TL,  TL) # 1 | map
+    loadSpritesheet(XGUI.ord,  "gui/gui.png",                     TL,  TL) # 2 | gui
+    loadSpritesheet(XGrid.ord, "gui/grid.png",                   960, 960) # 3 | grid
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
 
 proc gameUpdate(dt: float32) =

@@ -9,6 +9,7 @@ import parsetoml
 import nico
 # OL imports
 import kingdom
+import render
 import map
 
 const TL* = 32 # tile width/length
@@ -21,10 +22,6 @@ type
     TRAVEL          # travel mode   | clicking directs entity to particular cell
     TRADE           # trade mode    | clicking sets destination for trade
     BUILDING        # building mode | clicking adds a construction plan
-  Indexes* = enum # spreadsheet indexes (to be later reconceptualised)
-    XMap      = 1
-    XFeatures = 2
-    XGrid     = 3
   MapData* = object
     tileset* : string                         # tileset name
     palette* : string                         # palette name
@@ -32,7 +29,6 @@ type
     mapping* : OrderedTable[(int, int), Tile] # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
     size*    : (int, int)                     # size             | (width, length)
   Map* = object
-    index*    : int
     data*     : MapData
     move*     : (int, int) # cell move from (0,0)
     kingdoms* : OrderedTable[int, Kingdom] # kingdoms used in game, searchable by index (should start from 1 upwards)
@@ -44,9 +40,6 @@ proc isWithinMap* (px_coord: (int, int)): bool =
     if px_coord[0] > MV*TL or px_coord[1] > MV*TL:
         return false
     return true
-
-proc getPalette* (map: Map): Palette =
-    return loadPaletteFromImage(fmt"tilesets/{map.data.palette}")
 
 proc getCellCoords* (map: Map, px_coord: (int, int)): (int, int) =
     # yields coordinates of cell from pixel coordinates (adjusting to map move)
@@ -89,18 +82,16 @@ proc parseOLM (olm_file: string): MapData =
                 result.size[0] += 1
         result.size[1] += 1
 
-proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], map_index: int = 1): Map =
+proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom]): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
     result.data     = parseOLM(olm_file)
-    result.index    = map_index
     result.move     = (0, 0)
     result.kingdoms = kingdoms
-    loadSpritesheet(result.index, fmt"tilesets/{result.data.tileset}", TL, TL)
 
 proc drawMap* (map: Map) =
-    setPalette(getPalette(map))
-    setSpritesheet(map.index)
+    setPalette(getMapPalette())
+    setSpritesheet(XMap.ord)
     if len(map.data.mapping) < 900: # temporary measure, we need to just center the map and adjust it to size
         raise newException(Exception, fmt"Map file has too little tiles!") # similarly we need to limit the draw (make it via two seqs with more x/y coord system?)
                                                                 # for when we would use bigger maps

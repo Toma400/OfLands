@@ -1,15 +1,13 @@
 import std/strformat
 import std/tables
 import std/math
+import render
 import nico
 import game
 
 # default values (may be later imported from .ini, but would need adjusting GUI)
 const W* = 1280
 const H* = 960
-
-proc getGUIPalette* (): Palette =
-    return loadPaletteFromImage(fmt"gui/gui_palette.png")
 
 proc drawCursor(map: Map, ses: Session) =
     # replaces cursor with custom one
@@ -59,7 +57,7 @@ proc drawSidebar() =
 proc drawFocus (map: Map, ses: Session) =
     let focus_padding = TL*4 # focus padding from -drawSidebar- adjusted to exclude frame
     highlightTile(map, ses.focus)
-    setPalette(getPalette(map)) # gets palette for focus tile
+    setPalette(getMapPalette()) # gets palette for focus tile
     setSpritesheet(1)
     sprs(map.data.mapping[ses.focus].index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
     setPalette(getGUIPalette()) # resets the palette to GUI one
