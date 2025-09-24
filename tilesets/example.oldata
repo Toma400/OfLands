@@ -1,14 +1,31 @@
+#[properties]
+#road_D_None = 99  # dirt | no connections
+#road_D_L    = 100 # dirt | left only
+#road_D_LRU  = 101 # dirt | left, right and up
+
 [0]
-name = "Water"
+name          = "Water"
+road          = [false, false, false, false]
+biome         = "Generic"
+deforestation = ""
 
 [1]
-name = "Beach"
+name          = "Beach"
+road          = [false, false, true, true]
+biome         = "Fields"
+deforestation = ""
 
 [2]
-name = "Beach"
+name          = "Beach"
+road          = [true, false, true, true]
+biome         = "Fields"
+deforestation = ""
 
 [3]
-name = "Beach"
+name          = "Beach"
+road          = [true, false, false, true]
+biome         = "Fields"
+deforestation = ""
 
 [4]
 name = "Rock"
@@ -35,7 +52,10 @@ name = "Beach"
 name = "Beach"
 
 [12]
-name = "Forest"
+name          = "Forest"
+road          = [true, true, true, true]
+biome         = "Forest"
+deforestation = 6 # turns the tile into grassland (index 6)
 
 [13]
 name = "Meadow"

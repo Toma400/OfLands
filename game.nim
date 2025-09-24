@@ -7,27 +7,27 @@ import std/math
 import parsetoml
 # nico specifics
 import nico
+import map
 
 const TL* = 32 # tile width/length
+const MV* = 30 # map view size (default = 30)
 
 type
   MapMode* = enum # modes used by session to filter through actions (e.g. for I/O to not focus on tile if you are now doing building)
-    EXPLORE         # default mode | clicking on tile focuses on it and allow management if tile belongs to you)
-    ROUTE           # route mode   | clicking adds route node
-    TRAVEL          # travel mode  | clicking directs entity to particular cell
-    TRADE           # trade mode   | clicking sets destination for trade
+    EXPLORE         # default mode  | clicking on tile focuses on it and allow management if tile belongs to you)
+    ROUTE           # route mode    | clicking adds route node
+    TRAVEL          # travel mode   | clicking directs entity to particular cell
+    TRADE           # trade mode    | clicking sets destination for trade
+    BUILDING        # building mode | clicking adds a construction plan
   Indexes* = enum # spreadsheet indexes (to be later reconceptualised)
     XMap      = 1
     XFeatures = 2
     XGrid     = 3
-  Tile* = object
-    index* : int     # terrain tile index
-    name*  : string
   MapData* = object
     tileset* : string                         # tileset name
     palette* : string                         # palette name
-    defs*    : OrderedTable[int, Tile]        # tile definitions | index, Tile object | meant to be static reference/preset without edits
-    mapping* : OrderedTable[(int, int), Tile] # tile mapping     | (coords), Tile     | meant to be mutable (data can change)
+    defs*    : OrderedTable[int, TilePrefab]  # tile definitions | index, TilePrefab object | meant to be static reference/preset without edits
+    mapping* : OrderedTable[(int, int), Tile] # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
     size*    : (int, int)                     # size             | (width, length)
   Map* = object
     index* : int
@@ -37,35 +37,31 @@ type
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
     mode*  : MapMode
 
+proc isWithinMap* (px_coord: (int, int)): bool =
+    if px_coord[0] > MV*TL or px_coord[1] > MV*TL:
+        return false
+    return true
+
 proc getPalette* (map: Map): Palette =
     return loadPaletteFromImage(fmt"tilesets/{map.data.palette}")
 
 proc getCellCoords* (map: Map, px_coord: (int, int)): (int, int) =
     # yields coordinates of cell from pixel coordinates (adjusting to map move)
-    if px_coord[0] > 30*TL or px_coord[1] > 30*TL:
+    if not isWithinMap(px_coord):
         return (-1, -1) # outside of cell window
     return (floor(px_coord[0]/TL).int + map.move[0],
             floor(px_coord[1]/TL).int + map.move[1])
 
-proc newTile (index: int, oldata: OrderedTable[int, Tile]): Tile =
-    result.index = index
-    if index in oldata:
-        let data    = oldata[index]
-        result.name = data.name
-        return result
-    # default values if no data
-    result.name = ""
-
-proc parseOLDATA (oldata_file: string): OrderedTable[int, Tile] =
+proc parseOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
     # parses .oldata file and returns tile definitions in an OrderedTable
     let oldata = parseFile(fmt"tilesets/{oldata_file}")
     for tile_key in oldata.getTable.keys():
-        # check for keys (todo: the proper amount of integers per map is not checked)
-        for req in ["name"]:
-            if oldata[tile_key].hasKey(req) == false: raise newException(Exception, fmt"Tile definition file -{oldata_file}- doesn't have all required keys! Key missing: {req}")
-        result[parseInt(tile_key)] = Tile(
-                                          name : oldata[tile_key]["name"].getStr()
-                                          )
+        if tile_key == "properties": discard # TODO | temporary
+
+        result[parseInt(tile_key)] = newTilePrefab( # initialises prefab, using default values if key not found
+                                                   tname   = oldata[tile_key]["name"].getStr(""),
+                                                   road_ac = (false, false, false, false)         # TODO | temporary
+                                                   )
 
 proc parseOLM (olm_file: string): MapData =
     # - olm_file  : .olm file containing tileset and tile data
@@ -85,7 +81,7 @@ proc parseOLM (olm_file: string): MapData =
     for y, row in olm["map"].getElems().pairs:
         for x, ix in row.getElems().pairs:
             # ix = tile index; x/y = coordinates
-            result.mapping[(x, y)] = newTile(ix.getInt(), result.defs)
+            result.mapping[(x, y)] = newTile(result.defs, ix.getInt())
             if result.size[1] == 0: # sets itself only once
                 result.size[0] += 1
         result.size[1] += 1
@@ -107,7 +103,10 @@ proc drawMap* (map: Map) =
                                                                 # for when we would use bigger maps
     for row in 0..<30:      # 30 x 30 map area, adjusted to moved map
         for tile in 0..<30:                   # adjusted to moved map
-            spr(map.data.mapping[(tile + map.move[0], row + map.move[1])].index, tile * TL, row * TL)
+            let moved_coords = (tile + map.move[0], row + map.move[1])
+            spr(map.data.mapping[moved_coords].index, tile * TL, row * TL)
+            if map.data.mapping[moved_coords].road > 0:
+                discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
 
 proc moveMap* (map: var Map, shift: (int, int)) =
     # moves the starting coordinates if the boundaries are not outside 0..map_size range

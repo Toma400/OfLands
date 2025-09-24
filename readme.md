@@ -1,5 +1,5 @@
 # Of Lands
-**Of Lands** is a turn-based economy strategy game.  
+**Of Lands** is a simple economy/survival strategy game.  
 Based on the premise of local material conditions shaping your kingdom, it dictates
 the game's focus on fulfilling needs of different areas through interactions between
 settlements and constructing transport pipelines. It can be seen as somewhat of a mixture

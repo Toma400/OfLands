@@ -26,6 +26,9 @@ proc gameUpdate(dt: float32) =
     if btn(pcRight): moveMap(map, (1,   0))
     if btn(pcUp):    moveMap(map, (0,  -1))
     if btn(pcDown):  moveMap(map, (0,   1))
+    if btn(pcA):
+        if ses.mode != ROUTE: ses.mode = ROUTE
+        else:                 ses.mode = EXPLORE
     if mousebtnpr(0):
         if ses.mode == EXPLORE:
             if ses.focus != getCellCoords(map, mouse()):

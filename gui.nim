@@ -1,5 +1,6 @@
 import std/strformat
 import std/tables
+import std/math
 import nico
 import game
 
@@ -10,13 +11,18 @@ const H* = 960
 proc getGUIPalette* (): Palette =
     return loadPaletteFromImage(fmt"gui/gui_palette.png")
 
-proc drawCursor() =
+proc drawCursor(map: Map, ses: Session) =
     # replaces cursor with custom one
     hideMouse()
-    sprRot(3, mouse()[0], mouse()[1], 0.0)
-    #setColor(7)
-    #rect(x1 = mouse()[0] - 10, y1 = mouse()[1] - 10,
-         #x2 = mouse()[0] + 10, y2 = mouse()[1] + 10)
+    if ses.mode == EXPLORE:
+        sprRot(3, mouse()[0], mouse()[1], 0.0)
+    elif ses.mode == ROUTE:
+        if isWithinMap(mouse()):
+            let cell = getCellCoords(map, mouse())
+            rect(x1 = floor(cell[0]*TL),     y1 = floor(cell[1]*TL),
+                 x2 = floor((cell[0]+1)*TL), y2 = floor((cell[1]+1))*TL)
+        else:
+            sprRot(3, mouse()[0], mouse()[1], 0.0)
 
 proc drawSidebar() =
     let focus_padding = TL*3 # width of sidebar (320) is 10 tiles, so with 2-tiled focus (2x scale) and 1-tiled frame (*2) it leaves us 6 (3 tiles each side)
@@ -65,7 +71,7 @@ proc drawGUI* (map: Map, ses: Session) =
     setPalette(getGUIPalette())
     setSpritesheet(2)
     drawSidebar()
-    drawCursor()
+    drawCursor(map, ses)
     if ses.focus != (-1, -1):
         drawFocus(map, ses)
 
