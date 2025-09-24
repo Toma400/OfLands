@@ -7,6 +7,8 @@ import std/math
 import parsetoml
 # nico specifics
 import nico
+# OL imports
+import kingdom
 import map
 
 const TL* = 32 # tile width/length
@@ -30,9 +32,10 @@ type
     mapping* : OrderedTable[(int, int), Tile] # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
     size*    : (int, int)                     # size             | (width, length)
   Map* = object
-    index* : int
-    data*  : MapData
-    move*  : (int, int) # cell move from (0,0)
+    index*    : int
+    data*     : MapData
+    move*     : (int, int) # cell move from (0,0)
+    kingdoms* : OrderedTable[int, Kingdom] # kingdoms used in game, searchable by index (should start from 1 upwards)
   Session* = object # game object, to store session data
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
     mode*  : MapMode
@@ -86,14 +89,14 @@ proc parseOLM (olm_file: string): MapData =
                 result.size[0] += 1
         result.size[1] += 1
 
-proc newMap* (olm_file: string, map_index: int = 1): Map =
+proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], map_index: int = 1): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
-    result.data  = parseOLM(olm_file)
-    result.index = map_index
-    result.move  = (0, 0)
+    result.data     = parseOLM(olm_file)
+    result.index    = map_index
+    result.move     = (0, 0)
+    result.kingdoms = kingdoms
     loadSpritesheet(result.index, fmt"tilesets/{result.data.tileset}", TL, TL)
-    #discard loadPaletteFromImage(fmt"tilesets/{result.data.tileset}")
 
 proc drawMap* (map: Map) =
     setPalette(getPalette(map))

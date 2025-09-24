@@ -1,5 +1,6 @@
 import std/parsecfg
 import nico
+import kingdom
 import game
 import gui
 
@@ -9,7 +10,7 @@ const GAME_VER  = "0.1.0"
 ###########################################
 let cfg = loadConfig("oflands.ini")
 
-var map = newMap(getSectionValue(cfg, "", "map"))
+var map = newMap(getSectionValue(cfg, "", "map"), initKingdoms(newKingdom(getSectionValue(cfg, "", "kingdom"))))
 var ses = newSession()
 
 proc gameInit() =
