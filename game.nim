@@ -24,7 +24,6 @@ type
     BUILDING        # building mode | clicking adds a construction plan
   MapData* = object
     tileset* : string                         # tileset name
-    palette* : string                         # palette name
     defs*    : OrderedTable[int, TilePrefab]  # tile definitions | index, TilePrefab object | meant to be static reference/preset without edits
     mapping* : OrderedTable[(int, int), Tile] # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
     size*    : (int, int)                     # size             | (width, length)
@@ -36,14 +35,20 @@ type
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
     mode*  : MapMode
 
-proc isWithinMap* (px_coord: (int, int)): bool =
-    if px_coord[0] > MV*TL or px_coord[1] > MV*TL:
+proc isPxWithinMap* (map: Map, px_coord: (int, int)): bool =
+    # does not calculate move - only if particular pixel is within 30x30 bonds (calculate moved px when calling)
+    if px_coord[0] > MV*TL or
+       px_coord[1] > MV*TL:
         return false
     return true
 
+proc isTileWithinMap* (map: Map, t_coord: (int, int)): bool =
+    return isPxWithinMap(map, ((t_coord[0]-map.move[0])*TL,    (t_coord[1]-map.move[1])*TL)) and
+           isPxWithinMap(map, ((t_coord[0]-map.move[0])*TL+TL, (t_coord[1]-map.move[1])*TL+TL))
+
 proc getCellCoords* (map: Map, px_coord: (int, int)): (int, int) =
     # yields coordinates of cell from pixel coordinates (adjusting to map move)
-    if not isWithinMap(px_coord):
+    if not isPxWithinMap(map, px_coord):
         return (-1, -1) # outside of cell window
     return (floor(px_coord[0]/TL).int + map.move[0],
             floor(px_coord[1]/TL).int + map.move[1])
@@ -67,10 +72,9 @@ proc parseOLM (olm_file: string): MapData =
         if olm.hasKey(k) == false: raise newException(Exception, fmt"Map file doesn't have all required keys! Key missing: {k}")
 
     result.tileset = olm["tileset_img"].getStr()
-    result.palette = olm["tileset_palette"].getStr()
     var defs_path  = olm["tileset_data"].getStr()
     # before files are used, we ensure they exist
-    for f in [result.tileset, result.palette, defs_path]:
+    for f in [result.tileset, defs_path]:
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
     result.defs    = parseOLDATA(defs_path)
     # tile mapping
@@ -88,24 +92,22 @@ proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom]): Map =
     result.data     = parseOLM(olm_file)
     result.move     = (0, 0)
     result.kingdoms = kingdoms
+    if len(result.data.mapping) < MV*MV: # temporary measure, we will eventually need to just center the map and adjust it to size in -drawMap-
+        raise newException(Exception, fmt"Map file has too little tiles!")
 
 proc drawMap* (map: Map) =
-    setPalette(getMapPalette())
-    setSpritesheet(XMap.ord)
-    if len(map.data.mapping) < 900: # temporary measure, we need to just center the map and adjust it to size
-        raise newException(Exception, fmt"Map file has too little tiles!") # similarly we need to limit the draw (make it via two seqs with more x/y coord system?)
-                                                                # for when we would use bigger maps
-    for row in 0..<30:      # 30 x 30 map area, adjusted to moved map
-        for tile in 0..<30:                   # adjusted to moved map
+    useSpritesheet(XMap)
+    for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
+        for tile in 0..<MV:                   # adjusted to moved map
             let moved_coords = (tile + map.move[0], row + map.move[1])
             spr(map.data.mapping[moved_coords].index, tile * TL, row * TL)
             if map.data.mapping[moved_coords].road > 0:
                 discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
 
-proc moveMap* (map: var Map, shift: (int, int)) =
+proc moveMap* (map: var Map, shift: (int, int), dt: float32) =
     # moves the starting coordinates if the boundaries are not outside 0..map_size range
-    if map.move[0] + 30 + shift[0] <= map.data.size[0] and
-       map.move[1] + 30 + shift[1] <= map.data.size[1] and
+    if map.move[0] + MV + shift[0] <= map.data.size[0] and
+       map.move[1] + MV + shift[1] <= map.data.size[1] and
        map.move[0] + shift[0] >= 0 and
        map.move[1] + shift[1] >= 0:
         map.move[0] += shift[0]

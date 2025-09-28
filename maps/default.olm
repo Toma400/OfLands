@@ -1,6 +1,5 @@
 tileset_img     = "example.png"
 tileset_data    = "example.oldata"
-tileset_palette = "example_palette.png"
 map = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,],

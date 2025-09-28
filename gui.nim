@@ -1,4 +1,3 @@
-import std/strformat
 import std/tables
 import std/math
 import render
@@ -15,11 +14,13 @@ proc drawCursor(map: Map, ses: Session) =
     if ses.mode == EXPLORE:
         sprRot(3, mouse()[0], mouse()[1], 0.0)
     elif ses.mode == ROUTE:
-        if isWithinMap(mouse()):
+        if isPxWithinMap(map, mouse()):
+            echo "?:O"
             let cell = getCellCoords(map, mouse())
-            rect(x1 = floor(cell[0]*TL),     y1 = floor(cell[1]*TL),
-                 x2 = floor((cell[0]+1)*TL), y2 = floor((cell[1]+1))*TL)
+            rect(x1 = floor((cell[0]-map.move[0])*TL),   y1 = floor((cell[1]-map.move[1])*TL),
+                 x2 = floor((cell[0]-map.move[0]+1)*TL), y2 = floor((cell[1]-map.move[1]+1))*TL)
         else:
+            echo "><"
             sprRot(3, mouse()[0], mouse()[1], 0.0)
 
 proc drawSidebar() =
@@ -56,23 +57,23 @@ proc drawSidebar() =
 
 proc drawFocus (map: Map, ses: Session) =
     let focus_padding = TL*4 # focus padding from -drawSidebar- adjusted to exclude frame
-    highlightTile(map, ses.focus)
-    setPalette(getMapPalette()) # gets palette for focus tile
-    setSpritesheet(1)
+    useSpritesheet(XMap)
+    setColor(0) # black
+    if isTileWithinMap(map, ses.focus):
+        highlightTile(map, ses.focus)
     sprs(map.data.mapping[ses.focus].index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
-    setPalette(getGUIPalette()) # resets the palette to GUI one
     # info box
     printc(map.data.mapping[ses.focus].name, x = H+TL*5, y = TL*2, 4) # name   | in the middle between top and focus window
     printc($ses.focus,                       x = H+TL*5, y = TL*7, 3) # coords | in the middle below focus window
 
 proc drawGUI* (map: Map, ses: Session) =
-    setPalette(getGUIPalette())
-    setSpritesheet(2)
+    useSpritesheet(XGUI)
     drawSidebar()
     drawCursor(map, ses)
     if ses.focus != (-1, -1):
         drawFocus(map, ses)
 
 proc drawGrid* () =
-    setSpritesheet(3) # grid drawing
+    useSpritesheet(XGrid)
+    #setSpritesheet(3) # grid drawing
     spr(0, 0, 0)

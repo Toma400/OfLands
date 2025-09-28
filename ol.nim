@@ -1,6 +1,5 @@
 import std/strformat
 import std/parsecfg
-import std/tables
 import nico/backends/common
 import nico
 import kingdom
@@ -19,22 +18,21 @@ var ses = newSession()
 
 proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
-    block palettePreload: # initial palette start
-      setMapPalette(fmt"tilesets/{map.data.tileset}"); # index: 1
-      setGUIPalette("gui/gui.png")                     # index: 2
-      setPalette(getMapPalette()) # 1: map
-      setPalette(getGUIPalette()) # 2: GUI
+    registerPalettes(map = fmt"tilesets/{map.data.tileset}", # index: 1
+                     gui = "gui/gui.png"                     # index: 2
+    )
     loadSpritesheet(XMap.ord,  fmt"tilesets/{map.data.tileset}",  TL,  TL) # 1 | map
     loadSpritesheet(XGUI.ord,  "gui/gui.png",                     TL,  TL) # 2 | gui
     loadSpritesheet(XGrid.ord, "gui/grid.png",                   960, 960) # 3 | grid
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
 
 proc gameUpdate(dt: float32) =
-    if btn(pcLeft):  moveMap(map, (-1,  0))
-    if btn(pcRight): moveMap(map, (1,   0))
-    if btn(pcUp):    moveMap(map, (0,  -1))
-    if btn(pcDown):  moveMap(map, (0,   1))
-    if btn(pcA):
+    if btn(pcLeft):  moveMap(map, (-1,  0), dt)
+    if btn(pcRight): moveMap(map, (1,   0), dt)
+    if btn(pcUp):    moveMap(map, (0,  -1), dt)
+    if btn(pcDown):  moveMap(map, (0,   1), dt)
+    if btnpr(pcA):
+        ses.focus = (-1, -1) # resets focus
         if ses.mode != ROUTE: ses.mode = ROUTE
         else:                 ses.mode = EXPLORE
     if mousebtnpr(0):
