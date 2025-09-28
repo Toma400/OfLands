@@ -2,17 +2,16 @@
 This list here is non-exhaustive, but also non-declarative planning for features.
 
 ### 0.1.0
+- Locations (only the ones that can easily have no assignment, e.g. forts)
+  - A way to build empty forts to showcase structure & tie them to permanent map data
+    - Route mode should be turned into architecture mode?
+  - ...if we set kingdom struct, we may go with assignments even, dunno
 - Kingdom system with (for now) one default kingdom with name (set through config)
   - banners as separate tileset? (one that comes with the map and is noted in
     .olm, and kingdoms would direct index to it - would make it as value in Kingdom
     struct)
-  - with so many tilesets, it would be good to make proc that generates palette
-    from image and just store it in `int, [Palette]` equivalent to spritesheet
-    (probably new .nim file that handles all that? with Indexes enum to precise context
-     and picking proper index)
-- Locations (only the ones that can easily have no assignment, e.g. forts)
-  - ...or if we set kingdom struct, we may go with assignments even, dunno
 - Save-wise (later) it would make sense to keep names of tilesets in Map struct
+- Making sure .oldata tiles can be skipped or not have a name
 
 ### 0.2.0
 - More tiles

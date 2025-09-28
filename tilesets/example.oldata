@@ -3,161 +3,161 @@
 #road_D_L    = 100 # dirt | left only
 #road_D_LRU  = 101 # dirt | left, right and up
 
-[0]
+[tile.0]
 name          = "Water"
-road          = [false, false, false, false]
-biome         = "Generic"
-deforestation = ""
+#road          = [false, false, false, false]
+#biome         = "Generic"
+#deforestation = ""
 
-[1]
+[tile.1]
 name          = "Beach"
-road          = [false, false, true, true]
-biome         = "Fields"
-deforestation = ""
+#road          = [false, false, true, true]
+#biome         = "Fields"
+#deforestation = ""
 
-[2]
+[tile.2]
 name          = "Beach"
-road          = [true, false, true, true]
-biome         = "Fields"
-deforestation = ""
+#road          = [true, false, true, true]
+#biome         = "Fields"
+#deforestation = ""
 
-[3]
+[tile.3]
 name          = "Beach"
-road          = [true, false, false, true]
-biome         = "Fields"
-deforestation = ""
+#road          = [true, false, false, true]
+#biome         = "Fields"
+#deforestation = ""
 
-[4]
+[tile.4]
 name = "Rock"
 
-[5]
+[tile.5]
 name = "Beach"
 
-[6]
+[tile.6]
 name = "Grassland"
 
-[7]
+[tile.7]
 name = "Beach"
 
-[8]
+[tile.8]
 name = "Shipwreck"
 
-[9]
+[tile.9]
 name = "Beach"
 
-[10]
+[tile.10]
 name = "Beach"
 
-[11]
+[tile.11]
 name = "Beach"
 
-[12]
+[tile.12]
 name          = "Forest"
 road          = [true, true, true, true]
 biome         = "Forest"
 deforestation = 6 # turns the tile into grassland (index 6)
 
-[13]
+[tile.13]
 name = "Meadow"
 
-[14]
+[tile.14]
 name = "Beach"
 
-[15]
+[tile.15]
 name = "Beach"
 
-[16]
+[tile.16]
 name = "Forest"
 
-[17]
+[tile.17]
 name = "Hill"
 
-[18]
+[tile.18]
 name = "Beach"
 
-[19]
+[tile.19]
 name = "Beach"
 
-[20]
+[tile.20]
 name = "Beach"
 
-[21]
+[tile.21]
 name = "Sandy beach"
 
-[22]
+[tile.22]
 name = "Sandy beach"
 
-[23]
+[tile.23]
 name = "Sandy beach"
 
-[24]
+[tile.24]
 name = "Beach"
 
-[25]
+[tile.25]
 name = "Sandy beach"
 
-[26]
+[tile.26]
 name = "Lake"
 
-[27]
+[tile.27]
 name = "Sandy beach"
 
-[28]
+[tile.28]
 name = ""
 
-[29]
+[tile.29]
 name = "Sandy beach"
 
-[30]
+[tile.30]
 name = "Sandy beach"
 
-[31]
+[tile.31]
 name = "Sandy beach"
 
-[32]
+[tile.32]
 name = "Sandy beach"
 
-[33]
+[tile.33]
 name = "Sandy beach"
 
-[34]
+[tile.34]
 name = "Sandy beach"
 
-[35]
+[tile.35]
 name = "Sandy beach"
 
-[36]
+[tile.36]
 name = "Sandy beach"
 
-[37]
+[tile.37]
 name = "Sandy beach"
 
-[38]
+[tile.38]
 name = "Sandy beach"
 
-[39]
+[tile.39]
 name = "Sandy beach"
 
-[40]
+[tile.40]
 name = "Sandy beach"
 
-[41]
+[tile.41]
 name = "Sandy beach"
 
-[42]
+[tile.42]
 name = ""
 
-[43]
+[tile.43]
 name = ""
 
-[44]
+[tile.44]
 name = "Sandy beach"
 
-[45]
+[tile.45]
 name = "Sandy beach"
 
-[46]
+[tile.46]
 name = ""
 
-[47]
+[tile.47]
 name = ""

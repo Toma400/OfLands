@@ -58,13 +58,13 @@ proc getCellCoords* (map: Map, px_coord: (int, int)): (int, int) =
 proc parseOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
     # parses .oldata file and returns tile definitions in an OrderedTable
     let oldata = parseFile(fmt"tilesets/{oldata_file}")
-    for tile_key in oldata.getTable.keys():
-        if tile_key == "properties": discard # TODO | temporary
-
-        result[parseInt(tile_key)] = newTilePrefab( # initialises prefab, using default values if key not found
-                                                   tname   = oldata[tile_key]["name"].getStr(""),
-                                                   road_ac = (false, false, false, false)         # TODO | temporary
-                                                   )
+    for cat in oldata.getTable.keys():
+        if cat == "tile":
+            for tile_key in oldata["tile"].getTable.keys():
+                result[parseInt(tile_key)] = newTilePrefab( # initialises prefab, using default values if key not found
+                                                           tname   = oldata["tile"][tile_key]["name"].getStr(""),
+                                                           #road_ac = (false, false, false, false)         # TODO | temporary
+                                                           )
 
 proc parseOLM (olm_file: string): MapData =
     # - olm_file  : .olm file containing tileset and tile data
@@ -106,8 +106,8 @@ proc drawMap* (map: Map) =
         for tile in 0..<MV:                   # adjusted to moved map
             let moved_coords = (tile + map.move[0], row + map.move[1])
             spr(map.data.mapping[moved_coords].index, tile * TL, row * TL)
-            if map.data.mapping[moved_coords].road > 0:
-                discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
+            # if map.data.mapping[moved_coords].road > 0:
+            #     discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
 
 proc moveMap* (map: var Map, shift: (int, int), dt: float32) =
     # moves the starting coordinates if the boundaries are not outside 0..map_size range
@@ -117,6 +117,12 @@ proc moveMap* (map: var Map, shift: (int, int), dt: float32) =
        map.move[1] + shift[1] >= 0:
         map.move[0] += shift[0]
         map.move[1] += shift[1]
+
+proc newLocation* (map: var Map, affiliation: int = 0) =
+    # creates location and puts it on particular tile
+    let loc = Location(owner: affiliation)
+    if affiliation != 0:
+        map.kingdoms[affiliation].locations.add(loc)
 
 proc highlightTile* (map: Map, tcoord: (int, int)) =
     rect(x1 = TL * (tcoord[0]-map.move[0])  , y1 = TL * (tcoord[1]-map.move[1]),
