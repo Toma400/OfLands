@@ -1,7 +1,9 @@
+import std/strformat
 import std/tables
 import std/math
 import render
 import nico
+import time
 import game
 
 # default values (may be later imported from .ini, but would need adjusting GUI)
@@ -23,7 +25,7 @@ proc drawCursor(map: Map, ses: Session) =
             echo "><"
             sprRot(3, mouse()[0], mouse()[1], 0.0)
 
-proc drawSidebar() =
+proc drawSidebar(map: Map) =
     let focus_padding = TL*3 # width of sidebar (320) is 10 tiles, so with 2-tiled focus (2x scale) and 1-tiled frame (*2) it leaves us 6 (3 tiles each side)
 
     spr(0, H, 0)                               # corner (upper left)
@@ -54,6 +56,8 @@ proc drawSidebar() =
     spr(8,  H+focus_padding,      0+focus_padding+TL*3)
     spr(9,  H+focus_padding+TL,   0+focus_padding+TL*3)
     spr(9,  H+focus_padding+TL*2, 0+focus_padding+TL*3)
+    # time
+    printc(fmt"{map.time.day} {Month[map.time.month]} {map.time.year}, {map.time.hour}", x = H+TL*5, y = H-TL*2, 3)
 
 proc drawFocus (map: Map, ses: Session) =
     let focus_padding = TL*4 # focus padding from -drawSidebar- adjusted to exclude frame
@@ -68,7 +72,7 @@ proc drawFocus (map: Map, ses: Session) =
 
 proc drawGUI* (map: Map, ses: Session) =
     useSpritesheet(XGUI)
-    drawSidebar()
+    drawSidebar(map)
     drawCursor(map, ses)
     if ses.focus != (-1, -1):
         drawFocus(map, ses)

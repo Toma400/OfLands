@@ -13,3 +13,4 @@ Versions:
   - Clicking on tile highlights it and showcases zoom-in and information about it
     in the sidebar
 - Added basic kingdom system recognised and stored by the map
+- Added time system, showcased on GUI

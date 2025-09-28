@@ -13,7 +13,7 @@ type
 
 proc basePalette (): Palette =
     const COL = [
-        (55.uint8, 55.uint8, 33.uint8) # todo: black? white? for GUI
+        (55.uint8, 55.uint8, 33.uint8)
     ]
     for i, c in COL:
         result.size    = i+1

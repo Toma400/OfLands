@@ -23,17 +23,19 @@ type
     TRADE           # trade mode    | clicking sets destination for trade
     BUILDING        # building mode | clicking adds a construction plan
   MapData* = object
-    tileset* : string                         # tileset name
-    defs*    : OrderedTable[int, TilePrefab]  # tile definitions | index, TilePrefab object | meant to be static reference/preset without edits
-    mapping* : OrderedTable[(int, int), Tile] # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
-    size*    : (int, int)                     # size             | (width, length)
+    tileset* : string                             # tileset name
+    defs*    : OrderedTable[int, TilePrefab]      # tile definitions | index, TilePrefab object | meant to be static reference/preset without edits
+    mapping* : OrderedTable[(int, int), Tile]     # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
+    size*    : (int, int)                         # size             | (width, length)
   Map* = object
     data*     : MapData
-    move*     : (int, int) # cell move from (0,0)
-    kingdoms* : OrderedTable[int, Kingdom] # kingdoms used in game, searchable by index (should start from 1 upwards)
+    move*     : (int, int)                         # cell move from (0,0)
+    kingdoms* : OrderedTable[int, Kingdom]         # kingdoms used in game, searchable by index (should start from 1 upwards)
+    time*     : tuple[year, month, day, hour: int]
   Session* = object # game object, to store session data
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
     mode*  : MapMode
+    tick*  : int        # serves as a counter of each frame (used for some events)
 
 proc isPxWithinMap* (map: Map, px_coord: (int, int)): bool =
     # does not calculate move - only if particular pixel is within 30x30 bonds (calculate moved px when calling)
@@ -86,12 +88,15 @@ proc parseOLM (olm_file: string): MapData =
                 result.size[0] += 1
         result.size[1] += 1
 
-proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom]): Map =
+proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], starting_date: (int, int, int)): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
     result.data     = parseOLM(olm_file)
     result.move     = (0, 0)
     result.kingdoms = kingdoms
+    result.time     = (year: starting_date[0], month: starting_date[1], day: starting_date[2], hour: 1)
+    if result.time.year < 1 or result.time.month < 1 or result.time.day < 1:
+        raise newException(Exception, fmt"Game has incorrect date set. Date needs every value (year/month/day) be positive number!")
     if len(result.data.mapping) < MV*MV: # temporary measure, we will eventually need to just center the map and adjust it to size in -drawMap-
         raise newException(Exception, fmt"Map file has too little tiles!")
 
@@ -120,3 +125,4 @@ proc highlightTile* (map: Map, tcoord: (int, int)) =
 proc newSession* (): Session =
     result.focus = (-1, -1)
     result.mode  = EXPLORE
+    result.tick  = 1

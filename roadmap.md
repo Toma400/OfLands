@@ -2,7 +2,6 @@
 This list here is non-exhaustive, but also non-declarative planning for features.
 
 ### 0.1.0
-- Passing time (and showcasing it on GUI)
 - Kingdom system with (for now) one default kingdom with name (set through config)
   - banners as separate tileset? (one that comes with the map and is noted in
     .olm, and kingdoms would direct index to it - would make it as value in Kingdom

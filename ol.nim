@@ -1,9 +1,11 @@
 import std/strformat
+import std/strutils
 import std/parsecfg
 import nico/backends/common
 import nico
 import kingdom
 import render
+import time
 import game
 import gui
 
@@ -13,7 +15,13 @@ const GAME_VER  = "0.1.0"
 ###########################################
 let cfg = loadConfig("oflands.ini")
 
-var map = newMap(getSectionValue(cfg, "", "map"), initKingdoms(newKingdom(getSectionValue(cfg, "", "kingdom"))))
+var map = newMap(olm_file      = getSectionValue(cfg, "", "map"),
+                 kingdoms      = initKingdoms(newKingdom(getSectionValue(cfg, "", "kingdom"))),
+                 starting_date = (
+                              parseInt(getSectionValue(cfg, "", "year")),
+                              parseInt(getSectionValue(cfg, "", "month")),
+                              parseInt(getSectionValue(cfg, "", "day"))
+                 ))
 var ses = newSession()
 
 proc gameInit() =
@@ -40,6 +48,7 @@ proc gameUpdate(dt: float32) =
             if ses.focus != getCellCoords(map, mouse()):
                 ses.focus = getCellCoords(map, mouse())
             else: ses.focus = (-1, -1)
+    passTime(map, ses)
 
 proc gameDraw() =
     cls()
