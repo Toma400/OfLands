@@ -11,16 +11,31 @@ var olmMapFormat = {
 
     write: function(map, fileName) {
         // base data
-        var tilesets     = map.usedTilesets();
-        var tileset_name = tilesets[0].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
-        var tileset_data = tileset_name[0].replace(".png", ".oldata");              // sets .oldata to have the same name as tileset image
+        var tilesets          = map.usedTilesets();
+        var tileset_terrain   = tilesets[0].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
+        var tileset_locations = tilesets[1].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
+        var tileset_data      = tileset_terrain[0].replace(".png", ".oldata");           // sets .oldata to have the same name as tileset image
 
         var out = "";
-        out = out + "tileset_img     = " + String.raw`"${tileset_name[0]}"` + "\n"; // for some reason `match` yields two same entries
-        out = out + "tileset_data    = " + String.raw`"${tileset_data}"` + "\n";
-        out = out + "map = [" + "\n";
+        out = out + "tileset_terrain   = " + String.raw`"${tileset_terrain[0]}"` + "\n";   // for some reason `match` yields two same entries
+        out = out + "tileset_locations = " + String.raw`"${tileset_locations[0]}"` + "\n"; // for some reason `match` yields two same entries
+        out = out + "data              = " + String.raw`"${tileset_data}"` + "\n";
+        out = out + "terrain = [" + "\n";
 
-        var layer = map.layerAt(0); // only first layer is used
+        var layer = map.layerAt(0); // terrain
+        if (layer.isTileLayer) {
+            for (y = 0; y < layer.height; ++y) {
+                out = out + "    [";
+                for (x = 0; x < layer.width; ++x)
+                    out = out + layer.cellAt(x, y).tileId + ",";
+                out = out + "],\n";
+            }
+        }
+
+        out = out + "]\n";
+        out = out + "locations = [" + "\n";
+
+        var layer = map.layerAt(1); // locations
         if (layer.isTileLayer) {
             for (y = 0; y < layer.height; ++y) {
                 out = out + "    [";

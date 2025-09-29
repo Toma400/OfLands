@@ -23,10 +23,11 @@ type
     TRADE           # trade mode    | clicking sets destination for trade
     BUILDING        # building mode | clicking adds a construction plan
   MapData* = object
-    tileset* : string                             # tileset name
-    defs*    : OrderedTable[int, TilePrefab]      # tile definitions | index, TilePrefab object | meant to be static reference/preset without edits
-    mapping* : OrderedTable[(int, int), Tile]     # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
-    size*    : (int, int)                         # size             | (width, length)
+    tterrain* : string                         # terrain tileset name
+    tlocs*    : string                         # location tileset name
+    defs*     : OrderedTable[int, TilePrefab]  # tile definitions | index, TilePrefab object | meant to be static reference/preset without edits
+    mapping*  : OrderedTable[(int, int), Tile] # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
+    size*     : (int, int)                     # size             | (width, length)
   Map* = object
     data*     : MapData
     move*     : (int, int)                         # cell move from (0,0)
@@ -70,17 +71,18 @@ proc parseOLM (olm_file: string): MapData =
     # - olm_file  : .olm file containing tileset and tile data
     let olm = parseFile(fmt"maps/{olm_file}")
     # check keys before we proceed
-    for k in ["tileset_img", "tileset_data", "map"]:
+    for k in ["tileset_terrain", "tileset_locations", "data", "terrain"]:
         if olm.hasKey(k) == false: raise newException(Exception, fmt"Map file doesn't have all required keys! Key missing: {k}")
 
-    result.tileset = olm["tileset_img"].getStr()
-    var defs_path  = olm["tileset_data"].getStr()
+    result.tterrain = olm["tileset_terrain"].getStr()
+    result.tlocs    = olm["tileset_locations"].getStr()
+    var defs_path   = olm["data"].getStr()
     # before files are used, we ensure they exist
-    for f in [result.tileset, defs_path]:
+    for f in [result.tterrain, result.tlocs, defs_path]:
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
     result.defs    = parseOLDATA(defs_path)
     # tile mapping
-    for y, row in olm["map"].getElems().pairs:
+    for y, row in olm["terrain"].getElems().pairs:
         for x, ix in row.getElems().pairs:
             # ix = tile index; x/y = coordinates
             result.mapping[(x, y)] = newTile(result.defs, ix.getInt())
@@ -120,7 +122,7 @@ proc moveMap* (map: var Map, shift: (int, int), dt: float32) =
 
 proc newLocation* (map: var Map, affiliation: int = 0) =
     # creates location and puts it on particular tile
-    let loc = Location(owner: affiliation)
+    let loc = newLocation(affiliation)
     if affiliation != 0:
         map.kingdoms[affiliation].locations.add(loc)
 

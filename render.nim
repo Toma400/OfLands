@@ -8,8 +8,9 @@ import nico
 type
   Indexes* = enum # spreadsheet/palette indexes | access their values by .ord
     XMap  = 1
-    XGUI  = 2
-    XGrid = 3
+    XLoc  = 2
+    XGUI  = 3
+    XGrid = 4
 
 proc basePalette (): Palette =
     const COL = [
@@ -41,14 +42,16 @@ proc `+` (pals: varargs[Palette]): Palette =
             if dt == (0.uint8, 0.uint8, 0.uint8): break # marks end of currently iterated palette
             result.data[needle] = (dt.r, dt.g, dt.b)
             needle += 1
+    # todo: may be useful in the future -- result.data = deduplicate(result.data) # cuts any repeated colours
 
-proc registerPalettes* (map: string, gui: string) =
+proc registerPalettes* (map: string, loc: string, gui: string) =
     # ensures the correct indexes exist
-    setPalette(basePalette() + getPalette(map) + getPalette(gui)) # loads palettes, merge them and sets as currently used
+    setPalette(basePalette() + getPalette(map) + getPalette(loc) + getPalette(gui)) # loads palettes, merge them and sets as currently used
 
 proc useSpritesheet* (ix: Indexes) =
     # sets both palette and spritesheet together to be used
     case ix:
       of XMap:  setSpritesheet(XMap.ord)
+      of XLoc:  setSpritesheet(XLoc.ord)
       of XGUI:  setSpritesheet(XGUI.ord)
       of XGrid: setSpritesheet(XGrid.ord)

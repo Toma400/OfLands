@@ -17,7 +17,7 @@ let cfg = loadConfig("oflands.ini")
 
 var map = newMap(olm_file      = getSectionValue(cfg, "", "map"),
                  kingdoms      = initKingdoms(newKingdom(name   = getSectionValue(cfg, "", "kingdom"),
-                                                         number = parseInt(getSectionValue(cfg, "", "kingdom_number")))),
+                                                         number = 1)),
                  starting_date = (
                               parseInt(getSectionValue(cfg, "", "year")),
                               parseInt(getSectionValue(cfg, "", "month")),
@@ -27,12 +27,14 @@ var ses = newSession()
 
 proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
-    registerPalettes(map = fmt"tilesets/{map.data.tileset}", # index: 1
-                     gui = "gui/gui.png"                     # index: 2
+    registerPalettes(map = fmt"tilesets/{map.data.tterrain}",
+                     loc = fmt"tilesets/{map.data.tlocs}",
+                     gui = "gui/gui.png"
     )
-    loadSpritesheet(XMap.ord,  fmt"tilesets/{map.data.tileset}",  TL,  TL) # 1 | map
-    loadSpritesheet(XGUI.ord,  "gui/gui.png",                     TL,  TL) # 2 | gui
-    loadSpritesheet(XGrid.ord, "gui/grid.png",                   960, 960) # 3 | grid
+    loadSpritesheet(XMap.ord,  fmt"tilesets/{map.data.tterrain}",  TL,  TL) # 1 | map
+    loadSpritesheet(XLoc.ord,  fmt"tilesets/{map.data.tlocs}",     TL,  TL) # 2 | locations
+    loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 3 | gui
+    loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 4 | grid
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
 
 proc gameUpdate(dt: float32) =

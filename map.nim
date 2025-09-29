@@ -1,14 +1,6 @@
 import std/tables
 
 type
-  # RoadAccess = tuple[left, up, right, down: bool]
-  # #[ RoadAccess | indicates connections possible from the tile - no connection means the tile is isolated and thus doesn't support road building
-  #               | notes: rivers wouldn't support roads at all - bridge would be separate structure (location) that enables that
-  #               |        e.g. river going horizontally would create bridge looking like that: ||
-  #               |             meaning the directions opening are up and down
-  #               |        not unlikely we would want bridges with each connection fulfilled though (e.g. bridge w/o roads, bridge with up, bridge
-  #               |                                                                                       with down and both directions)
-  # ]#
   TilePrefab* = object # it's the same as Tile, but meant to be static (not have data edited) | index is kept out so duplicates are replaced
     name    : string
   #  road_ac : RoadAccess # road accessibility (left, top, right, bottom)

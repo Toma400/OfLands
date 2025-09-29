@@ -10,13 +10,11 @@ import std/tables
 const FILES = [
     "gui/grid.png",
     "gui/gui.png",
-    "gui/gui_palette.png",
     "maps/default.olm",    # those to be replaced later
     "maps/default2.olm",
     "maps/tiled.js",
     "tilesets/example.oldata",
     "tilesets/example.png",
-    "tilesets/example_palette.png",
     "OfLands.exe",
     "oflands.ini",
     "SDL2.dll"
