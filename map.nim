@@ -1,4 +1,8 @@
+import std/options
 import std/tables
+import questionable
+# OL imports
+import kingdom
 
 type
   TilePrefab* = object # it's the same as Tile, but meant to be static (not have data edited) | index is kept out so duplicates are replaced
@@ -7,6 +11,7 @@ type
   Tile* = object
     index*    : int        # terrain tile index
     name*     : string
+    location* : ?Location
     # road_ac*  : RoadAccess # road accessibility (left, top, right, bottom)
     # road*     : int        # whether tile has road (0 - none, 1 - dirt, 2 - rock)
     # road_cnn* : RoadAccess # whether nearby tiles (left, top, right, bottom) have road to connect to
@@ -29,8 +34,9 @@ proc newTilePrefab* (tname: string = ""): TilePrefab = #, road_ac: RoadAccess): 
 
 proc newTile* (tp: TilePrefab, ix: int): Tile = #, road: int): Tile =
     # converter to allow for tile to have dynamic data under exported struct
-    result.index   = ix
-    result.name    = tp.name
+    result.index    = ix
+    result.name     = tp.name
+    result.location = Location.none # temporary? not sure how to set it differently, but imo this could be set later (it's done that was in .olm parser)
     #result.road_ac = tp.road_ac
     #result.road    = road       # 0 = no road; 1 = dirt road; 2 = rock road
 

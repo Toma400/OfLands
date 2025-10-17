@@ -1,6 +1,8 @@
 import std/strformat
+import std/options
 import std/tables
 import std/math
+import questionable
 import render
 import nico
 import time
@@ -66,6 +68,10 @@ proc drawFocus (map: Map, ses: Session) =
     if isTileWithinMap(map, ses.focus):
         highlightTile(map, ses.focus)
     sprs(map.data.mapping[ses.focus].index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
+    # location
+    if map.data.mapping[ses.focus].location.isSome:
+        useSpritesheet(XLoc)
+        sprs((!map.data.mapping[ses.focus].location).index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
     # info box
     printc(map.data.mapping[ses.focus].name, x = H+TL*5, y = TL*2, 4) # name   | in the middle between top and focus window
     printc($ses.focus,                       x = H+TL*5, y = TL*7, 3) # coords | in the middle below focus window

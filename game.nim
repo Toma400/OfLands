@@ -5,6 +5,7 @@ import std/files
 import std/paths
 import std/math
 import parsetoml
+import questionable
 # nico specifics
 import nico
 # OL imports
@@ -76,7 +77,7 @@ proc parseOLM (olm_file: string): MapData =
 
     result.tterrain = olm["tileset_terrain"].getStr()
     result.tlocs    = olm["tileset_locations"].getStr()
-    var defs_path   = olm["data"].getStr()
+    var defs_path   = olm["data_terrain"].getStr()
     # before files are used, we ensure they exist
     for f in [result.tterrain, result.tlocs, defs_path]:
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
@@ -89,6 +90,13 @@ proc parseOLM (olm_file: string): MapData =
             if result.size[1] == 0: # sets itself only once
                 result.size[0] += 1
         result.size[1] += 1
+    # tile mapping (locations)
+    for y, row in olm["locations"].getElems().pairs:
+        for x, ix in row.getElems().pairs:
+            # ix = tile index; x/y = coordinates
+            if ix.getInt() != -1: # no location
+                result.mapping[(x, y)].location = newLocation(ix.getInt()).some # todo: rest is using default 0, because this is probably how it should be?
+                                                                                # try to find out how to potentially edit this? but unaffiliation makes sense
 
 proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], starting_date: (int, int, int)): Map =
     # - olm_file  : .olm file containing tileset and tile data
@@ -103,11 +111,14 @@ proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], starting_d
         raise newException(Exception, fmt"Map file has too little tiles!")
 
 proc drawMap* (map: Map) =
-    useSpritesheet(XMap)
     for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
         for tile in 0..<MV:                   # adjusted to moved map
             let moved_coords = (tile + map.move[0], row + map.move[1])
+            useSpritesheet(XMap)
             spr(map.data.mapping[moved_coords].index, tile * TL, row * TL)
+            if map.data.mapping[moved_coords].location.isSome:
+                useSpritesheet(XLoc)
+                spr((!map.data.mapping[moved_coords].location).index, tile * TL, row * TL)
             # if map.data.mapping[moved_coords].road > 0:
             #     discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
 
@@ -120,11 +131,12 @@ proc moveMap* (map: var Map, shift: (int, int), dt: float32) =
         map.move[0] += shift[0]
         map.move[1] += shift[1]
 
-proc newLocation* (map: var Map, affiliation: int = 0) =
-    # creates location and puts it on particular tile
-    let loc = newLocation(affiliation)
-    if affiliation != 0:
-        map.kingdoms[affiliation].locations.add(loc)
+# proc newLocation* (map: var Map, affiliation: int = 0) =
+#     # creates location and puts it on particular tile # todo? make variant without `map` needed that is by auto unaffiliated?
+#     # what is this even used with?? no usages found tbh
+#     let loc = newLocation(affiliation)
+#     if affiliation != 0:
+#         map.kingdoms[affiliation].locations.add(loc)
 
 proc highlightTile* (map: Map, tcoord: (int, int)) =
     rect(x1 = TL * (tcoord[0]-map.move[0])  , y1 = TL * (tcoord[1]-map.move[1]),

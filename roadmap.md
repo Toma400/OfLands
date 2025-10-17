@@ -33,3 +33,5 @@ This list here is non-exhaustive, but also non-declarative planning for features
 
 ### 0.?
 - Being able to dump Map object into file and load it afterwards (savegame)
+- Scaling up? (60x60 tiles, 15x15 map view, x2 scale (the same system that showcases
+  tile highlight))
