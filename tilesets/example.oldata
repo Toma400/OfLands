@@ -1,84 +1,126 @@
 [tile.0]
 name = "Water"
+tbase = "water"
 [tile.1]
 name = "Beach"
+tbase = "land"
 [tile.2]
 name = "Beach"
+tbase = "land"
 [tile.3]
 name = "Beach"
+tbase = "land"
 [tile.4]
 name = "Rock"
+tbase = "water"
 [tile.5]
 name = "Beach"
+tbase = "land"
 [tile.6]
 name = "Grassland"
+tbase = "land"
 [tile.7]
 name = "Beach"
+tbase = "land"
 [tile.9]
 name = "Beach"
+tbase = "land"
 [tile.10]
 name = "Beach"
+tbase = "land"
 [tile.11]
 name = "Beach"
+tbase = "land"
 [tile.12]
 name = "Forest"
+tbase = "land"
 [tile.13]
 name = "Meadow"
+tbase = "land"
 [tile.14]
 name = "Beach"
+tbase = "land"
 [tile.15]
 name = "Beach"
+tbase = "land"
 [tile.16]
 name = "Forest"
+tbase = "land"
 [tile.17]
 name = "Hill"
+tbase = "land"
 [tile.18]
 name = "Beach"
+tbase = "land"
 [tile.19]
 name = "Beach"
+tbase = "land"
 [tile.20]
 name = "Beach"
+tbase = "land"
 [tile.21]
 name = "Sandy Beach"
+tbase = "land"
 [tile.22]
 name = "Sandy Beach"
+tbase = "land"
 [tile.23]
 name = "Sandy Beach"
+tbase = "land"
 [tile.24]
 name = "Beach"
+tbase = "land"
 [tile.25]
 name = "Sandy Beach"
+tbase = "land"
 [tile.26]
 name = "Lake"
+tbase = "water"
 [tile.27]
 name = "Sandy Beach"
+tbase = "land"
 [tile.29]
 name = "Sandy Beach"
+tbase = "land"
 [tile.30]
 name = "Sandy Beach"
+tbase = "land"
 [tile.31]
 name = "Sandy Beach"
+tbase = "land"
 [tile.32]
 name = "Sandy Beach"
+tbase = "land"
 [tile.33]
 name = "Sandy Beach"
+tbase = "land"
 [tile.34]
 name = "Sandy Beach"
+tbase = "land"
 [tile.35]
 name = "Sandy Beach"
+tbase = "land"
 [tile.36]
 name = "Sandy Beach"
+tbase = "land"
 [tile.37]
 name = "Sandy Beach"
+tbase = "land"
 [tile.38]
 name = "Sandy Beach"
+tbase = "land"
 [tile.39]
 name = "Sandy Beach"
+tbase = "land"
 [tile.40]
 name = "Sandy Beach"
+tbase = "land"
 [tile.41]
 name = "Sandy Beach"
+tbase = "land"
 [tile.44]
 name = "Sandy Beach"
+tbase = "land"
 [tile.45]
 name = "Sandy Beach"
+tbase = "land"

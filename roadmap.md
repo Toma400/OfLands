@@ -6,6 +6,9 @@ This list here is non-exhaustive, but also non-declarative planning for features
   - A way to build empty forts to showcase structure & tie them to permanent map data
     - Route mode should be turned into architecture mode?
   - ...if we set kingdom struct, we may go with assignments even, dunno
+  - TODO: Make something to indicate their type (e.g. if it's fort or something else) and how
+    this reflects further relation (e.g. how ruined fort is connected to fort)
+    - probably should work like `deforestation` does for landscape (`repair` data?)
   - showcase? make a way for in-game placement of location on map
 - Settlements system added
   - There should be a button "create settlement" that is enabled:

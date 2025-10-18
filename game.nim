@@ -65,7 +65,8 @@ proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
         if cat == "tile":
             for tile_key in oldata["tile"].getTable.keys():
                 result[parseInt(tile_key)] = newTilePrefab( # initialises prefab, using default values if key not found
-                                                           tname   = oldata["tile"][tile_key]["name"].getStr(""),
+                                                           tname = oldata["tile"][tile_key]["name"].getStr(""),
+                                                           tbase = oldata["tile"][tile_key]["tbase"].getStr(""),
                                                            #road_ac = (false, false, false, false)         # TODO | temporary
                                                            )
 
@@ -111,6 +112,8 @@ proc parseOLM (olm_file: string): MapData =
             if ix.getInt() != -1: # no location
                 result.mapping[(x, y)].location = newLocation(result.ldefs, ix.getInt()).some # todo: rest is using default 0, because this is probably how it should be?
                                                                                 # try to find out how to potentially edit this? but unaffiliation makes sense
+                if not canExist(result.mapping[(x, y)], !result.mapping[(x, y)].location): # if conditions are not met, location is axed to default
+                    result.mapping[(x, y)].location = Location.none
                 # also todo: make Tile have 'waterTile/landTile' that determines location placement, and location be `type` that determines
                 #            if placement is valid for particular type (e.g. `waterType` would only go to `waterTile` etc.)
 

@@ -18,6 +18,5 @@ Versions:
 - Added location system, including rendering of locations put on map
   - Made rendering of locations (with ones from premade map being `faction=0`) with
     their info shown when tile is highlighted
-  - TODO: Make something to indicate their type (e.g. if it's fort or something else) and how
-    this reflects further relation (e.g. how ruined fort is connected to fort)
-    - probably should work like `deforestation` does for landscape (`repair` data?)
+  - Locations are automatically removed from premade maps if they don't follow proper
+    conditions for building
