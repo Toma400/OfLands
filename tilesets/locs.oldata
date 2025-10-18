@@ -1,7 +1,21 @@
 [tile.0]
-name  = "Ruined Fort"
 bcond = "land"
-
+name = "Ruined Fort"
 [tile.1]
-name  = "Fort"
 bcond = "land"
+name = "Fort"
+[tile.2]
+bcond = "land"
+name = "House"
+[tile.3]
+bcond = "land"
+name = "House"
+[tile.6]
+bcond = "land"
+name = "Inn"
+[tile.7]
+bcond = "land"
+name = "Inn"
+[tile.12]
+bcond = "water"
+name = "Shipwreck"

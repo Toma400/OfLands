@@ -7,6 +7,7 @@ Versions:
 - Made base game structure with ability to interpret .olm and .oldata files
   - This includes loading maps of any size
 - Wrote `tiled.js`, Tiled plugin to export its maps into .olm format
+  - It also supports custom properties that are exported into .oldata file
 - Made map used by game and grid visibility configurable through .ini file
 - Created GUI
   - Custom cursor replacing mouse

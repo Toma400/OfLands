@@ -6,6 +6,15 @@ This list here is non-exhaustive, but also non-declarative planning for features
   - A way to build empty forts to showcase structure & tie them to permanent map data
     - Route mode should be turned into architecture mode?
   - ...if we set kingdom struct, we may go with assignments even, dunno
+  - showcase? make a way for in-game placement of location on map
+- Settlements system added
+  - There should be a button "create settlement" that is enabled:
+    - when you don't have any settlements as a kingdom
+    - when you highlighted settler
+  - ...depending on option above, you'd be able to pick any area, or one that settler
+    stands on?
+  - optionally, you could be introduced to settler entity first and do initial settlement
+    via settler (so the system is more coherent)
 - Kingdom system with (for now) one default kingdom with name (set through config)
   - banners as separate tileset? (one that comes with the map and is noted in
     .olm, and kingdoms would direct index to it - would make it as value in Kingdom
