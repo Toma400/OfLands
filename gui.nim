@@ -70,9 +70,10 @@ proc drawFocus (map: Map, ses: Session) =
     if map.data.mapping[ses.focus].location.isSome:
         useSpritesheet(XLoc)
         sprs((!map.data.mapping[ses.focus].location).index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
+        printc((!map.data.mapping[ses.focus].location).name, x = H+TL*5, y = TL*7, 4) # loc name | below coordinates
     # info box
-    printc(map.data.mapping[ses.focus].name, x = H+TL*5, y = TL*2, 4) # name   | in the middle between top and focus window
-    printc($ses.focus,                       x = H+TL*5, y = TL*7, 3) # coords | in the middle below focus window
+    printc(map.data.mapping[ses.focus].name, x = H+TL*5, y = TL*1, 4) # name   | in the middle between top and focus window
+    printc($ses.focus,                       x = H+TL*5, y = TL*2, 3) # coords | in the middle below focus window
 
 proc drawGUI* (map: Map, ses: Session) =
     useSpritesheet(XGUI)

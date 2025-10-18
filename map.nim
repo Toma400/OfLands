@@ -25,18 +25,18 @@ type
 
 proc defaultTilePrefab* (): TilePrefab =
     # default values; used when there's no data available
-    result.name    = ""
+    result.name = ""
     # result.road_ac = (true, true, true, true)
 
 proc newTilePrefab* (tname: string = ""): TilePrefab = #, road_ac: RoadAccess): TilePrefab =
-    result.name    = tname
+    result.name = tname
     # result.road_ac = road_ac
 
 proc newTile* (tp: TilePrefab, ix: int): Tile = #, road: int): Tile =
     # converter to allow for tile to have dynamic data under exported struct
     result.index    = ix
     result.name     = tp.name
-    result.location = Location.none # temporary? not sure how to set it differently, but imo this could be set later (it's done that was in .olm parser)
+    result.location = Location.none # set later
     #result.road_ac = tp.road_ac
     #result.road    = road       # 0 = no road; 1 = dirt road; 2 = rock road
 

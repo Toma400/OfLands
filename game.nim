@@ -24,11 +24,12 @@ type
     TRADE           # trade mode    | clicking sets destination for trade
     BUILDING        # building mode | clicking adds a construction plan
   MapData* = object
-    tterrain* : string                         # terrain tileset name
-    tlocs*    : string                         # location tileset name
-    defs*     : OrderedTable[int, TilePrefab]  # tile definitions | index, TilePrefab object | meant to be static reference/preset without edits
-    mapping*  : OrderedTable[(int, int), Tile] # tile mapping     | (coords), Tile           | meant to be mutable (data can change)
-    size*     : (int, int)                     # size             | (width, length)
+    tterrain* : string                            # terrain tileset name
+    tlocs*    : string                            # location tileset name
+    tdefs*    : OrderedTable[int, TilePrefab]     # tile definitions | index, TilePrefab object     | meant to be static reference/preset without edits
+    ldefs*    : OrderedTable[int, LocationPrefab] # loc definitions  | index, LocationPrefab object | meant to be static reference/present without edits
+    mapping*  : OrderedTable[(int, int), Tile]    # tile mapping     | (coords), Tile               | meant to be mutable (data can change)
+    size*     : (int, int)                        # size             | (width, length)
   Map* = object
     data*     : MapData
     move*     : (int, int)                         # cell move from (0,0)
@@ -57,7 +58,7 @@ proc getCellCoords* (map: Map, px_coord: (int, int)): (int, int) =
     return (floor(px_coord[0]/TL).int + map.move[0],
             floor(px_coord[1]/TL).int + map.move[1])
 
-proc parseOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
+proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
     # parses .oldata file and returns tile definitions in an OrderedTable
     let oldata = parseFile(fmt"tilesets/{oldata_file}")
     for cat in oldata.getTable.keys():
@@ -68,6 +69,17 @@ proc parseOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
                                                            #road_ac = (false, false, false, false)         # TODO | temporary
                                                            )
 
+proc parseLocationOLDATA (oldata_file: string): OrderedTable[int, LocationPrefab] =
+    # parses .oldata file and returns tile definitions in an OrderedTable
+    let oldata = parseFile(fmt"tilesets/{oldata_file}")
+    for cat in oldata.getTable.keys():
+        if cat == "tile":
+            for tile_key in oldata["tile"].getTable.keys():
+                result[parseInt(tile_key)] = newLocationPrefab( # initialises prefab, using default values if key not found
+                                                               lname = oldata["tile"][tile_key]["name"].getStr(""),
+                                                               bcond = oldata["tile"][tile_key]["bcond"].getStr(""),
+                                                               )
+
 proc parseOLM (olm_file: string): MapData =
     # - olm_file  : .olm file containing tileset and tile data
     let olm = parseFile(fmt"maps/{olm_file}")
@@ -77,16 +89,18 @@ proc parseOLM (olm_file: string): MapData =
 
     result.tterrain = olm["tileset_terrain"].getStr()
     result.tlocs    = olm["tileset_locations"].getStr()
-    var defs_path   = olm["data_terrain"].getStr()
+    var tdefs_path  = olm["data_terrain"].getStr()
+    var ldefs_path  = olm["data_locations"].getStr()
     # before files are used, we ensure they exist
-    for f in [result.tterrain, result.tlocs, defs_path]:
+    for f in [result.tterrain, result.tlocs, tdefs_path, ldefs_path]:
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
-    result.defs    = parseOLDATA(defs_path)
+    result.tdefs = parseTerrainOLDATA(tdefs_path)
+    result.ldefs = parseLocationOLDATA(ldefs_path)
     # tile mapping
     for y, row in olm["terrain"].getElems().pairs:
         for x, ix in row.getElems().pairs:
             # ix = tile index; x/y = coordinates
-            result.mapping[(x, y)] = newTile(result.defs, ix.getInt())
+            result.mapping[(x, y)] = newTile(result.tdefs, ix.getInt())
             if result.size[1] == 0: # sets itself only once
                 result.size[0] += 1
         result.size[1] += 1
@@ -95,7 +109,7 @@ proc parseOLM (olm_file: string): MapData =
         for x, ix in row.getElems().pairs:
             # ix = tile index; x/y = coordinates
             if ix.getInt() != -1: # no location
-                result.mapping[(x, y)].location = newLocation(ix.getInt()).some # todo: rest is using default 0, because this is probably how it should be?
+                result.mapping[(x, y)].location = newLocation(result.ldefs, ix.getInt()).some # todo: rest is using default 0, because this is probably how it should be?
                                                                                 # try to find out how to potentially edit this? but unaffiliation makes sense
                 # also todo: make Tile have 'waterTile/landTile' that determines location placement, and location be `type` that determines
                 #            if placement is valid for particular type (e.g. `waterType` would only go to `waterTile` etc.)

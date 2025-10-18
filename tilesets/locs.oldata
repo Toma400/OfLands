@@ -1,0 +1,7 @@
+[tile.0]
+name  = "Ruined Fort"
+bcond = "land"
+
+[tile.1]
+name  = "Fort"
+bcond = "land"

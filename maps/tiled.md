@@ -16,3 +16,19 @@ require being named in very particular way:
 
 Of course file names can be different, the importance here is only for project's naming
 of the tileset.
+
+### Tilesets metadata
+Making tilesets, you can use Tiled's metadata feature to export .oldata files. Depending
+on tileset type, it will require you to have different metadata to allow .oldata to be
+created.
+
+#### Landscape
+- `name` - name of the tile
+
+#### Locations
+- `name` - name of the location
+- `bcond` - condition for location to be placed (also on premade map); can use following values:
+  - `land`  - can be placed on land tiles
+  - `water` - can be placed on water tiles
+  - `air`   - can be placed on tiles that do not obstruct sky (most of them)
+  - `all`   - can be anywhere
