@@ -1,3 +1,5 @@
+![](banner.png)
+
 # Of Lands
 **Of Lands** is a simple economy/survival strategy game.  
 Based on the premise of local material conditions shaping your kingdom, it dictates
