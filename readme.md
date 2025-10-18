@@ -6,8 +6,12 @@ settlements and constructing transport pipelines. It can be seen as somewhat of 
 of Transport Tycoon Deluxe, Civilisation, Dwarf Fortress and more typical city builders.
 
 Written in Nim language with support of Nico framework, Of Lands is planned to support
-limited moddability and already has integration with Tiled (plugin can be found in `maps`
-folder).
+limited moddability.
+
+### Tiled mapmaking
+Of Lands supports [Tiled](https://www.mapeditor.org/) as a more friendly way to create .olm
+map files. Export plugin can be found in `maps` folder, and further guide on how to use
+it can be found in [this file](maps/tiled.md).
 
 ### State of development
 The game is currently in early development. The most up-to-date conceptual doc can be read
