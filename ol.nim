@@ -16,8 +16,8 @@ const GAME_VER  = "0.1.0"
 let cfg = loadConfig("oflands.ini")
 
 var map = newMap(olm_file      = getSectionValue(cfg, "", "map"),
-                 kingdoms      = initKingdoms(newKingdom(name   = getSectionValue(cfg, "", "kingdom"),
-                                                         number = 1)),
+                 kingdoms      = initKingdoms(newKingdom(name   =          getSectionValue(cfg, "", "kingdom"),
+                                                         number = parseInt(getSectionValue(cfg, "", "player")))),
                  starting_date = (
                               parseInt(getSectionValue(cfg, "", "year")),
                               parseInt(getSectionValue(cfg, "", "month")),

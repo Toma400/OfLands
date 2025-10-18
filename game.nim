@@ -72,7 +72,7 @@ proc parseOLM (olm_file: string): MapData =
     # - olm_file  : .olm file containing tileset and tile data
     let olm = parseFile(fmt"maps/{olm_file}")
     # check keys before we proceed
-    for k in ["tileset_terrain", "tileset_locations", "data", "terrain"]:
+    for k in ["tileset_terrain", "tileset_locations", "data_terrain", "data_locations", "terrain"]:
         if olm.hasKey(k) == false: raise newException(Exception, fmt"Map file doesn't have all required keys! Key missing: {k}")
 
     result.tterrain = olm["tileset_terrain"].getStr()
@@ -97,6 +97,8 @@ proc parseOLM (olm_file: string): MapData =
             if ix.getInt() != -1: # no location
                 result.mapping[(x, y)].location = newLocation(ix.getInt()).some # todo: rest is using default 0, because this is probably how it should be?
                                                                                 # try to find out how to potentially edit this? but unaffiliation makes sense
+                # also todo: make Tile have 'waterTile/landTile' that determines location placement, and location be `type` that determines
+                #            if placement is valid for particular type (e.g. `waterType` would only go to `waterTile` etc.)
 
 proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], starting_date: (int, int, int)): Map =
     # - olm_file  : .olm file containing tileset and tile data

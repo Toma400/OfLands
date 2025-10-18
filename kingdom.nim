@@ -25,6 +25,7 @@ proc newKingdom* (name: string, number: int): Kingdom =
 
 proc newLocation* (ix: int, owner: int = 0, walls: int = 0): Location =
     # use -newLocation- found in game.nim, this is only helper for it! (should be merged when new directory system is made)
+    # ....actually it's not a helper rn, but it's needed for .olm parser as one allowing for no `map` argument to exist
     result.index = ix
     result.owner = owner
     result.walls = walls

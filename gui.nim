@@ -19,12 +19,10 @@ proc drawCursor(map: Map, ses: Session) =
         sprRot(3, mouse()[0], mouse()[1], 0.0)
     elif ses.mode == ROUTE:
         if isPxWithinMap(map, mouse()):
-            echo "?:O"
             let cell = getCellCoords(map, mouse())
             rect(x1 = floor((cell[0]-map.move[0])*TL),   y1 = floor((cell[1]-map.move[1])*TL),
                  x2 = floor((cell[0]-map.move[0]+1)*TL), y2 = floor((cell[1]-map.move[1]+1))*TL)
         else:
-            echo "><"
             sprRot(3, mouse()[0], mouse()[1], 0.0)
 
 proc drawSidebar(map: Map) =
