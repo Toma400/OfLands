@@ -6,7 +6,7 @@ import questionable
 import kingdom
 
 type
-  TileBase* = enum
+  TileBase* = enum # used for location building conditions (see proc `canExist`) and traversability (in the future/connected with roads)
     LAND
     WATER
     LAVA
@@ -65,15 +65,18 @@ proc newTile* (oldata: OrderedTable[int, TilePrefab], ix: int): Tile =
     return newTile(defaultTilePrefab(), ix)#, 0) # as above
 
 proc canExist* (t: Tile, l: Location): bool =
+    # proc to see if tile can have location built (it is *not* about traversability)
+    if t.tbase == TileBase.VOID:                                        return false # void can't have any location existing
+    # non-void cases
     case l.bcond:
       of BuildingConditions.LAND:
-          if t.tbase == TileBase.LAND:                   return true
+          if t.tbase == TileBase.LAND:                                  return true
       of BuildingConditions.WATER:
-          if t.tbase == TileBase.WATER:                  return true
+          if t.tbase == TileBase.WATER:                                 return true
       of BuildingConditions.AIR:
-          if t.tbase in [TileBase.LAND, TileBase.WATER]: return true
-      of BuildingConditions.ALL:                         return true
-      of BuildingConditions.NONE:                        return false
+          if t.tbase in [TileBase.LAND, TileBase.WATER, TileBase.LAVA]: return true
+      of BuildingConditions.ALL:                                        return true
+      of BuildingConditions.NONE:                                       return false
     return false # if any catches earlier for true are not met
 
 # proc canBuildRoad* (t: Tile | TilePrefab): bool =

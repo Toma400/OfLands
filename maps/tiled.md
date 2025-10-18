@@ -24,6 +24,12 @@ created.
 
 #### Landscape
 - `name` - name of the tile
+- `lbase` - base the tile uses; dictates things like movability of building conditions;
+            can use following values:
+  - `land` - contains primarily landmass
+  - `water` - contains primarily water
+  - `lava` - for lava streams or lakes
+  - `void` - for special uses
 
 #### Locations
 - `name` - name of the location
