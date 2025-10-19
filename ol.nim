@@ -16,6 +16,8 @@ import map # only for `canExist`, remove if not needed
 ###########################################
 const GAME_NAME = "Of Lands"
 const GAME_VER  = "0.1.0"
+const AUTHOR    = "Toma400"
+const LICENSE   = "All Rights Reserved (C) Tomasz Stępień 2025"
 ###########################################
 let cfg = loadConfig("oflands.ini")
 
