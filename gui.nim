@@ -12,17 +12,18 @@ import game
 const W* = 1280
 const H* = 960
 
-proc drawCursor(map: Map, ses: Session) =
+proc drawCursor(map: Map, ses: Session, ccursor: bool) =
     # replaces cursor with custom one
-    hideMouse()
-    if ses.mode == EXPLORE:
+    if ccursor: hideMouse()
+
+    if ses.mode == EXPLORE and ccursor:
         sprRot(3, mouse()[0], mouse()[1], 0.0)
     elif ses.mode == ROUTE:
         if isPxWithinMap(map, mouse()):
             let cell = getCellCoords(map, mouse())
             rect(x1 = floor((cell[0]-map.move[0])*TL),   y1 = floor((cell[1]-map.move[1])*TL),
                  x2 = floor((cell[0]-map.move[0]+1)*TL), y2 = floor((cell[1]-map.move[1]+1))*TL)
-        else:
+        elif ccursor: # 'else + if ccursor'
             sprRot(3, mouse()[0], mouse()[1], 0.0)
 
 proc drawSidebar(map: Map) =
@@ -75,10 +76,10 @@ proc drawFocus (map: Map, ses: Session) =
     printc(map.data.mapping[ses.focus].name, x = H+TL*5, y = TL*1, 4) # name   | in the middle between top and focus window
     printc($ses.focus,                       x = H+TL*5, y = TL*2, 3) # coords | in the middle below focus window
 
-proc drawGUI* (map: Map, ses: Session) =
+proc drawGUI* (map: Map, ses: Session, ccursor: bool) =
     useSpritesheet(XGUI)
     drawSidebar(map)
-    drawCursor(map, ses)
+    drawCursor(map, ses, ccursor)
     if ses.focus != (-1, -1):
         drawFocus(map, ses)
 

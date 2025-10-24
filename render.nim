@@ -6,7 +6,7 @@ import pixie
 import nico
 
 type
-  Indexes* = enum # spreadsheet/palette indexes | access their values by .ord
+  Indexes* = enum # spreadsheet indexes | access their values by .ord
     XMap  = 1
     XLoc  = 2
     XGUI  = 3
@@ -25,7 +25,7 @@ proc getPalette (img_path: string): Palette =
     let img  = readImage(img_path)
     var cols = newSeq[tuple[r, g, b: uint8]]()
     for px in img.data:
-        if px.a == 255: # not sure if needed
+        if px.a == 255: # not sure if needed # turns out it is lol
             cols.add((px.r, px.g, px.b))
     cols = deduplicate(cols) # overwrites
     result.size = len(cols)
@@ -37,7 +37,7 @@ proc `+` (pals: varargs[Palette]): Palette =
     for i, pal in pals:
         result.size = result.size + pal.size
         if result.size >= maxPaletteSize:
-            raise newException(Exception, "Map has too many colours! Please ensure that both map and GUI (4) have up to 255 colours!")
+            raise newException(Exception, "Map has too many colours! Please ensure that both map and GUI (4) have up to 4096 colours!")
         for i, dt in pal.data:
             if dt == (0.uint8, 0.uint8, 0.uint8): break # marks end of currently iterated palette
             result.data[needle] = (dt.r, dt.g, dt.b)

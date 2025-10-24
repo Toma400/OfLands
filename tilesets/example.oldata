@@ -2,34 +2,34 @@
 name = "Water"
 tbase = "water"
 [tile.1]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.2]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.3]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.4]
 name = "Rock"
 tbase = "water"
 [tile.5]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.6]
 name = "Grassland"
 tbase = "land"
 [tile.7]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.9]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.10]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.11]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.12]
 name = "Forest"
@@ -38,10 +38,10 @@ tbase = "land"
 name = "Meadow"
 tbase = "land"
 [tile.14]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.15]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.16]
 name = "Forest"
@@ -50,77 +50,326 @@ tbase = "land"
 name = "Hill"
 tbase = "land"
 [tile.18]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.19]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.20]
-name = "Beach"
+name = "Shore"
 tbase = "land"
 [tile.21]
-name = "Sandy Beach"
-tbase = "land"
-[tile.22]
-name = "Sandy Beach"
-tbase = "land"
-[tile.23]
-name = "Sandy Beach"
-tbase = "land"
-[tile.24]
 name = "Beach"
 tbase = "land"
+[tile.22]
+name = "Beach"
+tbase = "land"
+[tile.23]
+name = "Beach"
+tbase = "land"
+[tile.24]
+name = "Shore"
+tbase = "land"
 [tile.25]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.26]
 name = "Lake"
 tbase = "water"
 [tile.27]
-name = "Sandy Beach"
+name = "Beach"
+tbase = "land"
+[tile.28]
+name = "Island"
 tbase = "land"
 [tile.29]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.30]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.31]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.32]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.33]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.34]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.35]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.36]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.37]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.38]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.39]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.40]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.41]
-name = "Sandy Beach"
+name = "Beach"
+tbase = "land"
+[tile.42]
+name = "Shore"
+tbase = "land"
+[tile.43]
+name = "Shore"
 tbase = "land"
 [tile.44]
-name = "Sandy Beach"
+name = "Beach"
 tbase = "land"
 [tile.45]
-name = "Sandy Beach"
+name = "Beach"
+tbase = "land"
+[tile.46]
+name = "Shore"
+tbase = "land"
+[tile.47]
+name = "Shore"
+tbase = "land"
+[tile.48]
+name = "Lake"
+tbase = "water"
+[tile.49]
+name = "Shore"
+tbase = "land"
+[tile.50]
+name = "Shore"
+tbase = "land"
+[tile.51]
+name = "Shore"
+tbase = "land"
+[tile.52]
+name = "Oasis"
+tbase = "land"
+[tile.53]
+name = "Shore"
+tbase = "land"
+[tile.54]
+name = "Desert"
+tbase = "land"
+[tile.55]
+name = "Shore"
+tbase = "land"
+[tile.56]
+name = "Oasis"
+tbase = "land"
+[tile.57]
+name = "Shore"
+tbase = "land"
+[tile.58]
+name = "Shore"
+tbase = "land"
+[tile.59]
+name = "Shore"
+tbase = "land"
+[tile.60]
+name = "Grassland"
+tbase = "land"
+[tile.61]
+name = "Grassland"
+tbase = "land"
+[tile.62]
+name = "Grassland"
+tbase = "land"
+[tile.63]
+name = "Grassland"
+tbase = "land"
+[tile.64]
+name = "Grassland"
+tbase = "land"
+[tile.65]
+name = "Grassland"
+tbase = "land"
+[tile.66]
+name = "Grassland"
+tbase = "land"
+[tile.67]
+name = "Grassland"
+tbase = "land"
+[tile.68]
+name = "Grassland"
+tbase = "land"
+[tile.69]
+name = "Grassland"
+tbase = "land"
+[tile.70]
+name = "Shore"
+tbase = "land"
+[tile.71]
+name = "Grassland"
+tbase = "land"
+[tile.72]
+name = "Desert"
+tbase = "land"
+[tile.73]
+name = "Desert"
+tbase = "land"
+[tile.74]
+name = "Shore"
+tbase = "land"
+[tile.75]
+name = "Grassland"
+tbase = "land"
+[tile.76]
+name = "Desert"
+tbase = "land"
+[tile.77]
+name = "Desert"
+tbase = "land"
+[tile.78]
+name = "Shore"
+tbase = "land"
+[tile.79]
+name = "Shore"
+tbase = "land"
+[tile.80]
+name = "Frozen Lake"
+tbase = "water"
+[tile.81]
+name = "Shore"
+tbase = "land"
+[tile.82]
+name = "Shore"
+tbase = "land"
+[tile.83]
+name = "Shore"
+tbase = "land"
+[tile.84]
+name = "Snow"
+tbase = "land"
+[tile.85]
+name = "Shore"
+tbase = "land"
+[tile.86]
+name = "Snow"
+tbase = "land"
+[tile.87]
+name = "Shore"
+tbase = "land"
+[tile.88]
+name = "Forest"
+tbase = "land"
+[tile.89]
+name = "Shore"
+tbase = "land"
+[tile.90]
+name = "Shore"
+tbase = "land"
+[tile.91]
+name = "Shore"
+tbase = "land"
+[tile.92]
+name = "Grassland"
+tbase = "land"
+[tile.93]
+name = "Grassland"
+tbase = "land"
+[tile.94]
+name = "Grassland"
+tbase = "land"
+[tile.95]
+name = "Grassland"
+tbase = "land"
+[tile.96]
+name = "Grassland"
+tbase = "land"
+[tile.97]
+name = "Grassland"
+tbase = "land"
+[tile.98]
+name = "Grassland"
+tbase = "land"
+[tile.99]
+name = "Grassland"
+tbase = "land"
+[tile.100]
+name = "Grassland"
+tbase = "land"
+[tile.101]
+name = "Grassland"
+tbase = "land"
+[tile.102]
+name = "Grassland"
+tbase = "land"
+[tile.103]
+name = "Grassland"
+tbase = "land"
+[tile.106]
+name = "Shore"
+tbase = "land"
+[tile.107]
+name = "Shore"
+tbase = "land"
+[tile.110]
+name = "Shore"
+tbase = "land"
+[tile.111]
+name = "Shore"
+tbase = "land"
+[tile.112]
+name = "Island"
+tbase = "land"
+[tile.113]
+name = "Island"
+tbase = "land"
+[tile.116]
+name = "Shore"
+tbase = "land"
+[tile.117]
+name = "Shore"
+tbase = "land"
+[tile.118]
+name = "Shore"
+tbase = "land"
+[tile.119]
+name = "Shore"
+tbase = "land"
+[tile.120]
+name = "Shore"
+tbase = "land"
+[tile.121]
+name = "Shore"
+tbase = "land"
+[tile.122]
+name = "Shore"
+tbase = "land"
+[tile.123]
+name = "Shore"
+tbase = "land"
+[tile.124]
+name = "Shore"
+tbase = "land"
+[tile.125]
+name = "Shore"
+tbase = "land"
+[tile.126]
+name = "Shore"
+tbase = "land"
+[tile.127]
+name = "Shore"
+tbase = "land"
+[tile.128]
+name = "Shore"
+tbase = "land"
+[tile.129]
+name = "Shore"
+tbase = "land"
+[tile.130]
+name = "Shore"
+tbase = "land"
+[tile.131]
+name = "Shore"
 tbase = "land"

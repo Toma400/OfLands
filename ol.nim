@@ -20,6 +20,8 @@ const AUTHOR    = "Toma400"
 const LICENSE   = "All Rights Reserved (C) Tomasz Stępień 2025"
 ###########################################
 let cfg = loadConfig("oflands.ini")
+let grd = getSectionValue(cfg, "", "grid")   == "true"
+let cur = getSectionValue(cfg, "", "cursor") == "true"
 
 var mvp = newMap(olm_file      = getSectionValue(cfg, "", "map"),
                  kingdoms      = initKingdoms(newKingdom(name   =          getSectionValue(cfg, "", "kingdom"),
@@ -69,8 +71,8 @@ proc gameUpdate(dt: float32) =
 proc gameDraw() =
     cls()
     drawMap(mvp)
-    drawGUI(mvp, ses)
-    if getSectionValue(cfg, "", "grid") == "true":
+    drawGUI(mvp, ses, cur)
+    if grd: # checks if grid setting is set
         drawGrid()
 
 nico.init(org="Toma400", app=GAME_NAME)
