@@ -3,7 +3,10 @@ import std/options
 import std/tables
 import questionable
 # OL imports
+import core/entity
 import kingdom
+
+export EntityRole # exports so `addEntity` works from elsewhere
 
 type
   TileBase* = enum # used for location building conditions (see proc `canExist`) and traversability (in the future/connected with roads)
@@ -16,10 +19,11 @@ type
     tbase : TileBase
   #  road_ac : RoadAccess # road accessibility (left, top, right, bottom)
   Tile* = object
-    index*    : int        # terrain tile index
+    index*    : int          # terrain tile index
     name*     : string
     tbase*    : TileBase
     location* : ?Location
+    entities  : seq[Entity]  # private so it can't be accessed without proper handling (adding both to Tile and Kingdom)
     # road_ac*  : RoadAccess # road accessibility (left, top, right, bottom)
     # road*     : int        # whether tile has road (0 - none, 1 - dirt, 2 - rock)
     # road_cnn* : RoadAccess # whether nearby tiles (left, top, right, bottom) have road to connect to
@@ -54,7 +58,8 @@ proc newTile* (tp: TilePrefab, ix: int): Tile = #, road: int): Tile =
     result.index    = ix
     result.name     = tp.name
     result.tbase    = tp.tbase
-    result.location = Location.none # set later
+    result.location = Location.none    # set later
+    result.entities = newSeq[Entity]() # empty, use `addEntity()` proc to fill
     #result.road_ac = tp.road_ac
     #result.road    = road       # 0 = no road; 1 = dirt road; 2 = rock road
 
@@ -73,11 +78,23 @@ proc canExist* (t: Tile, l: Location): bool =
           if t.tbase == TileBase.LAND:                                  return true
       of BuildingConditions.WATER:
           if t.tbase == TileBase.WATER:                                 return true
+      of BuildingConditions.SUBMERGED:
+          if t.tbase in [TileBase.LAND, TileBase.WATER]:                return true
       of BuildingConditions.AIR:
           if t.tbase in [TileBase.LAND, TileBase.WATER, TileBase.LAVA]: return true
       of BuildingConditions.ALL:                                        return true
       of BuildingConditions.NONE:                                       return false
     return false # if any catches earlier for true are not met
+
+proc addEntity* (t: var Tile, k: var Kingdom, er: EntityRole) =
+    # also works as a constructor
+    var e = newEntity(er, k.number)
+    t.entities.add(e)
+    k.entities.add(e)
+    # SHOULD CHECK IF ENTITY CAN BE ON THE TILE! may need result that tells if it was successful placement
+
+proc getEntityList* (t: Tile): seq[Entity] = # todo: ensure you can't add to t.entities, so that seq is read-only (and/or you can only edit its Entity refs)
+    return t.entities
 
 # proc canBuildRoad* (t: Tile | TilePrefab): bool =
 #     # check if any of RoadAccess sides are available (none = not possible to build road)

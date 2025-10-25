@@ -3,10 +3,13 @@ import std/options
 import std/tables
 import std/math
 import questionable
+# OL imports
+import core/entity
 import render
 import nico
 import time
 import game
+import map
 
 # default values (may be later imported from .ini, but would need adjusting GUI)
 const W* = 1280
@@ -66,15 +69,20 @@ proc drawFocus (map: Map, ses: Session) =
     setColor(0) # black
     if isTileWithinMap(map, ses.focus):
         highlightTile(map, ses.focus)
-    sprs(map.data.mapping[ses.focus].index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
+    let tile_focused = map.data.mapping[ses.focus]
+    sprs(tile_focused.index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
     # location
-    if map.data.mapping[ses.focus].location.isSome:
+    if tile_focused.location.isSome:
         useSpritesheet(XLoc)
-        sprs((!map.data.mapping[ses.focus].location).index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
-        printc((!map.data.mapping[ses.focus].location).name, x = H+TL*5, y = TL*7, 4) # loc name | below coordinates
+        sprs((!tile_focused.location).index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
+        printc((!tile_focused.location).name, x = H+TL*5, y = TL*7, 4) # loc name | below coordinates
+    let entity_count = getEntityList(tile_focused).len
+    if entity_count > 0:
+        useSpritesheet(XSys)
+        sprs(getEntityList(tile_focused)[entity_count-1].role.ord, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # uses last entity that moved onto tile
     # info box
-    printc(map.data.mapping[ses.focus].name, x = H+TL*5, y = TL*1, 4) # name   | in the middle between top and focus window
-    printc($ses.focus,                       x = H+TL*5, y = TL*2, 3) # coords | in the middle below focus window
+    printc(tile_focused.name, x = H+TL*5, y = TL*1, 4) # name   | in the middle between top and focus window
+    printc($ses.focus,        x = H+TL*5, y = TL*2, 3) # coords | in the middle below focus window
 
 proc drawGUI* (map: Map, ses: Session, ccursor: bool) =
     useSpritesheet(XGUI)

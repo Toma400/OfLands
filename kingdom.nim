@@ -1,17 +1,20 @@
 import std/strutils
 import std/tables
+import core/entity
 
 type
   BuildingConditions* = enum
     LAND
     WATER
+    SUBMERGED # used for water + land combination
     AIR
     ALL
-    NONE  # should not be used in .oldata, indicates wrong entry
+    NONE      # should not be used in .oldata, indicates wrong entry
   Kingdom* = object
     name*      : string
     number*    : int
     locations* : seq[(int, int)] # coordinates to `MapData.mapping` Tile
+    entities*  : seq[Entity]
   LocationPrefab* = object # immutable variant used before instance is made
     name*  : string
     bcond* : BuildingConditions
@@ -32,11 +35,12 @@ proc `$`* (l: Location): string =
 
 proc getBuildingCondition* (id: string): BuildingConditions =
     case id.toLowerAscii():
-      of "land":  return LAND
-      of "water": return WATER
-      of "air":   return AIR
-      of "all":   return ALL
-      else:       return NONE
+      of "land":      return LAND
+      of "water":     return WATER
+      of "submerged": return SUBMERGED
+      of "air":       return AIR
+      of "all":       return ALL
+      else:           return NONE
 
 proc newKingdom* (name: string, number: int): Kingdom =
     result.name      = name

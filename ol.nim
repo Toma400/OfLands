@@ -6,6 +6,7 @@ import std/tables
 import questionable
 import nico/backends/common
 import nico
+# OL imports
 import kingdom
 import render
 import time
@@ -37,13 +38,17 @@ proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
     registerPalettes(map = fmt"tilesets/{mvp.data.tterrain}",
                      loc = fmt"tilesets/{mvp.data.tlocs}",
+                     sys = fmt"tilesets/{mvp.data.tsys}",
                      gui = "gui/gui.png"
     )
     loadSpritesheet(XMap.ord,  fmt"tilesets/{mvp.data.tterrain}",  TL,  TL) # 1 | map
     loadSpritesheet(XLoc.ord,  fmt"tilesets/{mvp.data.tlocs}",     TL,  TL) # 2 | locations
     loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 3 | gui
-    loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 4 | grid
+    loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 4 | system
+    loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 5 | grid
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
+
+    addEntity(mvp.data.mapping[(0, 0)], mvp.kingdoms[parseInt(getSectionValue(cfg, "", "player"))], SETTLER) # todo: example guy
 
 proc gameUpdate(dt: float32) =
     if btn(pcLeft):  moveMap(mvp, (-1,  0), dt)
@@ -75,6 +80,6 @@ proc gameDraw() =
     if grd: # checks if grid setting is set
         drawGrid()
 
-nico.init(org="Toma400", app=GAME_NAME)
+nico.init(org=AUTHOR, app=GAME_NAME)
 nico.createWindow(GAME_NAME, W, H, 1, false)
 nico.run(gameInit, gameUpdate, gameDraw)

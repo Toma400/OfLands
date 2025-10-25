@@ -10,7 +10,8 @@ type
     XMap  = 1
     XLoc  = 2
     XGUI  = 3
-    XGrid = 4
+    XSys  = 4
+    XGrid = 5
 
 proc basePalette (): Palette =
     const COL = [
@@ -44,9 +45,9 @@ proc `+` (pals: varargs[Palette]): Palette =
             needle += 1
     # todo: may be useful in the future -- result.data = deduplicate(result.data) # cuts any repeated colours
 
-proc registerPalettes* (map: string, loc: string, gui: string) =
+proc registerPalettes* (map: string, loc: string, gui: string, sys: string) =
     # ensures the correct indexes exist
-    setPalette(basePalette() + getPalette(map) + getPalette(loc) + getPalette(gui)) # loads palettes, merge them and sets as currently used
+    setPalette(basePalette() + getPalette(map) + getPalette(loc) + getPalette(gui) + getPalette(sys)) # loads palettes, merge them and sets as currently used
 
 proc useSpritesheet* (ix: Indexes) =
     # sets both palette and spritesheet together to be used
@@ -54,4 +55,5 @@ proc useSpritesheet* (ix: Indexes) =
       of XMap:  setSpritesheet(XMap.ord)
       of XLoc:  setSpritesheet(XLoc.ord)
       of XGUI:  setSpritesheet(XGUI.ord)
+      of XSys:  setSpritesheet(XSys.ord)
       of XGrid: setSpritesheet(XGrid.ord)

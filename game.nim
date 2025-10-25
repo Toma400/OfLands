@@ -9,6 +9,7 @@ import questionable
 # nico specifics
 import nico
 # OL imports
+import core/entity
 import kingdom
 import render
 import map
@@ -26,6 +27,7 @@ type
   MapData* = object
     tterrain* : string                            # terrain tileset name
     tlocs*    : string                            # location tileset name
+    tsys*     : string                            # system tileset name
     tdefs*    : OrderedTable[int, TilePrefab]     # tile definitions | index, TilePrefab object     | meant to be static reference/preset without edits
     ldefs*    : OrderedTable[int, LocationPrefab] # loc definitions  | index, LocationPrefab object | meant to be static reference/present without edits
     mapping*  : OrderedTable[(int, int), Tile]    # tile mapping     | (coords), Tile               | meant to be mutable (data can change)
@@ -85,15 +87,16 @@ proc parseOLM (olm_file: string): MapData =
     # - olm_file  : .olm file containing tileset and tile data
     let olm = parseFile(fmt"maps/{olm_file}")
     # check keys before we proceed
-    for k in ["tileset_terrain", "tileset_locations", "data_terrain", "data_locations", "terrain"]:
+    for k in ["tileset_terrain", "tileset_locations", "tileset_system", "data_terrain", "data_locations", "terrain"]:
         if olm.hasKey(k) == false: raise newException(Exception, fmt"Map file doesn't have all required keys! Key missing: {k}")
 
     result.tterrain = olm["tileset_terrain"].getStr()
     result.tlocs    = olm["tileset_locations"].getStr()
+    result.tsys     = olm["tileset_system"].getStr()
     var tdefs_path  = olm["data_terrain"].getStr()
     var ldefs_path  = olm["data_locations"].getStr()
     # before files are used, we ensure they exist
-    for f in [result.tterrain, result.tlocs, tdefs_path, ldefs_path]:
+    for f in [result.tterrain, result.tlocs, result.tsys, tdefs_path, ldefs_path]:
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
     result.tdefs = parseTerrainOLDATA(tdefs_path)
     result.ldefs = parseLocationOLDATA(ldefs_path)
@@ -133,11 +136,16 @@ proc drawMap* (map: Map) =
     for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
         for tile in 0..<MV:                   # adjusted to moved map
             let moved_coords = (tile + map.move[0], row + map.move[1])
+            let tile_drawn   = map.data.mapping[moved_coords]
             useSpritesheet(XMap)
-            spr(map.data.mapping[moved_coords].index, tile * TL, row * TL)
-            if map.data.mapping[moved_coords].location.isSome:
+            spr(tile_drawn.index, tile * TL, row * TL)
+            if tile_drawn.location.isSome:
                 useSpritesheet(XLoc)
-                spr((!map.data.mapping[moved_coords].location).index, tile * TL, row * TL)
+                spr((!tile_drawn.location).index, tile * TL, row * TL)
+            let entity_count = getEntityList(tile_drawn).len
+            if entity_count > 0:
+                useSpritesheet(XSys)
+                spr(getEntityList(tile_drawn)[entity_count-1].role.ord, tile * TL, row * TL) # uses last entity that moved onto tile
             # if map.data.mapping[moved_coords].road > 0:
             #     discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
 

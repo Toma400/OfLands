@@ -13,6 +13,7 @@ by index would require you to care about their naming order. To solve that, they
 require being named in very particular way:
 - `Landscape` - is name for tileset used for terrain (landscape layer)
 - `Locations` - is name for tileset used for locations (locations layer)
+- `System` - is name for tileset used for all other features (e.g. entities)
 
 Of course file names can be different, the importance here is only for project's naming
 of the tileset.
