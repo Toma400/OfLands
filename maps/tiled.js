@@ -27,6 +27,9 @@ var olmMapFormat = {
         var data_locations    = tileset_locations[0].replace(".png", ".oldata");         // sets .oldata to have the same name as tileset image
 
         var out = "";
+        if ("start_coords" in map.properties()) { // optional
+            out = out + "start_coordinates = " + "[" + map.property("start_coords") + "]\n";
+        }
         out = out + "tileset_terrain   = " + String.raw`"${tileset_terrain[0]}"` + "\n";   // for some reason `match` yields two same entries
         out = out + "tileset_locations = " + String.raw`"${tileset_locations[0]}"` + "\n"; // for some reason `match` yields two same entries
         out = out + "tileset_system    = " + String.raw`"${tileset_system[0]}"` + "\n";    // for some reason `match` yields two same entries
@@ -57,16 +60,18 @@ var olmMapFormat = {
             }
         }
 
-        out = out + "]\n";
-        out = out + "roads = [" + "\n";
+        if (map.layerCount > 2) { // optionals
+            out = out + "]\n";
+            out = out + "roads = [" + "\n";
 
-        var layer = map.layerAt(2); // roads | TODO: should be optional!!!!
-        if (layer.isTileLayer) {
-            for (var y = 0; y < layer.height; ++y) {
-                out = out + "    [";
-                for (var x = 0; x < layer.width; ++x)
-                    out = out + layer.cellAt(x, y).tileId + ",";
-                out = out + "],\n";
+            var layer = map.layerAt(2); // roads
+            if (layer.isTileLayer) {
+                for (var y = 0; y < layer.height; ++y) {
+                    out = out + "    [";
+                    for (var x = 0; x < layer.width; ++x)
+                        out = out + layer.cellAt(x, y).tileId + ",";
+                    out = out + "],\n";
+                }
             }
         }
 

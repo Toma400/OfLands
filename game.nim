@@ -85,9 +85,8 @@ proc parseLocationOLDATA (oldata_file: string): OrderedTable[int, LocationPrefab
                                                                bcond = oldata["tile"][tile_key]["bcond"].getStr(""),
                                                                )
 
-proc parseOLM (olm_file: string): MapData =
-    # - olm_file  : .olm file containing tileset and tile data
-    let olm = parseFile(fmt"maps/{olm_file}")
+proc parseOLM (olm: TomlValueRef): MapData =
+    # - olm : .olm file parsed by `newMap` into TomlValueRef object
     # check keys before we proceed
     for k in ["tileset_terrain", "tileset_locations", "tileset_system", "data_terrain", "data_locations", "terrain"]:
         if olm.hasKey(k) == false: raise newException(Exception, fmt"Map file doesn't have all required keys! Key missing: {k}")
@@ -122,11 +121,20 @@ proc parseOLM (olm_file: string): MapData =
                 # also todo: make Tile have 'waterTile/landTile' that determines location placement, and location be `type` that determines
                 #            if placement is valid for particular type (e.g. `waterType` would only go to `waterTile` etc.)
 
+proc getInitialCoords (olm: TomlValueRef): (int, int) =
+    if olm.hasKey("start_coordinates"):
+        let coords = olm["start_coordinates"].getElems()
+        if len(coords) == 2:
+            return (coords[0].getInt(), coords[1].getInt())
+    return (0, 0)
+
 proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], starting_date: (int, int, int)): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
-    result.data     = parseOLM(olm_file)
-    result.move     = (0, 0)
+    let olm         = parseFile(fmt"maps/{olm_file}")
+
+    result.data     = parseOLM(olm)
+    result.move     = getInitialCoords(olm)
     result.kingdoms = kingdoms
     result.time     = (year: starting_date[0], month: starting_date[1], day: starting_date[2], hour: 1)
     if result.time.year < 1 or result.time.month < 1 or result.time.day < 1:
