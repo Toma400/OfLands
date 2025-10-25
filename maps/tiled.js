@@ -15,14 +15,14 @@ var olmMapFormat = {
         // base data
         const baseName        = fileName.substring(0, fileName.lastIndexOf("."));
         const baseDir         = fileName.substring(0, fileName.lastIndexOf("/"));
-        var tilesets          = map.usedTilesets();
+        var tilesets          = map.tilesets;
         var tilesets_dict     = tilesets.reduce(function(dict, x) { // it does convert list to dict actually lol
                                     dict[x.name] = x;
                                     return dict;
                                 }, {});
         var tileset_terrain   = tilesets_dict["Landscape"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
         var tileset_locations = tilesets_dict["Locations"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
-        var tileset_system    = tilesets_dict["System"].imageFileName.match(String.raw`(\w*.png)`);     // regexed only file name, without path | todo: errors!
+        var tileset_system    = tilesets_dict["System"].imageFileName.match(String.raw`(\w*.png)`);     // regexed only file name, without path
         var data_terrain      = tileset_terrain[0].replace(".png", ".oldata");           // sets .oldata to have the same name as tileset image
         var data_locations    = tileset_locations[0].replace(".png", ".oldata");         // sets .oldata to have the same name as tileset image
 

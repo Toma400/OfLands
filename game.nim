@@ -67,8 +67,9 @@ proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
         if cat == "tile":
             for tile_key in oldata["tile"].getTable.keys():
                 result[parseInt(tile_key)] = newTilePrefab( # initialises prefab, using default values if key not found
-                                                           tname = oldata["tile"][tile_key]["name"].getStr(""),
-                                                           tbase = oldata["tile"][tile_key]["tbase"].getStr(""),
+                                                           tname   = oldata["tile"][tile_key]["name"].getStr(""),
+                                                           mv_cost = oldata["tile"][tile_key]["mv_cost"].getInt(),
+                                                           tbase   = oldata["tile"][tile_key]["tbase"].getStr(""),
                                                            #road_ac = (false, false, false, false)         # TODO | temporary
                                                            )
 

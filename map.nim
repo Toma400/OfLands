@@ -15,13 +15,15 @@ type
     LAVA
     VOID
   TilePrefab* = object # it's the same as Tile, but meant to be static (not have data edited) | index is kept out so duplicates are replaced
-    name  : string
-    tbase : TileBase
+    name   : string
+    tbase  : TileBase
+    mov_ct : int      # movement cost (base modifier)
   #  road_ac : RoadAccess # road accessibility (left, top, right, bottom)
   Tile* = object
     index*    : int          # terrain tile index
     name*     : string
     tbase*    : TileBase
+    mov_ct*   : int          # movement cost (base modifier) | -1 means unpassable // todo: is modified by roads (make proc for it)
     location* : ?Location
     entities  : seq[Entity]  # private so it can't be accessed without proper handling (adding both to Tile and Kingdom)
     # road_ac*  : RoadAccess # road accessibility (left, top, right, bottom)
@@ -44,13 +46,15 @@ proc getTileBase* (id: string): TileBase =
 
 proc defaultTilePrefab* (): TilePrefab =
     # default values; used when there's no data available
-    result.name  = ""
-    result.tbase = VOID
+    result.name   = ""
+    result.tbase  = VOID
+    result.mov_ct = 0
     # result.road_ac = (true, true, true, true)
 
-proc newTilePrefab* (tbase: string, tname: string = ""): TilePrefab = #, road_ac: RoadAccess): TilePrefab =
-    result.name  = tname
-    result.tbase = getTileBase(tbase)
+proc newTilePrefab* (tbase: string, mv_cost: int, tname: string = ""): TilePrefab = #, road_ac: RoadAccess): TilePrefab =
+    result.name   = tname
+    result.tbase  = getTileBase(tbase)
+    result.mov_ct = mv_cost
     # result.road_ac = road_ac
 
 proc newTile* (tp: TilePrefab, ix: int): Tile = #, road: int): Tile =
@@ -58,6 +62,7 @@ proc newTile* (tp: TilePrefab, ix: int): Tile = #, road: int): Tile =
     result.index    = ix
     result.name     = tp.name
     result.tbase    = tp.tbase
+    result.mov_ct   = tp.mov_ct
     result.location = Location.none    # set later
     result.entities = newSeq[Entity]() # empty, use `addEntity()` proc to fill
     #result.road_ac = tp.road_ac
