@@ -24,9 +24,11 @@ let cfg = loadConfig("oflands.ini")
 let grd = getSectionValue(cfg, "", "grid")   == "true"
 let cur = getSectionValue(cfg, "", "cursor") == "true"
 
+let player = parseInt(getSectionValue(cfg, "", "player"))
+
 var mvp = newMap(olm_file      = getSectionValue(cfg, "", "map"),
                  kingdoms      = initKingdoms(newKingdom(name   =          getSectionValue(cfg, "", "kingdom"),
-                                                         number = parseInt(getSectionValue(cfg, "", "player")))),
+                                                         number = parseInt(getSectionValue(cfg, "", "player")))), # done explicitly because `player` may change
                  starting_date = (
                               parseInt(getSectionValue(cfg, "", "year")),
                               parseInt(getSectionValue(cfg, "", "month")),
@@ -47,8 +49,9 @@ proc gameInit() =
     loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 4 | system
     loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 5 | grid
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
-
-    addEntity(mvp.data.mapping[(0, 0)], mvp.kingdoms[parseInt(getSectionValue(cfg, "", "player"))], SETTLER) # todo: example guy
+    # initialises game (may need to be changed when game saves are made)
+    if mvp.kingdoms[player].locations.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
+        ses.mode = INIT
 
 proc gameUpdate(dt: float32) =
     if btn(pcLeft):  moveMap(mvp, (-1,  0), dt)
@@ -64,13 +67,16 @@ proc gameUpdate(dt: float32) =
             if ses.focus != getCellCoords(mvp, mouse()):
                 ses.focus = getCellCoords(mvp, mouse())
             else: ses.focus = (-1, -1)
-        if ses.mode == ROUTE: # TODO: temporary, just for showcase
+        elif ses.mode == ROUTE: # TODO: temporary, just for showcase
             if mvp.data.mapping[getCellCoords(mvp, mouse())].location.isNone:
                 if canExist(mvp.data.mapping[getCellCoords(mvp, mouse())], newLocation(mvp.data.ldefs, 0)): # safeguard to not build on water
                     mvp.data.mapping[getCellCoords(mvp, mouse())].location = newLocation(mvp.data.ldefs, 0).some # should be replaced with dedicated `buildLocation`
             elif mvp.data.mapping[getCellCoords(mvp, mouse())].location.isSome:
                 if (!mvp.data.mapping[getCellCoords(mvp, mouse())].location).index == 0:
                     mvp.data.mapping[getCellCoords(mvp, mouse())].location = newLocation(mvp.data.ldefs, 1).some
+        elif ses.mode == INIT:
+            if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):
+                ses.mode = EXPLORE
     passTime(mvp, ses)
 
 proc gameDraw() =

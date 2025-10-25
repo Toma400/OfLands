@@ -9,6 +9,11 @@ type
     mov_pt* : int        # movement points reference has
     # potentially Tile? so it's backtracked, *but* be mindful of circular imports
 
+const
+  #AIR_ENTITY*   = []
+  LAND_ENTITY*  = [SETTLER]
+  WATER_ENTITY* = [SHIP]
+
 proc getSpeed(er: EntityRole): int =
     const DEF_SPEED = 15
     # returns speed regain points (15 is default for most entities)

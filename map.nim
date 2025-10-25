@@ -91,12 +91,26 @@ proc canExist* (t: Tile, l: Location): bool =
       of BuildingConditions.NONE:                                       return false
     return false # if any catches earlier for true are not met
 
-proc addEntity* (t: var Tile, k: var Kingdom, er: EntityRole) =
-    # also works as a constructor
-    var e = newEntity(er, k.number)
-    t.entities.add(e)
-    k.entities.add(e)
-    # SHOULD CHECK IF ENTITY CAN BE ON THE TILE! may need result that tells if it was successful placement
+proc canStand* (t: Tile, er: EntityRole): bool =
+    # checks whether the entity can exist on particular tile (it is *not* about traversability)
+    case t.tbase:
+        of TileBase.VOID: return false # is not traversed by anything
+        of TileBase.LAND:
+            return er in LAND_ENTITY
+        of TileBase.WATER:
+            return er in WATER_ENTITY
+        of TileBase.LAVA: return false
+            #if er in []: return true | todo: uncheck when there's air/lava entities
+    return false # if any catches earlier for true are not met
+
+proc addEntity* (t: var Tile, k: var Kingdom, er: EntityRole): bool =
+    # also works as a constructor; return false if entity can't be made
+    if canStand(t, er):
+        var e = newEntity(er, k.number)
+        t.entities.add(e)
+        k.entities.add(e)
+        return true
+    return false
 
 proc getEntityList* (t: Tile): seq[Entity] = # todo: ensure you can't add to t.entities, so that seq is read-only (and/or you can only edit its Entity refs)
     return t.entities

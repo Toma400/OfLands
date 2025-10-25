@@ -19,6 +19,7 @@ const MV* = 30 # map view size (default = 30)
 
 type
   MapMode* = enum # modes used by session to filter through actions (e.g. for I/O to not focus on tile if you are now doing building)
+    INIT            # init mode     | evoked when player does not have any settlements nor entities (before game)
     EXPLORE         # default mode  | clicking on tile focuses on it and allow management if tile belongs to you)
     ROUTE           # route mode    | clicking adds route node
     TRAVEL          # travel mode   | clicking directs entity to particular cell

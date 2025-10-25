@@ -15,7 +15,8 @@ type
 
 proc basePalette (): Palette =
     const COL = [
-        (55.uint8, 55.uint8, 33.uint8)
+        (55.uint8,  55.uint8, 33.uint8), # 0 | pure black
+        (225.uint8, 6.uint8,  0.uint8)   # 1 | bright red
     ]
     for i, c in COL:
         result.size    = i+1

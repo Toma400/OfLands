@@ -28,6 +28,19 @@ proc drawCursor(map: Map, ses: Session, ccursor: bool) =
                  x2 = floor((cell[0]-map.move[0]+1)*TL), y2 = floor((cell[1]-map.move[1]+1))*TL)
         elif ccursor: # 'else + if ccursor'
             sprRot(3, mouse()[0], mouse()[1], 0.0)
+    elif ses.mode == INIT:
+        if isPxWithinMap(map, mouse()):
+            let cell = getCellCoords(map, mouse())
+            if not canStand(map.data.mapping[cell], SETTLER): # sets square to red to indicate impossibility of placing the settler
+                setColor(1)
+            rect(x1 = floor((cell[0]-map.move[0])*TL),   y1 = floor((cell[1]-map.move[1])*TL),
+                 x2 = floor((cell[0]-map.move[0]+1)*TL), y2 = floor((cell[1]-map.move[1]+1))*TL)
+            setColor(0) # resets colour to black, so it works for sidebar/text/cell that can have settler
+            # draws settler
+            useSpritesheet(XSys)
+            spr(EntityRole.SETTLER.ord, floor((cell[0]-map.move[0])*TL), floor((cell[1]-map.move[1])*TL))
+        elif ccursor: # 'else + if ccursor'
+            sprRot(3, mouse()[0], mouse()[1], 0.0)
 
 proc drawSidebar(map: Map) =
     let focus_padding = TL*3 # width of sidebar (320) is 10 tiles, so with 2-tiled focus (2x scale) and 1-tiled frame (*2) it leaves us 6 (3 tiles each side)
