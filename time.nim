@@ -1,4 +1,5 @@
 import std/tables
+import std/math
 import game
 
 const Month* = {
@@ -31,16 +32,22 @@ const MonthDayCap* = {
 }.toTable
 
 proc passTime* (map: var Map, ses: var Session, progress_hours: int = 1) =
-    ses.tick += 1
-    if ses.tick mod 40 == 0:
+    proc remainingTime(base, divident: int): int =
+        # used as smart `divmod` to avoid 0s
+        result = divmod(base, divident)[1]
+        if result < 1: return 1 # protects from 0/negative numbers
+
+    # ses.tick += 1       | remnants of non-turn-based system - just uncomment them (`turn` block is used as condition equivalent)
+    #if ses.tick mod 40:
+    block turn:
         map.time.hour += progress_hours
-        if map.time.hour > 24:
-            map.time.day += 1
-            map.time.hour = 1
+        if map.time.hour > 24: # todo: make that if it's multiple times over, it makes day += 2+
+            map.time.day += floorDiv(map.time.hour, 24)
+            map.time.hour = remainingTime(map.time.hour, 24)
         if map.time.day > MonthDayCap[map.time.month]:
-            map.time.month += 1
-            map.time.day    = 1
+            map.time.month += floorDiv(map.time.day, MonthDayCap[map.time.month])
+            map.time.day    = remainingTime(map.time.day, MonthDayCap[map.time.month])
         if map.time.month > 12:
-            map.time.year += 1
-            map.time.month = 1
-        ses.tick = 1 # resets
+            map.time.year += floorDiv(map.time.month, 12)
+            map.time.month = remainingTime(map.time.month, 12)
+        # ses.tick = 1 # resets

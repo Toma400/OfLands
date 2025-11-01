@@ -49,19 +49,20 @@ proc gameInit() =
     loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 4 | system
     loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 5 | grid
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
-    # initialises game (may need to be changed when game saves are made)
+    # initialises game (may need to be changed when game saves are made, so it makes you fail the game when this is achieved post-init stage)
     if mvp.kingdoms[player].locations.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
         ses.mode = INIT
+
+proc turn() =
+    passTime(mvp, ses, 12) # progresses hours 12 hours
 
 proc gameUpdate(dt: float32) =
     if btn(pcLeft):  moveMap(mvp, (-1,  0), dt)
     if btn(pcRight): moveMap(mvp, (1,   0), dt)
     if btn(pcUp):    moveMap(mvp, (0,  -1), dt)
     if btn(pcDown):  moveMap(mvp, (0,   1), dt)
-    if btnpr(pcA):
-        ses.focus = (-1, -1) # resets focus
-        if ses.mode != ROUTE: ses.mode = ROUTE
-        else:                 ses.mode = EXPLORE
+    if btnpr(pcA): # space/Z/Y
+        turn() # todo: should keep us from doing this action again before all turn things process on screen/data
     if mousebtnpr(0):
         if ses.mode == EXPLORE:
             if ses.focus != getCellCoords(mvp, mouse()):
@@ -77,7 +78,6 @@ proc gameUpdate(dt: float32) =
         elif ses.mode == INIT:
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):
                 ses.mode = EXPLORE
-    passTime(mvp, ses)
 
 proc gameDraw() =
     cls()
