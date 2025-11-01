@@ -44,6 +44,7 @@ proc drawCursor(map: Map, ses: Session, ccursor: bool) =
 
 proc drawSidebar(map: Map) =
     let focus_padding = TL*3 # width of sidebar (320) is 10 tiles, so with 2-tiled focus (2x scale) and 1-tiled frame (*2) it leaves us 6 (3 tiles each side)
+    setColor(0)
 
     spr(0, H, 0)                               # corner (upper left)
     for x in int((H+TL)/TL)..int((W-TL*2)/TL): # basically upper part; 992-1248 (excludes corners)
