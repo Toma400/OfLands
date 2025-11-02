@@ -93,7 +93,17 @@ proc drawFocus (map: Map, ses: Session) =
     if tile_focused.settile.isSome:
         useSpritesheet(XSys)
         sprs(1, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
-        printc((!tile_focused.settile).settlem.name, x = H+TL*5, y = TL*10, 4) # loc name | below coordinates
+        printc($(!tile_focused.settile).settlem.tier, x = H+TL*5, y = TL*7, 4) # settlement name | below coordinates
+        printc((!tile_focused.settile).settlem.name,  x = H+TL*5, y = TL*8, 4) # settlement name | below coordinates
+    if hasObject(tile_focused):
+        const KINGDOMS = {
+            0: "Unowned",
+            1: "Player"
+        }.toTable
+        if tile_focused.location.isSome:
+            printc(KINGDOMS[(!tile_focused.location).owner], x = H+TL*5, y = TL*10, 4)
+        if tile_focused.settile.isSome:
+            printc(KINGDOMS[(!tile_focused.settile).settlem.knb], x = H+TL*5, y = TL*10, 4)
     let entity_count = getEntityList(tile_focused).len
     if entity_count > 0:
         useSpritesheet(XSys)
