@@ -70,6 +70,7 @@ proc gameUpdate(dt: float32) =
             else: ses.focus = (-1, -1)
         elif ses.mode == INIT:
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):
+                discard addSettlement(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player])
                 ses.mode = EXPLORE
 
 proc gameDraw() =

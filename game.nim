@@ -105,7 +105,7 @@ proc parseOLM (olm: TomlValueRef): MapData =
     for y, row in olm["terrain"].getElems().pairs:
         for x, ix in row.getElems().pairs:
             # ix = tile index; x/y = coordinates
-            result.mapping[(x, y)] = newTile(result.tdefs, ix.getInt())
+            result.mapping[(x, y)] = newTile(result.tdefs, ix.getInt(), (x, y))
             if result.size[1] == 0: # sets itself only once
                 result.size[0] += 1
         result.size[1] += 1

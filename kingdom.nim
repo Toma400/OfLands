@@ -1,5 +1,6 @@
 import std/strutils
 import std/tables
+import core/settlement
 import core/entity
 
 type
@@ -15,6 +16,7 @@ type
     number*    : int
     locations* : seq[(int, int)] # coordinates to `MapData.mapping` Tile
     entities*  : seq[Entity]
+    settlems*  : seq[Settlement]
   LocationPrefab* = object # immutable variant used before instance is made
     name*  : string
     bcond* : BuildingConditions

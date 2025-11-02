@@ -3,6 +3,7 @@ import std/options
 import std/tables
 import questionable
 # OL imports
+import core/settlement
 import core/entity
 import kingdom
 
@@ -22,9 +23,11 @@ type
   Tile* = object
     index*    : int          # terrain tile index
     name*     : string
+    coords*   : tuple[x, y: int]
     tbase*    : TileBase
     mov_ct*   : int          # movement cost (base modifier) | -1 means unpassable // todo: is modified by roads (make proc for it)
     location* : ?Location
+    settile*  : ?SettlementTile
     entities  : seq[Entity]  # private so it can't be accessed without proper handling (adding both to Tile and Kingdom)
     # road_ac*  : RoadAccess # road accessibility (left, top, right, bottom)
     # road*     : int        # whether tile has road (0 - none, 1 - dirt, 2 - rock)
@@ -57,22 +60,28 @@ proc newTilePrefab* (tbase: string, mv_cost: int, tname: string = ""): TilePrefa
     result.mov_ct = mv_cost
     # result.road_ac = road_ac
 
-proc newTile* (tp: TilePrefab, ix: int): Tile = #, road: int): Tile =
+proc newTile* (tp: TilePrefab, ix: int, coords: tuple[x, y: int]): Tile = #, road: int): Tile =
     # converter to allow for tile to have dynamic data under exported struct
     result.index    = ix
     result.name     = tp.name
+    result.coords   = coords
     result.tbase    = tp.tbase
     result.mov_ct   = tp.mov_ct
-    result.location = Location.none    # set later
+    result.location = Location.none       # set later
+    result.settile  = SettlementTile.none # set later
     result.entities = newSeq[Entity]() # empty, use `addEntity()` proc to fill
     #result.road_ac = tp.road_ac
     #result.road    = road       # 0 = no road; 1 = dirt road; 2 = rock road
 
-proc newTile* (oldata: OrderedTable[int, TilePrefab], ix: int): Tile =
+proc newTile* (oldata: OrderedTable[int, TilePrefab], ix: int, coords: tuple[x, y: int]): Tile =
     # converted that yields singular tile data from TilePrefab table
     if ix in oldata:
-        return newTile(oldata[ix], ix)#, 0) # todo: 0 is temporary
-    return newTile(defaultTilePrefab(), ix)#, 0) # as above
+        return newTile(oldata[ix], ix, coords)#, 0) # todo: 0 is temporary
+    return newTile(defaultTilePrefab(), ix, coords)#, 0) # as above
+
+proc hasObject* (t: Tile): bool =
+    # checks whether tile is occupied by location or settlement
+    return isSome(t.location) or isSome(t.settile)
 
 proc canExist* (t: Tile, l: Location): bool =
     # proc to see if tile can have location built (it is *not* about traversability)
@@ -90,6 +99,11 @@ proc canExist* (t: Tile, l: Location): bool =
       of BuildingConditions.ALL:                                        return true
       of BuildingConditions.NONE:                                       return false
     return false # if any catches earlier for true are not met
+
+proc canSettlementExist* (t: Tile): bool =
+    # for settlements
+    if t.tbase == LAND: return true
+    return false
 
 proc canStand* (t: Tile, er: EntityRole): bool =
     # checks whether the entity can exist on particular tile (it is *not* about traversability)
@@ -109,6 +123,18 @@ proc addEntity* (t: var Tile, k: var Kingdom, er: EntityRole): bool =
         var e = newEntity(er, k.number)
         t.entities.add(e)
         k.entities.add(e)
+        return true
+    return false
+
+proc addLocation* (t: var Tile, k: var Kingdom, l: Location): bool =
+    discard
+
+proc addSettlement* (t: var Tile, k: var Kingdom): bool =
+    if not hasObject(t) and canSettlementExist(t): # checks if tile is occupied + if settlement can be put
+        let stt = newSettlementTile(t.coords)
+        let stm = newSettlement(generateRandomName(), @[stt], k.number)
+        t.settile = stt.some # binds SettlementTile to Tile
+        k.settlems.add(stm)  # binds Settlement to Kingdom
         return true
     return false
 
