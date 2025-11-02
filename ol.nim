@@ -7,9 +7,9 @@ import questionable
 import nico/backends/common
 import nico
 # OL imports
+import core/time
 import kingdom
 import render
-import time
 import game
 import gui
 import map # only for `canExist`, remove if not needed
@@ -70,8 +70,18 @@ proc gameUpdate(dt: float32) =
             else: ses.focus = (-1, -1)
         elif ses.mode == INIT:
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):
-                discard addSettlement(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player])
                 ses.mode = EXPLORE
+    if mousebtnpr(1):
+        discard addSettlement(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player])
+    if mousebtnpr(2):
+        if ses.bdb == -1:
+            let tile = mvp.data.mapping[getCellCoords(mvp, mouse())]
+            if isSome(tile.location):
+                ses.bdb = (!tile.location).index
+        else:
+            let loc_pf = mvp.data.ldefs[ses.bdb]
+            discard addLocation(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], loc_pf, ses.bdb)
+            ses.bdb = -1
 
 proc gameDraw() =
     cls()

@@ -42,6 +42,7 @@ type
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
     mode*  : MapMode
     tick*  : int        # serves as a counter of each frame (used for some events)
+    bdb*   : int        # todo: temporary building helper
 
 proc isPxWithinMap* (map: Map, px_coord: (int, int)): bool =
     # does not calculate move - only if particular pixel is within 30x30 bonds (calculate moved px when calling)
@@ -152,6 +153,9 @@ proc drawMap* (map: Map) =
             if tile_drawn.location.isSome:
                 useSpritesheet(XLoc)
                 spr((!tile_drawn.location).index, tile * TL, row * TL)
+            elif tile_drawn.settile.isSome:
+                useSpritesheet(XSys)
+                spr(1, tile * TL, row * TL)
             let entity_count = getEntityList(tile_drawn).len
             if entity_count > 0:
                 useSpritesheet(XSys)
@@ -183,3 +187,4 @@ proc newSession* (): Session =
     result.focus = (-1, -1)
     result.mode  = EXPLORE
     result.tick  = 1
+    result.bdb   = -1 # no selection (default)

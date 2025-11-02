@@ -5,9 +5,9 @@ import std/math
 import questionable
 # OL imports
 import core/entity
+import core/time
 import render
 import nico
-import time
 import game
 import map
 
@@ -91,6 +91,8 @@ proc drawFocus (map: Map, ses: Session) =
         sprs((!tile_focused.location).index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
         printc((!tile_focused.location).name, x = H+TL*5, y = TL*7, 4) # loc name | below coordinates
     if tile_focused.settile.isSome:
+        useSpritesheet(XSys)
+        sprs(1, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
         printc((!tile_focused.settile).settlem.name, x = H+TL*5, y = TL*10, 4) # loc name | below coordinates
     let entity_count = getEntityList(tile_focused).len
     if entity_count > 0:

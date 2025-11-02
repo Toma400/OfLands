@@ -14,7 +14,7 @@ type
   Kingdom* = object
     name*      : string
     number*    : int
-    locations* : seq[(int, int)] # coordinates to `MapData.mapping` Tile
+    locations* : seq[tuple[x, y: int]] # coordinates to `MapData.mapping` Tile
     entities*  : seq[Entity]
     settlems*  : seq[Settlement]
   LocationPrefab* = object # immutable variant used before instance is made

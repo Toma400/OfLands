@@ -17,9 +17,9 @@ type
     knb*   : int
 
 proc generateRandomName* (): string =
-    const B = ["La", "Ni", "Te", "Ku", "Me"]
-    const M = ["hele", "una", "mino", "tere", "siva", "lini"]
-    const E = ["let", "sot", "rut", "kif", "anna", "un"]
+    const B = ["La", "Ni", "Te", "Ku", "Me", "Su", "Hag"]
+    const M = ["hele", "una", "mino", "tere", "siva", "lini", "ta", "inu"]
+    const E = ["let", "sot", "rut", "kif", "anna", "un", "be", "far"]
     result = sample(B) & sample(M) & sample(E)
 
 proc newSettlementTile* (coords: tuple[x, y: int]): SettlementTile =

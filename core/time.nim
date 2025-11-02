@@ -1,6 +1,6 @@
 import std/tables
 import std/math
-import game
+import ../game
 
 const Month* = {
     1:  "January",
@@ -16,7 +16,7 @@ const Month* = {
     11: "November",
     12: "December"
 }.toTable
-const MonthDayCap* = {
+const MonthDayCap = {
     1:  31,
     2:  28,
     3:  31,

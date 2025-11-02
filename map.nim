@@ -83,7 +83,7 @@ proc hasObject* (t: Tile): bool =
     # checks whether tile is occupied by location or settlement
     return isSome(t.location) or isSome(t.settile)
 
-proc canExist* (t: Tile, l: Location): bool =
+proc canExist* (t: Tile, l: Location | LocationPrefab): bool =
     # proc to see if tile can have location built (it is *not* about traversability)
     if t.tbase == TileBase.VOID:                                        return false # void can't have any location existing
     # non-void cases
@@ -126,8 +126,12 @@ proc addEntity* (t: var Tile, k: var Kingdom, er: EntityRole): bool =
         return true
     return false
 
-proc addLocation* (t: var Tile, k: var Kingdom, l: Location): bool =
-    discard
+proc addLocation* (t: var Tile, k: var Kingdom, l: LocationPrefab, ix: int): bool =
+    if not hasObject(t) and canExist(t, l):
+        t.location = newLocation(l, ix, k.number).some
+        k.locations.add(t.coords)
+        return true
+    return false
 
 proc addSettlement* (t: var Tile, k: var Kingdom): bool =
     if not hasObject(t) and canSettlementExist(t): # checks if tile is occupied + if settlement can be put
