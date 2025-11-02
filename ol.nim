@@ -68,13 +68,6 @@ proc gameUpdate(dt: float32) =
             if ses.focus != getCellCoords(mvp, mouse()):
                 ses.focus = getCellCoords(mvp, mouse())
             else: ses.focus = (-1, -1)
-        elif ses.mode == ROUTE: # TODO: temporary, just for showcase
-            if mvp.data.mapping[getCellCoords(mvp, mouse())].location.isNone:
-                if canExist(mvp.data.mapping[getCellCoords(mvp, mouse())], newLocation(mvp.data.ldefs, 0)): # safeguard to not build on water
-                    mvp.data.mapping[getCellCoords(mvp, mouse())].location = newLocation(mvp.data.ldefs, 0).some # should be replaced with dedicated `buildLocation`
-            elif mvp.data.mapping[getCellCoords(mvp, mouse())].location.isSome:
-                if (!mvp.data.mapping[getCellCoords(mvp, mouse())].location).index == 0:
-                    mvp.data.mapping[getCellCoords(mvp, mouse())].location = newLocation(mvp.data.ldefs, 1).some
         elif ses.mode == INIT:
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):
                 ses.mode = EXPLORE

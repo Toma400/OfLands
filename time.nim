@@ -41,12 +41,13 @@ proc passTime* (map: var Map, ses: var Session, progress_hours: int = 1) =
     #if ses.tick mod 40:
     block turn:
         map.time.hour += progress_hours
-        if map.time.hour > 24: # todo: make that if it's multiple times over, it makes day += 2+
+        if map.time.hour > 24:
             map.time.day += floorDiv(map.time.hour, 24)
             map.time.hour = remainingTime(map.time.hour, 24)
         if map.time.day > MonthDayCap[map.time.month]:
-            map.time.month += floorDiv(map.time.day, MonthDayCap[map.time.month])
-            map.time.day    = remainingTime(map.time.day, MonthDayCap[map.time.month])
+            let cap = MonthDayCap[map.time.month] # separated so it isn't affected by first change
+            map.time.month += floorDiv(map.time.day, cap)
+            map.time.day    = remainingTime(map.time.day, cap)
         if map.time.month > 12:
             map.time.year += floorDiv(map.time.month, 12)
             map.time.month = remainingTime(map.time.month, 12)
