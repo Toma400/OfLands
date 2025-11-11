@@ -9,6 +9,7 @@ import questionable
 # nico specifics
 import nico
 # OL imports
+import core/settlement
 import core/entity
 import kingdom
 import render
@@ -61,6 +62,18 @@ proc getCellCoords* (map: Map, px_coord: (int, int)): (int, int) =
         return (-1, -1) # outside of cell window
     return (floor(px_coord[0]/TL).int + map.move[0],
             floor(px_coord[1]/TL).int + map.move[1])
+
+proc addSettlement* (map: var Map, tiles_occupied: seq[tuple[x, y: int]], k: var Kingdom, name: string, tier: string) =
+    # helper proc, different from `map` one so it doesn't put settlement only on one tile
+    var stiles = newSeq[SettlementTile]()
+    for tile in tiles_occupied:
+        let tile_read_only = map.data.mapping[tile]
+        if not hasObject(tile_read_only) and canSettlementExist(tile_read_only): # checks if tile is occupied + if settlement can be put
+            add(stiles, newSettlementTile(tile))
+    if stiles.len > 0:
+        for stile in stiles:
+            map.data.mapping[stile.coords].settile = stile.some       # binds SettlementTile to Tile
+        k.settlems.add(newSettlement(name, stiles, k.number, TIER_STR[tier])) # binds Settlement to Kingdom
 
 proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
     # parses .oldata file and returns tile definitions in an OrderedTable
@@ -122,6 +135,79 @@ proc parseOLM (olm: TomlValueRef): MapData =
                 # also todo: make Tile have 'waterTile/landTile' that determines location placement, and location be `type` that determines
                 #            if placement is valid for particular type (e.g. `waterType` would only go to `waterTile` etc.)
 
+proc parseSettlements (distribution: TomlValueRef): OrderedTable[int, seq[tuple [x, y: int]]] =
+    # parses .olf's 'settlements' value, does not create settlements alone
+    for y, row in distribution.getElems().pairs:
+        for x, ix in row.getElems().pairs:
+            # ix = settlement index; x/y = coordinates
+            if ix.getInt() != -1: # no settlement
+                if ix.getInt() in result:
+                    result[ix.getInt()].add((x, y))
+                else: result[ix.getInt()] = @[(x, y)]
+
+proc parseFactions (ffile: string, map: var Map, player_k_nb: int, player_k_nm: string): OrderedTable[int, Kingdom] =
+    # parses .olf file and creates table of kingdoms
+    # if player number doesn't match existing kingdom, default one (`def`) is made
+    let pix = if player_k_nb > 0: player_k_nb else: 1 # checks for positive number
+    let def = newKingdom(name   = player_k_nm,
+                         number = pix)
+    # ---
+    if ffile == "" or not fileExists(Path(fmt"maps/{ffile}")):
+        result[pix] = def
+        return result
+    else:
+        let olf = parseFile(fmt"maps/{ffile}")
+        if olf.hasKey("kingdom"):
+            for index in olf["kingdom"].getTable.keys():
+                let ix    = parseInt(index)
+                let kdata = olf["kingdom"][index]
+                # data
+                let knm = if kdata.hasKey("name"): kdata["name"].getStr() else: ""
+
+                result[ix] = newKingdom(name   = knm,
+                                        number = ix)
+
+            if olf.hasKey("map") and olf.hasKey("settlement"):
+                if olf["map"].hasKey("settlements"):
+                    let settlement_library = parseSettlements(olf["map"]["settlements"])
+                    for index in olf["settlement"].getTable.keys():
+                        let ix = parseInt(index)
+                        if ix in settlement_library: # skips the settlement if not found on map
+                            let sdata = olf["settlement"][index]
+                            # check for values a) existing b) not having no value
+                            if sdata["tier"].getStr("") != "" and sdata["kingdom"].getInt(0) != 0:
+                                # data setup
+                                let knb = sdata["kingdom"].getInt()
+                                let snm = if sdata.hasKey("name"): sdata["name"].getStr() else: "" # the only optional value
+                                let str = sdata["tier"].getStr()
+
+                                var tiles_occupied = newSeq[tuple[x, y: int]]()
+                                for tile_coords in settlement_library[ix]:
+                                    add(tiles_occupied, tile_coords)
+                                addSettlement(map, tiles_occupied, result[knb], snm, str)
+
+            if pix in result:
+                return result
+        # # "else" for no 'kingdom' key or player not being registered is handled below
+    result[pix] = def
+
+    # TODO! SCAN FOR CITIES COULD FIRST GATHER CITIES TOGETHER, as in:
+    # let table = emptyTable[int, seq[tuple (x, y: int)]]
+    # for x in map:
+    #   for y in map[x]:
+    #      if (x, y).hasSettlement: table[].add((x, y))
+    #
+    # Tiled would export it to TOML like this:
+    # [settlement.1]
+    # data = ...
+    #
+    # and later we would get properties from tileset by going from table:
+    # for i, coords in table:
+    #     var seq = newSeq[SettlementTile]()
+    #     for c in coords.len:
+    #        seq.add(newSettlement(c)
+    #     registerSettlement(data = data, coords = seq)
+
 proc getInitialCoords (olm: TomlValueRef): (int, int) =
     if olm.hasKey("start_coordinates"):
         let coords = olm["start_coordinates"].getElems()
@@ -129,14 +215,19 @@ proc getInitialCoords (olm: TomlValueRef): (int, int) =
             return (coords[0].getInt(), coords[1].getInt())
     return (0, 0)
 
-proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], starting_date: (int, int, int)): Map =
+proc getFactionFile (olm: TomlValueRef): string =
+    if olm.hasKey("factions"):
+        return olm["factions"].getStr()
+    return "" # aka "no file provided, start with only player"
+
+proc newMap* (olm_file: string, player_kingdom: tuple[nb: int, nm: string], starting_date: (int, int, int)): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
     let olm         = parseFile(fmt"maps/{olm_file}")
 
     result.data     = parseOLM(olm)
     result.move     = getInitialCoords(olm)
-    result.kingdoms = kingdoms
+    result.kingdoms = parseFactions(getFactionFile(olm), result, player_kingdom.nb, player_kingdom.nm)
     result.time     = (year: starting_date[0], month: starting_date[1], day: starting_date[2], hour: 1)
     if result.time.year < 1 or result.time.month < 1 or result.time.day < 1:
         raise newException(Exception, fmt"Game has incorrect date set. Date needs every value (year/month/day) be positive number!")
@@ -144,6 +235,7 @@ proc newMap* (olm_file: string, kingdoms: OrderedTable[int, Kingdom], starting_d
         raise newException(Exception, fmt"Map file has too little tiles!")
 
 proc drawMap* (map: Map) =
+    # IMPORTANT: needs to also be updated in `gui.nim` focus render
     for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
         for tile in 0..<MV:                   # adjusted to moved map
             let moved_coords = (tile + map.move[0], row + map.move[1])
@@ -155,7 +247,7 @@ proc drawMap* (map: Map) =
                 spr((!tile_drawn.location).index, tile * TL, row * TL)
             elif tile_drawn.settile.isSome:
                 useSpritesheet(XSys)
-                spr(1, tile * TL, row * TL)
+                spr((!tile_drawn.settile).settlem.tier.ord + 1, tile * TL, row * TL) # TODO: temporary!
             let entity_count = getEntityList(tile_drawn).len
             if entity_count > 0:
                 useSpritesheet(XSys)

@@ -1,3 +1,5 @@
+import std/strformat
+import std/tables
 import std/random
 randomize()
 
@@ -16,6 +18,16 @@ type
     tiles* : seq[SettlementTile]
     knb*   : int
 
+const TIER_STR* = { # string representation for .olf parsing
+    "village": VILLAGE,
+    "town":    TOWN,
+    "city":    CITY,
+    "polis":   POLIS
+}.toTable
+
+proc `$`* (s: Settlement): string =
+    result = fmt"{s.name} | Tier: {s.tier} | Kingdom index: {s.knb}"
+
 proc generateRandomName* (): string =
     const B = ["La", "Ni", "Te", "Ku", "Me", "Su", "Hag"]
     const M = ["hele", "una", "mino", "tere", "siva", "lini", "ta", "inu"]
@@ -29,7 +41,7 @@ proc newSettlementTile* (coords: tuple[x, y: int]): SettlementTile =
 
 proc newSettlement* (name: string, init_tiles: seq[SettlementTile], kingdom: int, tier: SettlementTier = VILLAGE): Settlement =
     # helper proc, should not be used by itself (you need to assign settlement to kingdom)
-    # todo: kingdom assignment, but also initial Tile assignment (or at least coords if Tile wouldn't be available)
+    # todo: use `addSettlement` from either `map.nim` or `game.nim` depending on need
     new(result)
     result.name = name
     result.tier = tier

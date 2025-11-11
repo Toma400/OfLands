@@ -4,17 +4,15 @@ Versions:
 
 ### 0.1.0
 - Created minimal .olm/.oldata system with its parsers
-- Made base game structure with ability to interpret .olm and .oldata files
+- Made base game structure with ability to interpret `.olm` and `.oldata` files
   - This includes loading maps of any size (bigger than 30x30)
-- Wrote `tiled.js`, Tiled plugin to export its maps into .olm format
-  - It also supports custom properties that are exported into .oldata file
-- Made map used by game and grid visibility configurable through .ini file
+- Wrote `tiled.js`, Tiled plugin to export its maps into `.olm` format
+  - It also supports custom properties that are exported into `.oldata` file
+- Made map used by game and grid visibility configurable through `.ini` file
 - Created GUI
   - Custom cursor replacing mouse
   - Clicking on tile highlights it and showcases zoom-in and information about it
     in the sidebar
-- Added basic kingdom system recognised and stored by the map
-  - Locations, settlements and entities affiliated are marked accurately
 - Added time system, showcased on GUI
 - Added location system, including rendering of locations put on map
   - Made rendering of locations (with ones from premade map being `faction=0`) with
@@ -22,6 +20,13 @@ Versions:
   - Locations are automatically removed from premade maps if they don't follow proper
     conditions for building
 - Added entities system
+- Added basic factions system recognised and stored by the map
+  - Locations, settlements and entities affiliated are marked accurately
+  - Factions can be initialised with custom `.olf` file and joined by using
+    `.ini` file
 - Added settlement system
+  - Settlements have unique icon, depending on their tier 
+  - Settlements can be initialised with custom `.olf` file
 - Added turn system
-- Added initial starting mode, which requires you to drop settler on some walkable tile
+- Added initial starting mode, which requires you to drop settler on some 
+  walkable tile (if you don't have settlement)

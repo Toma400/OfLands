@@ -72,9 +72,3 @@ proc newLocation* (oldata: OrderedTable[int, LocationPrefab], ix: int): Location
     if ix in oldata:
         return newLocation(oldata[ix], ix) # todo: may be good to fill `owner` and `walls`?
     return newLocation(defaultLocationPrefab(), ix) # todo?
-
-proc initKingdoms* (ks: varargs[Kingdom]): OrderedTable[int, Kingdom] =
-    for k in ks:
-        if k.number < 1:
-            raise newException(Exception, "Kingdom number must be positive.")
-        result[k.number] = k

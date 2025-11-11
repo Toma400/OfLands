@@ -133,10 +133,10 @@ proc addLocation* (t: var Tile, k: var Kingdom, l: LocationPrefab, ix: int): boo
         return true
     return false
 
-proc addSettlement* (t: var Tile, k: var Kingdom): bool =
+proc addSettlement* (t: var Tile, k: var Kingdom, name: string = generateRandomName()): bool =
     if not hasObject(t) and canSettlementExist(t): # checks if tile is occupied + if settlement can be put
         let stt = newSettlementTile(t.coords)
-        let stm = newSettlement(generateRandomName(), @[stt], k.number)
+        let stm = newSettlement(name, @[stt], k.number)
         t.settile = stt.some # binds SettlementTile to Tile
         k.settlems.add(stm)  # binds Settlement to Kingdom
         return true

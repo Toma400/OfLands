@@ -4,6 +4,7 @@ import std/tables
 import std/math
 import questionable
 # OL imports
+import core/settlement
 import core/entity
 import core/time
 import render
@@ -85,29 +86,37 @@ proc drawFocus (map: Map, ses: Session) =
         highlightTile(map, ses.focus)
     let tile_focused = map.data.mapping[ses.focus]
     sprs(tile_focused.index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
+
     # location
-    if tile_focused.location.isSome:
-        useSpritesheet(XLoc)
-        sprs((!tile_focused.location).index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
-        printc((!tile_focused.location).name, x = H+TL*5, y = TL*7, 4) # loc name | below coordinates
-    if tile_focused.settile.isSome:
-        useSpritesheet(XSys)
-        sprs(1, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
-        printc($(!tile_focused.settile).settlem.tier, x = H+TL*5, y = TL*7, 4) # settlement name | below coordinates
-        printc((!tile_focused.settile).settlem.name,  x = H+TL*5, y = TL*8, 4) # settlement name | below coordinates
+    # IMPORTANT: needs to also be updated in `game.nim` render
     if hasObject(tile_focused):
-        const KINGDOMS = {
-            0: "Unowned",
-            1: "Player"
-        }.toTable
         if tile_focused.location.isSome:
-            printc(KINGDOMS[(!tile_focused.location).owner], x = H+TL*5, y = TL*10, 4)
-        if tile_focused.settile.isSome:
-            printc(KINGDOMS[(!tile_focused.settile).settlem.knb], x = H+TL*5, y = TL*10, 4)
+            useSpritesheet(XLoc)
+            let location = (!tile_focused.location)
+            sprs(location.index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
+            # location data
+            printc(location.name, x = H+TL*5, y = TL*7, 4) # loc name | below coordinates
+            # location name
+            let owner = location.owner
+            let name  = if owner in map.kingdoms: map.kingdoms[owner].name else: "Unowned"
+            printc(name, x = H+TL*5, y = TL*10, 4)
+
+        elif tile_focused.settile.isSome:
+            useSpritesheet(XSys)
+            let settlement = (!tile_focused.settile).settlem
+            sprs(settlement.tier.ord + 1, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # todo: SETTLEMENT_TIER.ord is temporary!
+            # settlement data
+            printc($settlement.tier, x = H+TL*5, y = TL*7, 4) # settlement tier | below coordinates
+            printc(settlement.name,  x = H+TL*5, y = TL*8, 4) # settlement name | below coordinates
+            # kingdom name
+            let owner = settlement.knb
+            let kname = if owner in map.kingdoms: map.kingdoms[owner].name else: "Unowned"
+            printc(kname, x = H+TL*5, y = TL*10, 4)
     let entity_count = getEntityList(tile_focused).len
     if entity_count > 0:
         useSpritesheet(XSys)
         sprs(getEntityList(tile_focused)[entity_count-1].role.ord, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # uses last entity that moved onto tile
+
     # info box
     printc(tile_focused.name, x = H+TL*5, y = TL*1, 4) # name   | in the middle between top and focus window
     printc($ses.focus,        x = H+TL*5, y = TL*2, 3) # coords | in the middle below focus window

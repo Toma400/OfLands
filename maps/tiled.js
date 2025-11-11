@@ -8,27 +8,83 @@ var olmMapFormat = {
 
     outputFiles: function(map, fileName) {
         const baseName = fileName.substring(0, fileName.lastIndexOf("."));
-        return [baseName + "olm", baseName + "oldata"];
+        return [baseName + "olm", baseName + "olf", baseName + "oldata"];
     },
 
     write: function(map, fileName) {
         // base data
         const baseName        = fileName.substring(0, fileName.lastIndexOf("."));
         const baseDir         = fileName.substring(0, fileName.lastIndexOf("/"));
+        const pureName        = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.lastIndexOf("."))
         var tilesets          = map.tilesets;
         var tilesets_dict     = tilesets.reduce(function(dict, x) { // it does convert list to dict actually lol
                                     dict[x.name] = x;
                                     return dict;
                                 }, {});
+        var layers            = map.layers;
+        var layers_dict       = layers.reduce(function(dict, x) { // it does convert list to dict actually lol
+                                    dict[x.name] = x;
+                                    return dict;
+        }, {});
         var tileset_terrain   = tilesets_dict["Landscape"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
         var tileset_locations = tilesets_dict["Locations"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
         var tileset_system    = tilesets_dict["System"].imageFileName.match(String.raw`(\w*.png)`);     // regexed only file name, without path
         var data_terrain      = tileset_terrain[0].replace(".png", ".oldata");           // sets .oldata to have the same name as tileset image
         var data_locations    = tileset_locations[0].replace(".png", ".oldata");         // sets .oldata to have the same name as tileset image
 
+        // factions
+        var olf = "";
+        for (const kingdom_nb of Array(999).keys()) { // checks for kingdom registry, needs to have consecutive numbers
+            var kingdom_var = `kingdom_${kingdom_nb + 1}_name`
+            if (kingdom_var in map.properties()) {
+                olf = olf + `[kingdom.${kingdom_nb + 1}]`                          + "\n"; // header
+                olf = olf + "name = " + String.raw`"${map.property(kingdom_var)}"` + "\n";
+            } else {
+                break; // breaks when finds the gap
+            }
+        }
+        if ("Settlements" in tilesets_dict) {
+            var settlements = tilesets_dict["Settlements"].tiles;
+            for (const settlement of settlements) {
+                // checks if tile has data (required & optional)
+                if (("kingdom" in settlement.properties()) && ("tier" in settlement.properties()) && ("name" in settlement.properties())) {
+                    // checks if tile has properly set required data
+                    if ((settlement.property("kingdom") != 0) && (settlement.property("tier") != "")) {
+                        olf = olf + `[settlement.${settlement.id}]`                             + "\n";
+                        olf = olf + "kingdom = " + settlement.property("kingdom")               + "\n";
+                        olf = olf + "name    = " + String.raw`"${settlement.property('name')}"` + "\n";
+                        olf = olf + "tier    = " + String.raw`"${settlement.property('tier')}"` + "\n";
+                    }
+                }
+            }
+        }
+        if ("Settlements" in layers_dict) {
+            var layer = layers_dict["Settlements"]; // terrain
+            if (layer.isTileLayer) {
+                olf = olf + "[map]"           + "\n";
+                olf = olf + "settlements = [" + "\n";
+                for (var y = 0; y < layer.height; ++y) {
+                    olf = olf + "    [";
+                    for (var x = 0; x < layer.width; ++x)
+                        olf = olf + layer.cellAt(x, y).tileId + ",";
+                    olf = olf + "],\n";
+                }
+            }
+            olf = olf + "]\n";
+        }
+        if (olf.length > 0) {
+            var factionFile = new TextFile(baseName + ".olf", TextFile.WriteOnly); // writes .olf named samely as map
+            factionFile.write(olf);
+            factionFile.commit();
+        }
+
+        // .olm file contents
         var out = "";
         if ("start_coords" in map.properties()) { // optional
             out = out + "start_coordinates = " + "[" + map.property("start_coords") + "]\n";
+        }
+        if (olf.length > 0) { // if kingdoms are registered
+            out = out + "factions          = " + String.raw`"${pureName}.olf"` + "\n";
         }
         out = out + "tileset_terrain   = " + String.raw`"${tileset_terrain[0]}"` + "\n";   // for some reason `match` yields two same entries
         out = out + "tileset_locations = " + String.raw`"${tileset_locations[0]}"` + "\n"; // for some reason `match` yields two same entries
@@ -37,7 +93,7 @@ var olmMapFormat = {
         out = out + "data_locations    = " + String.raw`"${data_locations}"` + "\n";
         out = out + "terrain = [" + "\n";
 
-        var layer = map.layerAt(0); // terrain
+        var layer = layers_dict["Landscape"]; // terrain
         if (layer.isTileLayer) {
             for (var y = 0; y < layer.height; ++y) {
                 out = out + "    [";
@@ -50,7 +106,7 @@ var olmMapFormat = {
         out = out + "]\n";
         out = out + "locations = [" + "\n";
 
-        var layer = map.layerAt(1); // locations
+        var layer = layers_dict["Locations"]; // locations
         if (layer.isTileLayer) {
             for (var y = 0; y < layer.height; ++y) {
                 out = out + "    [";
@@ -60,11 +116,11 @@ var olmMapFormat = {
             }
         }
 
-        if (map.layerCount > 2) { // optionals
+        if ("Roads" in layers_dict) { // optionals
             out = out + "]\n";
             out = out + "roads = [" + "\n";
 
-            var layer = map.layerAt(2); // roads
+            var layer = layers_dict["Roads"]; // roads
             if (layer.isTileLayer) {
                 for (var y = 0; y < layer.height; ++y) {
                     out = out + "    [";

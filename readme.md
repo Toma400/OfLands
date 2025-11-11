@@ -21,3 +21,6 @@ The game is currently in early development. The most up-to-date conceptual doc c
 
 You can also see [changelog](changelog.md) depicting history of game's versions and features
 added by each.
+
+### Discord
+[![Discord](https://img.shields.io/badge/Discord-Join%20our%20server!-7289da.svg?longCache=true&style=for-the-badge)](https://discord.gg/GbTw9KqnrE)
