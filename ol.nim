@@ -26,10 +26,10 @@ let cur = getSectionValue(cfg, "", "cursor") == "true"
 
 let player = parseInt(getSectionValue(cfg, "", "player"))
 
-var mvp = newMap(olm_file      = getSectionValue(cfg, "", "map"),
-                 kingdoms      = initKingdoms(newKingdom(name   =          getSectionValue(cfg, "", "kingdom"),
-                                                         number = parseInt(getSectionValue(cfg, "", "player")))), # done explicitly because `player` may change
-                 starting_date = (
+var mvp = newMap(olm_file       = getSectionValue(cfg, "", "map"),
+                 player_kingdom = (nb: parseInt(getSectionValue(cfg, "", "player")),
+                                   nm: getSectionValue(cfg, "", "kingdom")),
+                 starting_date  = (
                               parseInt(getSectionValue(cfg, "", "year")),
                               parseInt(getSectionValue(cfg, "", "month")),
                               parseInt(getSectionValue(cfg, "", "day"))
@@ -50,7 +50,7 @@ proc gameInit() =
     loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 5 | grid
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
     # initialises game (may need to be changed when game saves are made, so it makes you fail the game when this is achieved post-init stage)
-    if mvp.kingdoms[player].locations.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
+    if mvp.kingdoms[player].settlems.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
         ses.mode = INIT
 
 proc turn() =
