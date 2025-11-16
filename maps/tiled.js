@@ -26,56 +26,74 @@ var olmMapFormat = {
                                     dict[x.name] = x;
                                     return dict;
         }, {});
+        var faction_count     = "factions_count" in map.properties() ? map.property("factions_count") : 0;
+        // TODO: make faction tileset optional!!!!!!
         var tileset_terrain   = tilesets_dict["Landscape"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
         var tileset_locations = tilesets_dict["Locations"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
+        var tileset_factions  = tilesets_dict["Factions"].imageFileName.match(String.raw`(\w*.png)`);   // regexed only file name, without path
         var tileset_system    = tilesets_dict["System"].imageFileName.match(String.raw`(\w*.png)`);     // regexed only file name, without path
         var data_terrain      = tileset_terrain[0].replace(".png", ".oldata");           // sets .oldata to have the same name as tileset image
         var data_locations    = tileset_locations[0].replace(".png", ".oldata");         // sets .oldata to have the same name as tileset image
 
         // factions
-        var olf = "";
-        for (const kingdom_nb of Array(999).keys()) { // checks for kingdom registry, needs to have consecutive numbers
-            var kingdom_var = `kingdom_${kingdom_nb + 1}_name`
-            if (kingdom_var in map.properties()) {
-                olf = olf + `[kingdom.${kingdom_nb + 1}]`                          + "\n"; // header
-                olf = olf + "name = " + String.raw`"${map.property(kingdom_var)}"` + "\n";
-            } else {
-                break; // breaks when finds the gap
+        if (faction_count > 0 && "Factions" in tilesets_dict) {
+            var olf           = ""; // output file string
+            var faction_tiles = tilesets_dict["Factions"].tiles;
+
+            for (let faction_ix = 0; faction_ix < faction_count; faction_ix++) {
+                var faction_tile = faction_tiles[faction_ix];
+                var faction_prop = faction_tile.properties();
+                olf = olf + `[kingdom.${faction_ix + 1}]`                          + "\n"; // header
+                if ("name" in faction_prop) {
+                    olf = olf + "name = " + String.raw`"${faction_tile.property('name')}"` + "\n";
+                }
             }
-        }
-        if ("Settlements" in tilesets_dict) {
-            var settlements = tilesets_dict["Settlements"].tiles;
-            for (const settlement of settlements) {
-                // checks if tile has data (required & optional)
-                if (("kingdom" in settlement.properties()) && ("tier" in settlement.properties()) && ("name" in settlement.properties())) {
-                    // checks if tile has properly set required data
-                    if ((settlement.property("kingdom") != 0) && (settlement.property("tier") != "")) {
-                        olf = olf + `[settlement.${settlement.id}]`                             + "\n";
-                        olf = olf + "kingdom = " + settlement.property("kingdom")               + "\n";
-                        olf = olf + "name    = " + String.raw`"${settlement.property('name')}"` + "\n";
-                        olf = olf + "tier    = " + String.raw`"${settlement.property('tier')}"` + "\n";
+//            for (const kingdom_nb of Array(999).keys()) { // checks for kingdom registry, needs to have consecutive numbers
+//                var kingdom_var = `kingdom_${kingdom_nb + 1}_name`
+//                if (kingdom_var in map.properties()) {
+//                    olf = olf + `[kingdom.${kingdom_nb + 1}]`                          + "\n"; // header
+//                    olf = olf + "name = " + String.raw`"${map.property(kingdom_var)}"` + "\n";
+//                } else {
+//                    break; // breaks when finds the gap
+//                }
+//            }
+            if ("Factions" in tilesets_dict) {
+                var settlements = tilesets_dict["Factions"].tiles;
+                for (const settlement of settlements) {
+                    if (settlement.id >= faction_count) { // skips faction registry
+                        // checks if tile has data (required & optional)
+                        var settlement_properties = settlement.properties();
+                        if (("kingdom" in settlement_properties) && ("tier" in settlement_properties) && ("name" in settlement_properties)) {
+                            // checks if tile has properly set required data
+                            if ((settlement.property("kingdom") != 0) && (settlement.property("tier") != "")) {
+                                olf = olf + `[settlement.${settlement.id}]`                             + "\n";
+                                olf = olf + "kingdom = " + settlement.property("kingdom")               + "\n";
+                                olf = olf + "name    = " + String.raw`"${settlement.property('name')}"` + "\n";
+                                olf = olf + "tier    = " + String.raw`"${settlement.property('tier')}"` + "\n";
+                            }
+                        }
                     }
                 }
             }
-        }
-        if ("Settlements" in layers_dict) {
-            var layer = layers_dict["Settlements"]; // terrain
-            if (layer.isTileLayer) {
-                olf = olf + "[map]"           + "\n";
-                olf = olf + "settlements = [" + "\n";
-                for (var y = 0; y < layer.height; ++y) {
-                    olf = olf + "    [";
-                    for (var x = 0; x < layer.width; ++x)
-                        olf = olf + layer.cellAt(x, y).tileId + ",";
-                    olf = olf + "],\n";
+            if ("Settlements" in layers_dict) {
+                var layer = layers_dict["Settlements"]; // terrain
+                if (layer.isTileLayer) {
+                    olf = olf + "[map]"           + "\n";
+                    olf = olf + "settlements = [" + "\n";
+                    for (var y = 0; y < layer.height; ++y) {
+                        olf = olf + "    [";
+                        for (var x = 0; x < layer.width; ++x)
+                            olf = olf + layer.cellAt(x, y).tileId + ",";
+                        olf = olf + "],\n";
+                    }
                 }
+                olf = olf + "]\n";
             }
-            olf = olf + "]\n";
-        }
-        if (olf.length > 0) {
-            var factionFile = new TextFile(baseName + ".olf", TextFile.WriteOnly); // writes .olf named samely as map
-            factionFile.write(olf);
-            factionFile.commit();
+            if (olf.length > 0) {
+                var factionFile = new TextFile(baseName + ".olf", TextFile.WriteOnly); // writes .olf named samely as map
+                factionFile.write(olf);
+                factionFile.commit();
+            }
         }
 
         // .olm file contents
@@ -88,6 +106,7 @@ var olmMapFormat = {
         }
         out = out + "tileset_terrain   = " + String.raw`"${tileset_terrain[0]}"` + "\n";   // for some reason `match` yields two same entries
         out = out + "tileset_locations = " + String.raw`"${tileset_locations[0]}"` + "\n"; // for some reason `match` yields two same entries
+        out = out + "tileset_factions  = " + String.raw`"${tileset_factions[0]}"` + "\n";  // for some reason `match` yields two same entries
         out = out + "tileset_system    = " + String.raw`"${tileset_system[0]}"` + "\n";    // for some reason `match` yields two same entries
         out = out + "data_terrain      = " + String.raw`"${data_terrain}"` + "\n";
         out = out + "data_locations    = " + String.raw`"${data_locations}"` + "\n";

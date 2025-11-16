@@ -17,9 +17,9 @@ FILES = [
     "tilesets/example.png",
     "tilesets/locs.oldata",
     "tilesets/locs.png",
-    "tilesets/ptr_locs.oldata", # temporary TES stuff
-    "tilesets/ptr_locs.png",    # temporary TES stuff
-    "tilesets/settlements.png", # not useful RIGHT NOW but will be
+    "tilesets/ptr_locs.oldata",  # temporary TES stuff
+    "tilesets/ptr_locs.png",     # temporary TES stuff
+    "tilesets/factions_ptr.png", # temporary TES stuff
     "tilesets/system.png",
     "OfLands.exe",
     "oflands.ini",

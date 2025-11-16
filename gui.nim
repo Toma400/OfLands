@@ -78,7 +78,7 @@ proc drawSidebar(map: Map) =
     # time
     printc(fmt"{map.time.day} {Month[map.time.month]} {map.time.year}, {map.time.hour}", x = H+TL*5, y = H-TL*2, 3)
 
-proc drawFocus (map: Map, ses: Session) =
+proc drawFocus (map: Map, ses: Session, player_nb: int) =
     let focus_padding = TL*4 # focus padding from -drawSidebar- adjusted to exclude frame
     useSpritesheet(XMap)
     setColor(0) # black
@@ -100,6 +100,11 @@ proc drawFocus (map: Map, ses: Session) =
             let owner = location.owner
             let name  = if owner in map.kingdoms: map.kingdoms[owner].name else: "Unowned"
             printc(name, x = H+TL*5, y = TL*10, 4)
+            if owner in map.kingdoms:
+                useSpritesheet(XFac)
+                sprs(owner - 1, x = H+focus_padding, y = TL*12, dw = 2, dh = 2) # draw faction banner in 2x scale
+            if owner == player_nb:
+                printc("Your location!", x = H+TL*5, y = TL*13, 4)
 
         elif tile_focused.settile.isSome:
             useSpritesheet(XSys)
@@ -112,6 +117,12 @@ proc drawFocus (map: Map, ses: Session) =
             let owner = settlement.knb
             let kname = if owner in map.kingdoms: map.kingdoms[owner].name else: "Unowned"
             printc(kname, x = H+TL*5, y = TL*10, 4)
+            if owner in map.kingdoms:
+                useSpritesheet(XFac)
+                sprs(owner - 1, x = H+focus_padding, y = TL*11, dw = 2, dh = 2) # draw faction banner in 2x scale
+            if owner == player_nb:
+                printc("Your settlement!", x = H+TL*5, y = TL*14, 4)
+
     let entity_count = getEntityList(tile_focused).len
     if entity_count > 0:
         useSpritesheet(XSys)
@@ -121,12 +132,12 @@ proc drawFocus (map: Map, ses: Session) =
     printc(tile_focused.name, x = H+TL*5, y = TL*1, 4) # name   | in the middle between top and focus window
     printc($ses.focus,        x = H+TL*5, y = TL*2, 3) # coords | in the middle below focus window
 
-proc drawGUI* (map: Map, ses: Session, ccursor: bool) =
+proc drawGUI* (map: Map, ses: Session, ccursor: bool, player_nb: int) =
     useSpritesheet(XGUI)
     drawSidebar(map)
     drawCursor(map, ses, ccursor)
     if ses.focus != (-1, -1):
-        drawFocus(map, ses)
+        drawFocus(map, ses, player_nb)
 
 proc drawGrid* () =
     useSpritesheet(XGrid)

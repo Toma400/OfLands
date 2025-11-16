@@ -40,18 +40,25 @@ proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
     registerPalettes(map = fmt"tilesets/{mvp.data.tterrain}",
                      loc = fmt"tilesets/{mvp.data.tlocs}",
+                     fac = fmt"tilesets/{mvp.data.tfacs}",
                      sys = fmt"tilesets/{mvp.data.tsys}",
                      gui = "gui/gui.png"
     )
     loadSpritesheet(XMap.ord,  fmt"tilesets/{mvp.data.tterrain}",  TL,  TL) # 1 | map
     loadSpritesheet(XLoc.ord,  fmt"tilesets/{mvp.data.tlocs}",     TL,  TL) # 2 | locations
-    loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 3 | gui
-    loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 4 | system
-    loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 5 | grid
+    loadSpritesheet(XFac.ord,  fmt"tilesets/{mvp.data.tfacs}",     TL,  TL) # 3 | factions
+    loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 4 | gui
+    loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 5 | system
+    loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 6 | grid
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
     # initialises game (may need to be changed when game saves are made, so it makes you fail the game when this is achieved post-init stage)
     if mvp.kingdoms[player].settlems.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
         ses.mode = INIT
+    # var settlement_count: int
+    # for _, k in mvp.kingdoms.pairs():
+    #     for i in k.settlems:
+    #         settlement_count += 1
+    # echo settlement_count
 
 proc turn() =
     passTime(mvp, ses, 12) # progresses hours 12 hours
@@ -86,7 +93,7 @@ proc gameUpdate(dt: float32) =
 proc gameDraw() =
     cls()
     drawMap(mvp)
-    drawGUI(mvp, ses, cur)
+    drawGUI(mvp, ses, cur, player)
     if grd: # checks if grid setting is set
         drawGrid()
 

@@ -29,6 +29,7 @@ type
   MapData* = object
     tterrain* : string                            # terrain tileset name
     tlocs*    : string                            # location tileset name
+    tfacs*    : string                            # faction tileset name
     tsys*     : string                            # system tileset name
     tdefs*    : OrderedTable[int, TilePrefab]     # tile definitions | index, TilePrefab object     | meant to be static reference/preset without edits
     ldefs*    : OrderedTable[int, LocationPrefab] # loc definitions  | index, LocationPrefab object | meant to be static reference/present without edits
@@ -102,11 +103,12 @@ proc parseLocationOLDATA (oldata_file: string): OrderedTable[int, LocationPrefab
 proc parseOLM (olm: TomlValueRef): MapData =
     # - olm : .olm file parsed by `newMap` into TomlValueRef object
     # check keys before we proceed
-    for k in ["tileset_terrain", "tileset_locations", "tileset_system", "data_terrain", "data_locations", "terrain"]:
+    for k in ["tileset_terrain", "tileset_locations", "tileset_factions", "tileset_system", "data_terrain", "data_locations", "terrain"]:
         if olm.hasKey(k) == false: raise newException(Exception, fmt"Map file doesn't have all required keys! Key missing: {k}")
 
     result.tterrain = olm["tileset_terrain"].getStr()
     result.tlocs    = olm["tileset_locations"].getStr()
+    result.tfacs    = olm["tileset_factions"].getStr()
     result.tsys     = olm["tileset_system"].getStr()
     var tdefs_path  = olm["data_terrain"].getStr()
     var ldefs_path  = olm["data_locations"].getStr()
