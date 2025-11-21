@@ -9,10 +9,10 @@ import questionable
 # nico specifics
 import nico
 # OL imports
+import core/render/colours
 import core/settlement
 import core/entity
 import kingdom
-import render
 import map
 
 const TL* = 32 # tile width/length

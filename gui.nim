@@ -4,10 +4,10 @@ import std/tables
 import std/math
 import questionable
 # OL imports
+import core/render/colours
 import core/settlement
 import core/entity
 import core/time
-import render
 import nico
 import game
 import map

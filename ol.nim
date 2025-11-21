@@ -7,9 +7,9 @@ import questionable
 import nico/backends/common
 import nico
 # OL imports
+import core/render/colours
 import core/time
 import kingdom
-import render
 import game
 import gui
 import map # only for `canExist`, remove if not needed
