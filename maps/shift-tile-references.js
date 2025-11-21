@@ -55,20 +55,23 @@ function shiftTileReferences(map, tileset, shiftBy, shiftFrom) {
     map.macro(`Shift tile references in "${tileset.name}" by ${shiftBy}`, function() {
         // Process tile layers
         forEachLayerInMap(map, function(layer) {
-            if (!layer || !layer.isTileLayer)
+            if (!layer || !layer.isTileLayer) {
                 return;
+            }
 
             const edit = layer.edit();
 
             eachTileCell(layer, (x, y) => {
                 const tile = layer.tileAt(x, y);
-                if (!tile || tile.tileset !== tileset)// || tile.id < shiftFrom)
+                if (!tile || tile.tileset !== tileset || tile.id < shiftFrom) {
                     return;
+                }
 
                 const newId = tile.id + shiftBy;
                 const newTile = tryGetNewTile(tileset, newId);
-                if (!newTile)
+                if (!newTile) {
                     return; // skip when outside valid range
+                }
 
                 const flags = layer.flagsAt(x, y); // preserve flips/rotation
                 edit.setTile(x, y, newTile, flags);
@@ -80,17 +83,20 @@ function shiftTileReferences(map, tileset, shiftBy, shiftFrom) {
 
         // Process tile objects on object layers
         forEachLayerInMap(map, function(layer) {
-            if (!layer || !layer.isObjectLayer)
+            if (!layer || !layer.isObjectLayer) {
                 return;
+            }
 
             for (const obj of layer.objects) {
-                if (!obj.tile || obj.tile.tileset !== tileset)// || tile.id < shiftFrom)
+                if (!obj.tile || obj.tile.tileset !== tileset || obj.tile.id < shiftFrom) {
                     continue;
+                }
 
                 const newId = obj.tile.id + shiftBy;
                 const newTile = tryGetNewTile(tileset, newId);
-                if (!newTile)
+                if (!newTile) {
                     continue; // skip when outside valid range
+                }
 
                 obj.tile = newTile;
                 objectsChanged++;
@@ -103,13 +109,11 @@ function shiftTileReferences(map, tileset, shiftBy, shiftFrom) {
         for (const tile of oldTiles.reverse()) {
             const newId = tile.id + shiftBy;
             const newTile = tryGetNewTile(tileset, newId);
-            tiled.log(`${tile.id} -> ${newId}`);
-            if (!newTile) {
-                tiled.log("Skipping!");
+            if (!newTile || tile.id < shiftFrom) { // todo: check for id could be earlier ig
                 continue; // skip when outside valid range
             }
 
-            tiled.log("! We are past skip!");
+            tiled.log(`${tile.id} -> ${newId}`);
             // remove & copy custom properties
             for (const prop in newTile.properties()) {
                 tiled.log(prop);
