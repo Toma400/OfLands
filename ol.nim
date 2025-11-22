@@ -1,8 +1,11 @@
+import std/private/osdirs
 import std/strformat
 import std/strutils
+import std/sequtils
 import std/parsecfg
 import std/options
 import std/tables
+import std/random
 import questionable
 import nico/backends/common
 import nico
@@ -15,6 +18,7 @@ import game
 import gui
 import map # only for `canExist`, remove if not needed
 
+randomize()
 ###########################################
 const GAME_NAME = "Of Lands"
 const GAME_VER  = "0.1.0"
@@ -27,12 +31,23 @@ let cur = getSectionValue(cfg, "", "cursor") == "true"
 let roa = getSectionValue(cfg, "", "roads")  == "true" # TODO: EXPERIMENTAL
 
 let player = parseInt(getSectionValue(cfg, "", "player"))
+let map_fl = getSectionValue(cfg, "", "map")
+let map_nm = replace(map_fl, ".olm", "")
 
-var mvp = newMap(olm_file       = getSectionValue(cfg, "", "map"),
-                 player_kingdom = (nb: parseInt(getSectionValue(cfg, "", "player")),
+var mvp = newMap(olm_file       = map_fl,
+                 player_kingdom = (nb: player,
                                    nm: getSectionValue(cfg, "", "kingdom")),
                  )
 var ses = newSession()
+
+# TODO: MUSIC!!!
+# let music  = if dirExists(fmt"music/{map_nm}"): toSeq(walkFiles(fmt"music/{map_nm}/*.ogg")) else: toSeq(walkFiles(fmt"music/*.ogg"))
+# var mcount = 0
+# for song in music:
+#     if mcount < 61: # indexes 0..60
+#         loadMusic(mcount, song)
+#         mcount += 1
+#     else: break
 
 proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
@@ -90,6 +105,10 @@ proc gameUpdate(dt: float32) =
             ses.bdb = -1
     if roa:
         updateRoads(mvp)
+    # TODO: MUSIC!!
+    # if mcount > 0: # if music is available
+    #     if getMusic(0) == -1: # play new music if nothing is playing
+    #         music(0, rand(0..mcount), loop=0)
 
 proc gameDraw() =
     cls()

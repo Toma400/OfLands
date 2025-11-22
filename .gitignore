@@ -6,6 +6,7 @@
 /maps/Settlements.tsx
 /maps/ol.tiled-project
 /maps/ol.tiled-session
+/music/*
 /tilesets/example.ase
 OfLands.exe
 OfLandsConfigurator.exe

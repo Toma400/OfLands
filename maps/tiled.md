@@ -11,6 +11,7 @@ Table of contents:
   - [Landscape](#----landscape----)
   - [Locations](#----locations----)
   - [Settlements](#----settlements----)
+  - [Factions](#----factions----)
 - [Additional metadata](#additional-metadata)
 
 ### Setting up layers and tilesets
@@ -42,20 +43,28 @@ tile). Index 1 (second tile) is dirt road, while index 2 (third tile) is stone r
 You can use some placeholder icons to visualise roads placed.
 
 #### --- Factions and settlements ---
-To add factions, you need to open map properties (`Map > Map Properties` in menu).
-Creating faction is as simple as just adding new string property named `kingdom_x_name`,
-with `x` replaced by numbers from 1 up. The value of the property will be faction's name.  
-It's worth adding however that adding multiple factions, their numbers should be always
-increased by one - if there's a number gap in between factions, the ones after the gap
-won't be exported.  
-Faction number (`x`) will be important.
+Factions are registered in two steps: first, you should state the amount of registered
+kingdoms in map properties. Head to `Map > Map Properties` in menu, and add property
+`factions_count` (of integer type) - the number stated there will make game check for
+this number of factions on faction tileset.
 
-To create settlements, you need to create `Settlements` layer and tileset. Layer controls
-placement of settlements, while tileset defines data.  
-Once created, initialise all needed properties for the tile you want to be settlement
-marker (you can find properties in [this subsection](#----settlements----)). You can
-use some placeholder icons to mark settlements, as the images of settlement tiles won't
-be used.
+Next step is making tileset, shared between faction registry and settlement one. It
+should be named `Factions` and contain at least amount of tiles equal to faction count
+set above.  
+Faction registry works upon checking amount of tiles equal to this count - iterating
+over tile's data and art, respectively for faction's information and icon visible in-game.
+
+Any tiles past that count can be used freely for settlement markers - they do not need
+to have any art, as the marker only matters by its ID placed on map and data stored on
+tile. Therefore it is important to also create `Settlements` layer, where settlement
+markers can be put.  
+This is a good opportunity to use placeholder icons for the settlement marker, as it can
+help you with indicating what particular marker represents. It is however crucial to
+include all required properties (which can be found [here](#----settlements----)) of
+settlement marker for it to be recognised as settlement and registered by the game.
+
+Faction number required by settlement is faction's index + 1 (so, it starts from
+number 1 (being index 0 on tileset)).
 
 ### Tilesets metadata
 Making tilesets, you can use Tiled's metadata feature to export .oldata and .olf files.
@@ -91,6 +100,12 @@ Depending on tileset type, it will require you to have different metadata to all
   - `town`
   - `city`
   - `polis`
+
+#### --- Factions ---
+- `name` _: string_ - name of the faction
+- `description` _: string_ - description of what the faction is (optional)
+- `start_coords` _: string, string_ - two coordinates indicating starting position when
+                                      playing this particular faction (optional) 
 
 ### Additional metadata
 Additionally, you can set map's starting coordinates by adding `start_coords` property

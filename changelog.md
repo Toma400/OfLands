@@ -22,11 +22,14 @@ Versions:
 - Added entities system
 - Added basic factions system recognised and stored by the map
   - Locations, settlements and entities affiliated are marked accurately
-  - Factions can be initialised with custom `.olf` file and joined by using
-    `.ini` file
+  - Factions can be initialised with custom `.olf` file and joined by using Configurator
+  - Factions have their unique banners
 - Added settlement system
-  - Settlements have unique icon, depending on their tier 
+  - Settlements have unique icon, depending on their tier and location
   - Settlements can be initialised with custom `.olf` file
+- Added road system
 - Added turn system
 - Added initial starting mode, which requires you to drop settler on some 
   walkable tile (if you don't have settlement)
+- Included Configurator to serve as placeholder starting tool before proper "new game"
+  menu is made
