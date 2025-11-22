@@ -6,8 +6,8 @@ FILES = [
     "gui/font.png.dat",
     "gui/grid.png",
     "gui/gui.png",
-    "maps/default.olm",    # those to be replaced later
-    "maps/default2.olm",
+    # TODO: removed so players can't break their game! "maps/default.olm",    # those to be replaced later
+    # TODO: removed so players can't break their game! "maps/default2.olm",
     "maps/tamriel.olm",        # temporary TES stuff
     "maps/tamriel.olf",        # temporary TES stuff
     # "maps/summerset.olm",
@@ -22,6 +22,7 @@ FILES = [
     "tilesets/factions_ptr.png", # temporary TES stuff
     "tilesets/system.png",
     "OfLands.exe",
+    "OfLandsConfigurator.exe",   # probably temporary
     "oflands.ini",
     "SDL2.dll"
 ]

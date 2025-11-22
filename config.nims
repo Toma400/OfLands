@@ -1,0 +1,3 @@
+--d:release
+--app:gui
+--out:OfLandsConfigurator.exe
