@@ -117,11 +117,21 @@ proc parseOLM (olm: TomlValueRef): MapData =
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
     result.tdefs = parseTerrainOLDATA(tdefs_path)
     result.ldefs = parseLocationOLDATA(ldefs_path)
+    # road mapping
+    var roads_mapping: Table[tuple[x, y: int], int]
+    proc getRoad (mapping: Table[tuple[x, y: int], int], coord: tuple[x, y: int]): int =
+        if coord in mapping: return mapping[coord]
+        else:                return 0
+    if olm.hasKey("roads"):
+        for y, row in olm["roads"].getElems().pairs:
+            for x, ix in row.getElems().pairs():
+                # ix = road index; x/y = coordinates
+                if ix.getInt() > 0: roads_mapping[(x, y)] = ix.getInt()
     # tile mapping
     for y, row in olm["terrain"].getElems().pairs:
         for x, ix in row.getElems().pairs:
             # ix = tile index; x/y = coordinates
-            result.mapping[(x, y)] = newTile(result.tdefs, ix.getInt(), (x, y))
+            result.mapping[(x, y)] = newTile(result.tdefs, ix.getInt(), (x, y), getRoad(roads_mapping, (x, y)))
             if result.size[1] == 0: # sets itself only once
                 result.size[0] += 1
         result.size[1] += 1
@@ -147,15 +157,14 @@ proc parseSettlements (distribution: TomlValueRef): OrderedTable[int, seq[tuple 
                     result[ix.getInt()].add((x, y))
                 else: result[ix.getInt()] = @[(x, y)]
 
-proc parseFactions (ffile: string, map: var Map, player_k_nb: int, player_k_nm: string): OrderedTable[int, Kingdom] =
+proc parseFactions* (ffile: string, map: var Map, player_k_nb: int, player_k_nm: string): OrderedTable[int, Kingdom] =
     # parses .olf file and creates table of kingdoms
     # if player number doesn't match existing kingdom, default one (`def`) is made
-    let pix = if player_k_nb > 0: player_k_nb else: 1 # checks for positive number
     let def = newKingdom(name   = player_k_nm,
-                         number = pix)
+                         number = player_k_nb)
     # ---
     if ffile == "" or not fileExists(Path(fmt"maps/{ffile}")):
-        result[pix] = def
+        result[player_k_nb] = def
         return result
     else:
         let olf = parseFile(fmt"maps/{ffile}")
@@ -164,7 +173,8 @@ proc parseFactions (ffile: string, map: var Map, player_k_nb: int, player_k_nm: 
                 let ix    = parseInt(index)
                 let kdata = olf["kingdom"][index]
                 # data
-                let knm = if kdata.hasKey("name"): kdata["name"].getStr() else: ""
+                let knm = if kdata.hasKey("name"):        kdata["name"].getStr()        else: ""
+                let kds = if kdata.hasKey("description"): kdata["description"].getStr() else: ""
                 var kst = (0, 0) # default
                 if kdata.hasKey("start_coordinates"):
                     let coords = kdata["start_coordinates"].getElems()
@@ -173,7 +183,8 @@ proc parseFactions (ffile: string, map: var Map, player_k_nb: int, player_k_nm: 
 
                 result[ix] = newKingdom(name   = knm,
                                         number = ix,
-                                        start  = kst)
+                                        start  = kst,
+                                        descr  = kds)
 
             if olf.hasKey("map") and olf.hasKey("settlement"):
                 if olf["map"].hasKey("settlements"):
@@ -194,10 +205,10 @@ proc parseFactions (ffile: string, map: var Map, player_k_nb: int, player_k_nm: 
                                     add(tiles_occupied, tile_coords)
                                 addSettlement(map, tiles_occupied, result[knb], snm, str)
 
-            if pix in result:
+            if player_k_nb in result:
                 return result
         # # "else" for no 'kingdom' key or player not being registered is handled below
-    result[pix] = def
+    result[player_k_nb] = def
 
     # TODO! SCAN FOR CITIES COULD FIRST GATHER CITIES TOGETHER, as in:
     # let table = emptyTable[int, seq[tuple (x, y: int)]]
@@ -216,6 +227,18 @@ proc parseFactions (ffile: string, map: var Map, player_k_nb: int, player_k_nm: 
     #        seq.add(newSettlement(c)
     #     registerSettlement(data = data, coords = seq)
 
+proc parseDate (olm: TomlValueRef): tuple[year, month, day, hour: int] =
+    result.hour = 1 # default hour no matter the settings
+    if olm.hasKey("start_date"):
+        let dates = olm["start_date"].getElems()
+        if len(dates) >= 3:
+            return (year: dates[0].getInt(), month: dates[1].getInt(), day: dates[2].getInt(), hour: 1)
+        elif len(dates) == 2:
+            return (year: dates[0].getInt(), month: dates[1].getInt(), day: 1,                 hour: 1)
+        elif len(dates) == 1:
+            return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: 1)
+    return (year: 1, month: 1, day: 1, hour: 1)
+
 proc getInitialCoords (olm: TomlValueRef, p_kingdom: Kingdom): (int, int) =
     if p_kingdom.start != (0, 0):
         return p_kingdom.start
@@ -225,20 +248,21 @@ proc getInitialCoords (olm: TomlValueRef, p_kingdom: Kingdom): (int, int) =
             return (coords[0].getInt(), coords[1].getInt())
     return (0, 0)
 
-proc getFactionFile (olm: TomlValueRef): string =
+proc getFactionFile* (olm: TomlValueRef): string =
     if olm.hasKey("factions"):
         return olm["factions"].getStr()
     return "" # aka "no file provided, start with only player"
 
-proc newMap* (olm_file: string, player_kingdom: tuple[nb: int, nm: string], starting_date: (int, int, int)): Map =
+proc newMap* (olm_file: string, player_kingdom: tuple[nb: int, nm: string]): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
     let olm         = parseFile(fmt"maps/{olm_file}")
+    let pix         = if player_kingdom.nb > 0: player_kingdom.nb else: 1 # checks for positive number
 
     result.data     = parseOLM(olm)
-    result.kingdoms = parseFactions(getFactionFile(olm), result, player_kingdom.nb, player_kingdom.nm)
-    result.move     = getInitialCoords(olm, result.kingdoms[player_kingdom.nb])
-    result.time     = (year: starting_date[0], month: starting_date[1], day: starting_date[2], hour: 1)
+    result.kingdoms = parseFactions(getFactionFile(olm), result, pix, player_kingdom.nm)
+    result.move     = getInitialCoords(olm, result.kingdoms[pix])
+    result.time     = parseDate(olm)
     if result.time.year < 1 or result.time.month < 1 or result.time.day < 1:
         raise newException(Exception, fmt"Game has incorrect date set. Date needs every value (year/month/day) be positive number!")
     if len(result.data.mapping) < MV*MV: # temporary measure, we will eventually need to just center the map and adjust it to size in -drawMap-
@@ -252,18 +276,24 @@ proc drawMap* (map: Map) =
             let tile_drawn   = map.data.mapping[moved_coords]
             useSpritesheet(XMap)
             spr(tile_drawn.index, tile * TL, row * TL)
+            # road drawing
+            if map.data.mapping[moved_coords].road > 0 and map.data.mapping[moved_coords].roadch:
+                useSpritesheet(XSys)
+                for road_piece in map.data.mapping[moved_coords].roaddraw:
+                    spr(road_piece, tile * TL, row * TL)
+            #     discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
             if tile_drawn.location.isSome:
                 useSpritesheet(XLoc)
                 spr((!tile_drawn.location).index, tile * TL, row * TL)
             elif tile_drawn.settile.isSome:
                 useSpritesheet(XSys)
+                if tile_drawn.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
+                    spr(5, tile * TL, row * TL)
                 spr((!tile_drawn.settile).settlem.tier.ord + 1, tile * TL, row * TL) # TODO: temporary!
             let entity_count = getEntityList(tile_drawn).len
             if entity_count > 0:
                 useSpritesheet(XSys)
                 spr(getEntityList(tile_drawn)[entity_count-1].role.ord, tile * TL, row * TL) # uses last entity that moved onto tile
-            # if map.data.mapping[moved_coords].road > 0:
-            #     discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
 
 proc moveMap* (map: var Map, shift: (int, int), dt: float32) =
     # moves the starting coordinates if the boundaries are not outside 0..map_size range
