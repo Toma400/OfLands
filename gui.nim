@@ -87,6 +87,12 @@ proc drawFocus (map: Map, ses: Session, player_nb: int) =
     let tile_focused = map.data.mapping[ses.focus]
     sprs(tile_focused.index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
 
+    # road drawing
+    if tile_focused.road > 0 and tile_focused.roadch:
+        useSpritesheet(XSys)
+        for road_piece in tile_focused.roaddraw:
+            sprs(road_piece, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
+
     # location
     # IMPORTANT: needs to also be updated in `game.nim` render
     if hasObject(tile_focused):
@@ -109,6 +115,8 @@ proc drawFocus (map: Map, ses: Session, player_nb: int) =
         elif tile_focused.settile.isSome:
             useSpritesheet(XSys)
             let settlement = (!tile_focused.settile).settlem
+            if tile_focused.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
+                sprs(5, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
             sprs(settlement.tier.ord + 1, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # todo: SETTLEMENT_TIER.ord is temporary!
             # settlement data
             printc($settlement.tier, x = H+TL*5, y = TL*7, 4) # settlement tier | below coordinates

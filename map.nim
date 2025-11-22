@@ -10,6 +10,8 @@ import kingdom
 export EntityRole # exports so `addEntity` works from elsewhere
 
 type
+  Routes* = tuple[L, LU, U, RU, R, RD, D, LD: int]
+  # route data of nearby tiles | L = left, U = up, R = right, D = down
   TileBase* = enum # used for location building conditions (see proc `canExist`) and traversability (in the future/connected with roads)
     LAND
     WATER
@@ -30,7 +32,10 @@ type
     settile*  : ?SettlementTile
     entities  : seq[Entity]  # private so it can't be accessed without proper handling (adding both to Tile and Kingdom)
     # road_ac*  : RoadAccess # road accessibility (left, top, right, bottom)
-    # road*     : int        # whether tile has road (0 - none, 1 - dirt, 2 - rock)
+    road*     : int          # whether tile has road (0 - none, 1 - dirt, 2 - rock)
+    roadch*   : bool         # whether tile was checked initially by `updateRoads`
+    routes*   : Routes       # data of nearby tiles
+    roaddraw* : seq[int]     # seq of roads that are meant to be drawn
     # road_cnn* : RoadAccess # whether nearby tiles (left, top, right, bottom) have road to connect to
     #[ 'singleton' fields
     road     | not-bool because type can be used // also road connections (that gets updated when new road is made, but set up during initial tile creation*)
@@ -60,7 +65,7 @@ proc newTilePrefab* (tbase: string, mv_cost: int, tname: string = ""): TilePrefa
     result.mov_ct = mv_cost
     # result.road_ac = road_ac
 
-proc newTile* (tp: TilePrefab, ix: int, coords: tuple[x, y: int]): Tile = #, road: int): Tile =
+proc newTile* (tp: TilePrefab, ix: int, coords: tuple[x, y: int], road: int = 0): Tile = #, road: int): Tile =
     # converter to allow for tile to have dynamic data under exported struct
     result.index    = ix
     result.name     = tp.name
@@ -69,15 +74,18 @@ proc newTile* (tp: TilePrefab, ix: int, coords: tuple[x, y: int]): Tile = #, roa
     result.mov_ct   = tp.mov_ct
     result.location = Location.none       # set later
     result.settile  = SettlementTile.none # set later
-    result.entities = newSeq[Entity]() # empty, use `addEntity()` proc to fill
+    result.entities = newSeq[Entity]()    # empty, use `addEntity()` proc to fill
+    result.road     = road                # 0 = no road; 1 = dirt road; 2 = rock road
+    result.roadch   = false               # TODO: if this becomes axed field (e.g. because of different way to calculate), do the same
+    result.routes   = (0, 0, 0, 0, 0, 0, 0, 0) # default value, also TODO
+    result.roaddraw = newSeq[int]()       # empty as default to be overwritten later when `roadch` is marked, also TODO
     #result.road_ac = tp.road_ac
-    #result.road    = road       # 0 = no road; 1 = dirt road; 2 = rock road
 
-proc newTile* (oldata: OrderedTable[int, TilePrefab], ix: int, coords: tuple[x, y: int]): Tile =
+proc newTile* (oldata: OrderedTable[int, TilePrefab], ix: int, coords: tuple[x, y: int], road: int = 0): Tile =
     # converted that yields singular tile data from TilePrefab table
     if ix in oldata:
-        return newTile(oldata[ix], ix, coords)#, 0) # todo: 0 is temporary
-    return newTile(defaultTilePrefab(), ix, coords)#, 0) # as above
+        return newTile(oldata[ix], ix, coords, road)#, 0) # todo: 0 is temporary
+    return newTile(defaultTilePrefab(), ix, coords, road)#, 0) # as above
 
 proc hasObject* (t: Tile): bool =
     # checks whether tile is occupied by location or settlement

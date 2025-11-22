@@ -8,6 +8,7 @@ import nico/backends/common
 import nico
 # OL imports
 import core/render/colours
+import core/roads
 import core/time
 import kingdom
 import game
@@ -23,17 +24,14 @@ const LICENSE   = "All Rights Reserved (C) Tomasz Stępień 2025"
 let cfg = loadConfig("oflands.ini")
 let grd = getSectionValue(cfg, "", "grid")   == "true"
 let cur = getSectionValue(cfg, "", "cursor") == "true"
+let roa = getSectionValue(cfg, "", "roads")  == "true" # TODO: EXPERIMENTAL
 
 let player = parseInt(getSectionValue(cfg, "", "player"))
 
 var mvp = newMap(olm_file       = getSectionValue(cfg, "", "map"),
                  player_kingdom = (nb: parseInt(getSectionValue(cfg, "", "player")),
                                    nm: getSectionValue(cfg, "", "kingdom")),
-                 starting_date  = (
-                              parseInt(getSectionValue(cfg, "", "year")),
-                              parseInt(getSectionValue(cfg, "", "month")),
-                              parseInt(getSectionValue(cfg, "", "day"))
-                 ))
+                 )
 var ses = newSession()
 
 proc gameInit() =
@@ -54,6 +52,7 @@ proc gameInit() =
     # initialises game (may need to be changed when game saves are made, so it makes you fail the game when this is achieved post-init stage)
     if mvp.kingdoms[player].settlems.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
         ses.mode = INIT
+    #updateRoads(addr mvp)
     # var settlement_count: int
     # for _, k in mvp.kingdoms.pairs():
     #     for i in k.settlems:
@@ -89,6 +88,8 @@ proc gameUpdate(dt: float32) =
             let loc_pf = mvp.data.ldefs[ses.bdb]
             discard addLocation(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], loc_pf, ses.bdb)
             ses.bdb = -1
+    if roa:
+        updateRoads(mvp)
 
 proc gameDraw() =
     cls()
