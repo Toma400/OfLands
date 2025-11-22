@@ -165,9 +165,15 @@ proc parseFactions (ffile: string, map: var Map, player_k_nb: int, player_k_nm: 
                 let kdata = olf["kingdom"][index]
                 # data
                 let knm = if kdata.hasKey("name"): kdata["name"].getStr() else: ""
+                var kst = (0, 0) # default
+                if kdata.hasKey("start_coordinates"):
+                    let coords = kdata["start_coordinates"].getElems()
+                    if len(coords) == 2:
+                        kst = (coords[0].getInt(), coords[1].getInt())
 
                 result[ix] = newKingdom(name   = knm,
-                                        number = ix)
+                                        number = ix,
+                                        start  = kst)
 
             if olf.hasKey("map") and olf.hasKey("settlement"):
                 if olf["map"].hasKey("settlements"):
@@ -210,7 +216,9 @@ proc parseFactions (ffile: string, map: var Map, player_k_nb: int, player_k_nm: 
     #        seq.add(newSettlement(c)
     #     registerSettlement(data = data, coords = seq)
 
-proc getInitialCoords (olm: TomlValueRef): (int, int) =
+proc getInitialCoords (olm: TomlValueRef, p_kingdom: Kingdom): (int, int) =
+    if p_kingdom.start != (0, 0):
+        return p_kingdom.start
     if olm.hasKey("start_coordinates"):
         let coords = olm["start_coordinates"].getElems()
         if len(coords) == 2:
@@ -228,8 +236,8 @@ proc newMap* (olm_file: string, player_kingdom: tuple[nb: int, nm: string], star
     let olm         = parseFile(fmt"maps/{olm_file}")
 
     result.data     = parseOLM(olm)
-    result.move     = getInitialCoords(olm)
     result.kingdoms = parseFactions(getFactionFile(olm), result, player_kingdom.nb, player_kingdom.nm)
+    result.move     = getInitialCoords(olm, result.kingdoms[player_kingdom.nb])
     result.time     = (year: starting_date[0], month: starting_date[1], day: starting_date[2], hour: 1)
     if result.time.year < 1 or result.time.month < 1 or result.time.day < 1:
         raise newException(Exception, fmt"Game has incorrect date set. Date needs every value (year/month/day) be positive number!")

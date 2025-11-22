@@ -17,6 +17,7 @@ type
     locations* : seq[tuple[x, y: int]] # coordinates to `MapData.mapping` Tile
     entities*  : seq[Entity]
     settlems*  : seq[Settlement]
+    start*     : tuple[x, y: int]      # initial coordinates kingdom starts in
   LocationPrefab* = object # immutable variant used before instance is made
     name*  : string
     bcond* : BuildingConditions
@@ -44,10 +45,11 @@ proc getBuildingCondition* (id: string): BuildingConditions =
       of "all":       return ALL
       else:           return NONE
 
-proc newKingdom* (name: string, number: int): Kingdom =
+proc newKingdom* (name: string, number: int, start: tuple[x, y: int] = (0, 0)): Kingdom =
     result.name      = name
     result.number    = number
     result.locations = newSeq[(int, int)]()
+    result.start     = start
 
 proc defaultLocationPrefab* (): LocationPrefab =
     # default values; used when there's no data available | bcond NONE should remove it from game during map parse
