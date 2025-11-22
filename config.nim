@@ -117,6 +117,7 @@ cb_facs.onChange = proc (event: ComboBoxChangeEvent) =
 
 bt_save.onClick = proc (event: ClickEvent) =
     saveConfig()
+    quit()
 
 bt_svrn.onClick = proc (event: ClickEvent) =
     saveConfig()

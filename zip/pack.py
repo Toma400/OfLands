@@ -13,7 +13,7 @@ FILES = [
     # "maps/summerset.olm",
     "maps/tiled.js",
     "maps/tiled.md",
-    "music",                   # pure folder!
+    #"music",                   # pure folder!?
     # INCLUDE `tamriel` soundtrack when music works!
     "tilesets/example.oldata",
     "tilesets/example.png",
