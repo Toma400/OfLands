@@ -317,7 +317,7 @@ tbase = "land"
 [tile.80]
 mv_cost = 20
 name = "Frozen Lake"
-tbase = "water"
+tbase = "land"
 [tile.81]
 mv_cost = 20
 name = "Shore"

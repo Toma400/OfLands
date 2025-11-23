@@ -125,8 +125,9 @@ var olmMapFormat = {
         if (layer.isTileLayer) {
             for (var y = 0; y < layer.height; ++y) {
                 out = out + "    [";
-                for (var x = 0; x < layer.width; ++x)
+                for (var x = 0; x < layer.width; ++x) {
                     out = out + layer.cellAt(x, y).tileId + ",";
+                }
                 out = out + "],\n";
             }
         }
@@ -138,8 +139,9 @@ var olmMapFormat = {
         if (layer.isTileLayer) {
             for (var y = 0; y < layer.height; ++y) {
                 out = out + "    [";
-                for (var x = 0; x < layer.width; ++x)
+                for (var x = 0; x < layer.width; ++x) {
                     out = out + layer.cellAt(x, y).tileId + ",";
+                }
                 out = out + "],\n";
             }
         }
@@ -152,8 +154,14 @@ var olmMapFormat = {
             if (layer.isTileLayer) {
                 for (var y = 0; y < layer.height; ++y) {
                     out = out + "    [";
-                    for (var x = 0; x < layer.width; ++x)
-                        out = out + layer.cellAt(x, y).tileId + ",";
+                    for (var x = 0; x < layer.width; ++x) {
+                        var tile_id = layer.cellAt(x, y).tileId;
+                        if (tile_id < 3) { // safeguard for map to never go above allowed -1..2 index
+                            out = out + tile_id + ",";
+                        } else {
+                            out = out + -1 + ",";
+                        }
+                    }
                     out = out + "],\n";
                 }
             }

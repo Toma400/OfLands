@@ -93,6 +93,7 @@ window.add(main)
 
 # initial values configuration
 cb_maps.index    = find(maps, fmt"maps\{map_nm}")
+cb_facs.index    = if parseInt(getSectionValue(cfg, "", "player")) <= len(cb_facs.options): parseInt(getSectionValue(cfg, "", "player")) - 1 else: 0
 ch_road.checked  = getSectionValue(cfg, "", "roads")  == "true"
 ch_curs.checked  = getSectionValue(cfg, "", "cursor") == "true"
 tb_facs.editable = false
