@@ -21,6 +21,9 @@ type
     name   : string
     tbase  : TileBase
     mov_ct : int      # movement cost (base modifier)
+    # winter data
+    w_ix   : int
+    w_mv   : int
   #  road_ac : RoadAccess # road accessibility (left, top, right, bottom)
   Tile* = object
     index*    : int          # terrain tile index
@@ -31,6 +34,9 @@ type
     location* : ?Location
     settile*  : ?SettlementTile
     entities  : seq[Entity]  # private so it can't be accessed without proper handling (adding both to Tile and Kingdom)
+    # winter data
+    wint_ix*  : int # winter tile index
+    wint_mv*  : int # winter movement cost
     # road_ac*  : RoadAccess # road accessibility (left, top, right, bottom)
     road*     : int          # whether tile has road (0 - none, 1 - dirt, 2 - rock)
     roadch*   : bool         # whether tile was checked initially by `updateRoads`
@@ -59,10 +65,12 @@ proc defaultTilePrefab* (): TilePrefab =
     result.mov_ct = 0
     # result.road_ac = (true, true, true, true)
 
-proc newTilePrefab* (tbase: string, mv_cost: int, tname: string = ""): TilePrefab = #, road_ac: RoadAccess): TilePrefab =
+proc newTilePrefab* (tbase: string, mv_cost: int, w_ix: int, w_mv: int, tname: string = ""): TilePrefab = #, road_ac: RoadAccess): TilePrefab =
     result.name   = tname
     result.tbase  = getTileBase(tbase)
     result.mov_ct = mv_cost
+    result.w_ix   = w_ix
+    result.w_mv   = w_mv
     # result.road_ac = road_ac
 
 proc newTile* (tp: TilePrefab, ix: int, coords: tuple[x, y: int], road: int = 0): Tile = #, road: int): Tile =
@@ -79,6 +87,10 @@ proc newTile* (tp: TilePrefab, ix: int, coords: tuple[x, y: int], road: int = 0)
     result.roadch   = false               # TODO: if this becomes axed field (e.g. because of different way to calculate), do the same
     result.routes   = (0, 0, 0, 0, 0, 0, 0, 0) # default value, also TODO
     result.roaddraw = newSeq[int]()       # empty as default to be overwritten later when `roadch` is marked, also TODO
+    result.wint_ix  = if tp.w_ix == -1: ix        else: tp.w_ix
+    result.wint_mv  = if tp.w_mv == -1: tp.mov_ct else: tp.w_mv # TODO: MV SHOULD BE NOT THE TILE WE HAVE PREFAB OF, BUT ONE WITH tp.w_ix!! (needs Table for this)
+                                                                # todo: ...but this also means we would need to run this after we initiate all tiles?
+                                                                # todo: ...so maybe we would need other value to indicate temporary tile? (like -2 or whatever?)
     #result.road_ac = tp.road_ac
 
 proc newTile* (oldata: OrderedTable[int, TilePrefab], ix: int, coords: tuple[x, y: int], road: int = 0): Tile =

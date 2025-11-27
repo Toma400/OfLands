@@ -6,14 +6,17 @@ tbase = "water"
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 81
 [tile.2]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 82
 [tile.3]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 83
 [tile.4]
 mv_cost = -1
 name = "Rock"
@@ -22,146 +25,182 @@ tbase = "water"
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 85
 [tile.6]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.7]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 87
 [tile.9]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 89
 [tile.10]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 90
 [tile.11]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 91
 [tile.12]
 mv_cost = 25
 name = "Forest"
 tbase = "land"
+winter_tile = 88
 [tile.13]
 mv_cost = 15
 name = "Meadow"
 tbase = "land"
+winter_tile = 84
 [tile.14]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 106
 [tile.15]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 107
 [tile.16]
 mv_cost = 25
 name = "Forest"
 tbase = "land"
+winter_tile = 88
 [tile.17]
 mv_cost = 20
 name = "Hill"
 tbase = "land"
+winter_tile = 115
 [tile.18]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 110
 [tile.19]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 111
 [tile.20]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 78
 [tile.21]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 81
 [tile.22]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 82
 [tile.23]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 83
 [tile.24]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 79
 [tile.25]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 85
 [tile.26]
 mv_cost = 15
 name = "Lake"
 tbase = "water"
+winter_tile = 80
 [tile.27]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 87
 [tile.28]
 mv_cost = 15
 name = "Island"
 tbase = "land"
+winter_tile = 113
 [tile.29]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 89
 [tile.30]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 90
 [tile.31]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 91
 [tile.32]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 81
 [tile.33]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 83
 [tile.34]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 81
 [tile.35]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 83
 [tile.36]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 89
 [tile.37]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 91
 [tile.38]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 89
 [tile.39]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 91
 [tile.40]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 106
 [tile.41]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 107
 [tile.42]
 mv_cost = 20
 name = "Shore"
@@ -174,10 +213,12 @@ tbase = "land"
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 110
 [tile.45]
 mv_cost = 15
 name = "Beach"
 tbase = "land"
+winter_tile = 111
 [tile.46]
 mv_cost = 20
 name = "Shore"
@@ -366,58 +407,72 @@ tbase = "land"
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.93]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.94]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.95]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.96]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.97]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.98]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.99]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.100]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.101]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.102]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.103]
 mv_cost = 15
 name = "Grassland"
 tbase = "land"
+winter_tile = 86
 [tile.104]
 mv_cost = 20
 name = "Snow"
 tbase = "land"
+winter_tile = 86
 [tile.105]
 mv_cost = 20
 name = "Snow"
 tbase = "land"
+winter_tile = 86
 [tile.106]
 mv_cost = 20
 name = "Shore"
@@ -430,10 +485,12 @@ tbase = "land"
 mv_cost = 20
 name = "Snow"
 tbase = "land"
+winter_tile = 86
 [tile.109]
 mv_cost = 20
 name = "Snow"
 tbase = "land"
+winter_tile = 86
 [tile.110]
 mv_cost = 20
 name = "Shore"
@@ -462,34 +519,42 @@ tbase = "land"
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 82
 [tile.117]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 85
 [tile.118]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 87
 [tile.119]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 90
 [tile.120]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 82
 [tile.121]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 85
 [tile.122]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 87
 [tile.123]
 mv_cost = 15
 name = "Shore"
 tbase = "land"
+winter_tile = 90
 [tile.124]
 mv_cost = 15
 name = "Shore"

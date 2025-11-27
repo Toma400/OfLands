@@ -82,6 +82,11 @@ Depending on tileset type, it will require you to have different metadata to all
 - `mv_cost` _: integer_ - cost of movement through the tile; for reference:
   - `15` is default movement across normal tile (takes normal entity 1 turn)
   - movement cost with road is calculated separately by decreasing the base cost
+- winter data - if you want to have winter variant of the tile, there's optional data you can add:
+  - `winter_tile` - index of tile to be used for winter appearance (if doesn't exist,
+                    defaults to regular appearance)
+  - `winter_mv_cost` - cost of movement (if doesn't exist, the `winter_tile`'s movement
+                       is used (so if this value doesn't exist, it's value of `mv_cost`))
 
 #### --- Locations ---
 - `name` _: string_ - name of the location
@@ -111,3 +116,5 @@ Depending on tileset type, it will require you to have different metadata to all
 Additionally, you can set map's starting coordinates by adding `start_coords` property
 to map itself. The property should be string, but contain `int, int` data (e.g. `128, 128`)
 as it will be transferred in such form to .olm file.
+
+ADD START DATE!!!

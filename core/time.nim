@@ -2,6 +2,12 @@ import std/tables
 import std/math
 import ../game
 
+type
+  Seasons* = enum
+    SPRING
+    SUMMER
+    AUTUMN
+    WINTER
 const Month* = {
     1:  "January",
     2:  "February",
@@ -52,3 +58,9 @@ proc passTime* (map: var Map, ses: var Session, progress_hours: int = 1) =
             map.time.year += floorDiv(map.time.month, 12)
             map.time.month = remainingTime(map.time.month, 12)
         # ses.tick = 1 # resets
+
+proc getSeason* (month: int): Seasons =
+    if   month in [12, 1, 2]: return WINTER
+    elif month in 3..5:       return SPRING
+    elif month in 6..8:       return SUMMER
+    elif month in 9..11:      return AUTUMN

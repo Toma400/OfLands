@@ -85,7 +85,11 @@ proc drawFocus (map: Map, ses: Session, player_nb: int) =
     if isTileWithinMap(map, ses.focus):
         highlightTile(map, ses.focus)
     let tile_focused = map.data.mapping[ses.focus]
-    sprs(tile_focused.index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
+    block TILE_DRAWING:
+        if getSeason(map.time.month) == WINTER:
+            sprs(tile_focused.wint_ix, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
+        else:
+            sprs(tile_focused.index,   x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
 
     # road drawing
     if tile_focused.road > 0 and tile_focused.roadch:
@@ -94,7 +98,7 @@ proc drawFocus (map: Map, ses: Session, player_nb: int) =
             sprs(road_piece, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
 
     # location
-    # IMPORTANT: needs to also be updated in `game.nim` render
+    # IMPORTANT: needs to also be updated in `drawMap`
     if hasObject(tile_focused):
         if tile_focused.location.isSome:
             useSpritesheet(XLoc)
@@ -151,3 +155,34 @@ proc drawGrid* () =
     useSpritesheet(XGrid)
     #setSpritesheet(3) # grid drawing
     spr(0, 0, 0)
+
+proc drawMap* (map: Map) =
+    # IMPORTANT: needs to also be updated in `drawFocus`
+    for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
+        for tile in 0..<MV:                   # adjusted to moved map
+            let moved_coords = (tile + map.move[0], row + map.move[1])
+            let tile_drawn   = map.data.mapping[moved_coords]
+            block TILE_DRAWING:
+                useSpritesheet(XMap)
+                if getSeason(map.time.month) == WINTER: spr(tile_drawn.wint_ix, tile * TL, row * TL)
+                else:                                   spr(tile_drawn.index,   tile * TL, row * TL)
+            # road drawing
+            if map.data.mapping[moved_coords].road > 0 and map.data.mapping[moved_coords].roadch:
+                useSpritesheet(XSys)
+                for road_piece in map.data.mapping[moved_coords].roaddraw:
+                    spr(road_piece, tile * TL, row * TL)
+            #     discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
+            if tile_drawn.location.isSome:
+                useSpritesheet(XLoc)
+                spr((!tile_drawn.location).index, tile * TL, row * TL)
+            elif tile_drawn.settile.isSome:
+                useSpritesheet(XSys)
+                if tile_drawn.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
+                    spr(5, tile * TL, row * TL)
+                spr((!tile_drawn.settile).settlem.tier.ord + 1, tile * TL, row * TL) # TODO: temporary!
+            let entity_count = getEntityList(tile_drawn).len
+            if entity_count > 0:
+                useSpritesheet(XSys)
+                spr(getEntityList(tile_drawn)[entity_count-1].role.ord, tile * TL, row * TL) # uses last entity that moved onto tile
+
+# TODO: MAKE SHARED PROC FOR `needs to also be updated` todo!!

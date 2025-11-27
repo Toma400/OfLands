@@ -82,10 +82,17 @@ proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
     for cat in oldata.getTable.keys():
         if cat == "tile":
             for tile_key in oldata["tile"].getTable.keys():
-                result[parseInt(tile_key)] = newTilePrefab( # initialises prefab, using default values if key not found
-                                                           tname   = oldata["tile"][tile_key]["name"].getStr(""),
+                # optional values
+                let winter_ix = if "winter_tile"    in oldata["tile"][tile_key]: oldata["tile"][tile_key]["winter_tile"].getInt()    else: -1
+                let winter_mv = if "winter_mv_cost" in oldata["tile"][tile_key]: oldata["tile"][tile_key]["winter_mv_cost"].getInt() else: -1
+                let tl_name   = if "name"           in oldata["tile"][tile_key]: oldata["tile"][tile_key]["name"].getStr()           else: ""
+                # initialises prefab, using default values if key not found
+                result[parseInt(tile_key)] = newTilePrefab(
+                                                           tname   = tl_name,
                                                            mv_cost = oldata["tile"][tile_key]["mv_cost"].getInt(),
-                                                           tbase   = oldata["tile"][tile_key]["tbase"].getStr(""),
+                                                           tbase   = oldata["tile"][tile_key]["tbase"].getStr(),
+                                                           w_ix    = winter_ix,
+                                                           w_mv    = winter_mv,
                                                            #road_ac = (false, false, false, false)         # TODO | temporary
                                                            )
 
@@ -95,9 +102,12 @@ proc parseLocationOLDATA (oldata_file: string): OrderedTable[int, LocationPrefab
     for cat in oldata.getTable.keys():
         if cat == "tile":
             for tile_key in oldata["tile"].getTable.keys():
-                result[parseInt(tile_key)] = newLocationPrefab( # initialises prefab, using default values if key not found
-                                                               lname = oldata["tile"][tile_key]["name"].getStr(""),
-                                                               bcond = oldata["tile"][tile_key]["bcond"].getStr(""),
+                # optional values
+                let lc_name = if "name" in oldata["tile"][tile_key]: oldata["tile"][tile_key]["name"].getStr() else: ""
+                # initialises prefab, using default values if key not found
+                result[parseInt(tile_key)] = newLocationPrefab(
+                                                               lname = lc_name,
+                                                               bcond = oldata["tile"][tile_key]["bcond"].getStr(),
                                                                )
 
 proc parseOLM (olm: TomlValueRef): MapData =
@@ -267,33 +277,6 @@ proc newMap* (olm_file: string, player_kingdom: tuple[nb: int, nm: string]): Map
         raise newException(Exception, fmt"Game has incorrect date set. Date needs every value (year/month/day) be positive number!")
     if len(result.data.mapping) < MV*MV: # temporary measure, we will eventually need to just center the map and adjust it to size in -drawMap-
         raise newException(Exception, fmt"Map file has too little tiles!")
-
-proc drawMap* (map: Map) =
-    # IMPORTANT: needs to also be updated in `gui.nim` focus render
-    for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
-        for tile in 0..<MV:                   # adjusted to moved map
-            let moved_coords = (tile + map.move[0], row + map.move[1])
-            let tile_drawn   = map.data.mapping[moved_coords]
-            useSpritesheet(XMap)
-            spr(tile_drawn.index, tile * TL, row * TL)
-            # road drawing
-            if map.data.mapping[moved_coords].road > 0 and map.data.mapping[moved_coords].roadch:
-                useSpritesheet(XSys)
-                for road_piece in map.data.mapping[moved_coords].roaddraw:
-                    spr(road_piece, tile * TL, row * TL)
-            #     discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
-            if tile_drawn.location.isSome:
-                useSpritesheet(XLoc)
-                spr((!tile_drawn.location).index, tile * TL, row * TL)
-            elif tile_drawn.settile.isSome:
-                useSpritesheet(XSys)
-                if tile_drawn.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
-                    spr(5, tile * TL, row * TL)
-                spr((!tile_drawn.settile).settlem.tier.ord + 1, tile * TL, row * TL) # TODO: temporary!
-            let entity_count = getEntityList(tile_drawn).len
-            if entity_count > 0:
-                useSpritesheet(XSys)
-                spr(getEntityList(tile_drawn)[entity_count-1].role.ord, tile * TL, row * TL) # uses last entity that moved onto tile
 
 proc moveMap* (map: var Map, shift: (int, int), dt: float32) =
     # moves the starting coordinates if the boundaries are not outside 0..map_size range
