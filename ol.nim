@@ -119,4 +119,5 @@ proc gameDraw() =
 
 nico.init(org=AUTHOR, app=GAME_NAME)
 nico.createWindow(GAME_NAME, W, H, 1, false)
+setWindowIcon("ol.ico")
 nico.run(gameInit, gameUpdate, gameDraw)

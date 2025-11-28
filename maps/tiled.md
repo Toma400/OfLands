@@ -12,7 +12,9 @@ Table of contents:
   - [Locations](#----locations----)
   - [Settlements](#----settlements----)
   - [Factions](#----factions----)
-- [Additional metadata](#additional-metadata)
+- [Additional map metadata](#additional-map-metadata)
+  - [Starting coordinates](#----starting-coordinates----)
+  - [Starting date](#----starting-date----)
 
 ### Setting up layers and tilesets
 Of Lands functions upon multiple layers and tilesets, although not every single one
@@ -112,9 +114,21 @@ Depending on tileset type, it will require you to have different metadata to all
 - `start_coords` _: string, string_ - two coordinates indicating starting position when
                                       playing this particular faction (optional) 
 
-### Additional metadata
-Additionally, you can set map's starting coordinates by adding `start_coords` property
-to map itself. The property should be string, but contain `int, int` data (e.g. `128, 128`)
-as it will be transferred in such form to .olm file.
+### Additional map metadata
+Additionally to the above, you can also set some data to the map itself. You can enter
+it by clicking on `Map > Map Properties`.
 
-ADD START DATE!!!
+#### --- Starting coordinates ---
+You can set map's starting coordinates by adding `start_coords` property. The property
+should be string, but contain `int, int` data (e.g. `128, 128`) as it will be transferred
+in such form to .olm file.  
+Mind you, faction starting coordinates take priority over map ones. If no property is
+set, default value is `0, 0`.
+
+#### --- Starting date ---
+Default date map is set with is 1st January, of year 1. If you want to set it to different
+value, create `start_date` property. It should be string type, but contain `int, int, int`
+value (e.g. `300, 10, 1`). The date format goes in order of year, month and day. You can
+set less values (e.g. just year) but keep in mind any values past three will be skipped.  
+Also be careful to not set month or day values that would be impossible in regular
+calendar, as it can result in crashing the game.

@@ -26,7 +26,10 @@ FILES = [
     "OfLands.exe",
     "OfLandsConfigurator.exe",   # probably temporary
     "oflands.ini",
-    "SDL2.dll"
+    "ol.ico",
+    "ol.png",
+    "SDL2.dll",
+    "SDL2_image.dll",
 ]
 TILED_BACKUP = [
     # tilesets registered

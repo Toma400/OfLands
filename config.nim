@@ -11,9 +11,18 @@ import os
 import kingdom
 import game
 
+# TODO
+# - "new Faction" with name TextArea
+
 proc facToSeq (ot: OrderedTable[int, Kingdom]): seq[string] =
     for i, k in ot.pairs():
         result.add(k.name)
+
+proc getDescr (k: Kingdom): string =
+    result = k.descr & "\r\n"
+    result = result & "List of settlements:\r\n"
+    for s in k.settlems:
+        result = result & "- \r\n" & s.name
 
 let maps     = toSeq(walkFiles("maps/*.olm"))
 
@@ -28,6 +37,7 @@ var map_dt = newMap(olm_file       = map_nm,
 # app run
 app.init()
 var window = newWindow("Of Lands Configurator")
+window.iconPath = "ol.png"
 
 # containers
 var main   = newLayoutContainer(Layout_Vertical)
@@ -98,6 +108,7 @@ ch_road.checked  = getSectionValue(cfg, "", "roads")  == "true"
 ch_curs.checked  = getSectionValue(cfg, "", "cursor") == "true"
 tb_facs.editable = false
 tb_facs.height   = 100
+tb_facs.text     = getDescr(map_dt.kingdoms[cb_facs.index + 1])
 
 proc saveConfig() =
     setSectionKey(cfg, "", "map",    multiReplace(cb_maps.value, [("maps/", ""), (r"maps\", "")]))
@@ -114,7 +125,7 @@ cb_maps.onChange = proc (event: ComboBoxChangeEvent) =
     cb_facs.options = facToSeq(map_dt.kingdoms)
 
 cb_facs.onChange = proc (event: ComboBoxChangeEvent) =
-    tb_facs.text = map_dt.kingdoms[cb_facs.index + 1].descr
+    tb_facs.text = getDescr(map_dt.kingdoms[cb_facs.index + 1])
 
 bt_save.onClick = proc (event: ClickEvent) =
     saveConfig()

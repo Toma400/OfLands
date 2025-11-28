@@ -34,3 +34,4 @@ Versions:
   walkable tile (if you don't have settlement)
 - Included Configurator to serve as placeholder starting tool before proper "new game"
   menu is made
+- Game and Configurator have icons both in-game and embed into executable
