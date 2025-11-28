@@ -8,14 +8,16 @@ import std/tables
 import std/random
 import questionable
 import nico/backends/common
+import nico/gui
 import nico
 # OL imports
 import core/render/colours
+import core/gui/nicogui
+import core/gui/main
 import core/roads
 import core/time
 import kingdom
 import game
-import gui
 import map # only for `canExist`, remove if not needed
 
 randomize()
@@ -67,6 +69,7 @@ proc gameInit() =
     # initialises game (may need to be changed when game saves are made, so it makes you fail the game when this is achieved post-init stage)
     if mvp.kingdoms[player].settlems.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
         ses.mode = INIT
+    initGUITheme()
     #updateRoads(addr mvp)
     # var settlement_count: int
     # for _, k in mvp.kingdoms.pairs():
@@ -76,6 +79,10 @@ proc gameInit() =
 
 proc turn() =
     passTime(mvp, ses, 12) # progresses hours 12 hours
+
+proc gameGUI() =
+    #turnButton(turn)
+    discard
 
 proc gameUpdate(dt: float32) =
     if btn(pcLeft):  moveMap(mvp, (-1,  0), dt)
@@ -109,6 +116,7 @@ proc gameUpdate(dt: float32) =
     # if mcount > 0: # if music is available
     #     if getMusic(0) == -1: # play new music if nothing is playing
     #         music(0, rand(0..mcount), loop=0)
+    G.update(gameGUI, dt)
 
 proc gameDraw() =
     cls()
@@ -116,6 +124,7 @@ proc gameDraw() =
     drawGUI(mvp, ses, cur, player)
     if grd: # checks if grid setting is set
         drawGrid()
+    G.draw(gameGUI)
 
 nico.init(org=AUTHOR, app=GAME_NAME)
 nico.createWindow(GAME_NAME, W, H, 1, false)

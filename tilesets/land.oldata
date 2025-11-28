@@ -1,0 +1,835 @@
+[tile.0]
+mv_cost = 15
+name = "Water"
+tbase = "water"
+[tile.1]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 81
+[tile.2]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 82
+[tile.3]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 83
+[tile.4]
+mv_cost = -1
+name = "Rock"
+tbase = "water"
+[tile.5]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 85
+[tile.6]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.7]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 87
+[tile.9]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 89
+[tile.10]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 90
+[tile.11]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 91
+[tile.12]
+mv_cost = 25
+name = "Forest"
+tbase = "land"
+winter_tile = 88
+[tile.13]
+mv_cost = 15
+name = "Meadow"
+tbase = "land"
+winter_tile = 84
+[tile.14]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 106
+[tile.15]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 107
+[tile.16]
+mv_cost = 25
+name = "Forest"
+tbase = "land"
+winter_tile = 88
+[tile.17]
+mv_cost = 20
+name = "Hill"
+tbase = "land"
+winter_tile = 115
+[tile.18]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 110
+[tile.19]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 111
+[tile.20]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 78
+[tile.21]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 81
+[tile.22]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 82
+[tile.23]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 83
+[tile.24]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 79
+[tile.25]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 85
+[tile.26]
+mv_cost = 15
+name = "Lake"
+tbase = "water"
+winter_tile = 80
+[tile.27]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 87
+[tile.28]
+mv_cost = 15
+name = "Island"
+tbase = "land"
+winter_tile = 113
+[tile.29]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 89
+[tile.30]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 90
+[tile.31]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 91
+[tile.32]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 81
+[tile.33]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 83
+[tile.34]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 81
+[tile.35]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 83
+[tile.36]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 89
+[tile.37]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 91
+[tile.38]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 89
+[tile.39]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 91
+[tile.40]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 106
+[tile.41]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 107
+[tile.42]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.43]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.44]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 110
+[tile.45]
+mv_cost = 15
+name = "Beach"
+tbase = "land"
+winter_tile = 111
+[tile.46]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.47]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.48]
+mv_cost = 20
+name = "Lake"
+tbase = "water"
+[tile.49]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.50]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.51]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.52]
+mv_cost = 20
+name = "Oasis"
+tbase = "land"
+[tile.53]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.54]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.55]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.56]
+mv_cost = 20
+name = "Oasis"
+tbase = "land"
+[tile.57]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.58]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.59]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.60]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.61]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.62]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.63]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.64]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.65]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.66]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.67]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.68]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.69]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.70]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.71]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.72]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.73]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.74]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.75]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.76]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.77]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.78]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.79]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.80]
+mv_cost = 20
+name = "Frozen Lake"
+tbase = "land"
+[tile.81]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.82]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.83]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.84]
+mv_cost = 20
+name = "Snow"
+tbase = "land"
+[tile.85]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.86]
+mv_cost = 20
+name = "Snow"
+tbase = "land"
+[tile.87]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.88]
+mv_cost = 20
+name = "Forest"
+tbase = "land"
+[tile.89]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.90]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.91]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.92]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.93]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.94]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.95]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.96]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.97]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.98]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.99]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.100]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.101]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.102]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.103]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+winter_tile = 86
+[tile.104]
+mv_cost = 20
+name = "Snow"
+tbase = "land"
+winter_tile = 86
+[tile.105]
+mv_cost = 20
+name = "Snow"
+tbase = "land"
+winter_tile = 86
+[tile.106]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.107]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.108]
+mv_cost = 20
+name = "Snow"
+tbase = "land"
+winter_tile = 86
+[tile.109]
+mv_cost = 20
+name = "Snow"
+tbase = "land"
+winter_tile = 86
+[tile.110]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.111]
+mv_cost = 20
+name = "Shore"
+tbase = "land"
+[tile.112]
+mv_cost = 20
+name = "Island"
+tbase = "land"
+[tile.113]
+mv_cost = 20
+name = "Island"
+tbase = "land"
+[tile.114]
+mv_cost = 25
+name = "Hill"
+tbase = "land"
+[tile.115]
+mv_cost = 25
+name = "Hill"
+tbase = "land"
+[tile.116]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 82
+[tile.117]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 85
+[tile.118]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 87
+[tile.119]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 90
+[tile.120]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 82
+[tile.121]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 85
+[tile.122]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 87
+[tile.123]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+winter_tile = 90
+[tile.124]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.125]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.126]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.127]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.128]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.129]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.130]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.131]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.132]
+mv_cost = -1
+name = "TEMPORARY MOUNTAINS"
+tbase = "land"
+[tile.133]
+mv_cost = -1
+name = "TEMPORARY MOUNTAINS"
+tbase = "land"
+[tile.134]
+mv_cost = -1
+name = "TEMPORARY MOUNTAINS"
+tbase = "land"
+[tile.136]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 168
+[tile.137]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 169
+[tile.138]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 170
+[tile.140]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 172
+[tile.141]
+mv_cost = 15
+name = "Rocky Grass"
+tbase = "land"
+winter_tile = 173
+[tile.142]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 174
+[tile.144]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 176
+[tile.145]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 177
+[tile.146]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 178
+[tile.148]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 159
+[tile.149]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 167
+[tile.150]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 159
+[tile.151]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 167
+[tile.152]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 163
+[tile.153]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 171
+[tile.154]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 163
+[tile.155]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 171
+[tile.156]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 168
+[tile.157]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 169
+[tile.158]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 170
+[tile.159]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.160]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 172
+[tile.161]
+mv_cost = 18
+name = "Rocks"
+tbase = "land"
+winter_tile = 173
+[tile.162]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 174
+[tile.163]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.164]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 176
+[tile.165]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 177
+[tile.166]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+winter_tile = 178
+[tile.167]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.168]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.169]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.170]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.171]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.172]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.173]
+mv_cost = 18
+name = "Rocky Snow"
+tbase = "land"
+[tile.174]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.175]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.176]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.177]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.178]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.179]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.180]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.181]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.182]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.183]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.184]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.185]
+mv_cost = 18
+name = "Rocky Desert"
+tbase = "land"
+[tile.186]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.187]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.188]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.189]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"
+[tile.190]
+mv_cost = 20
+name = "Mountain Slope"
+tbase = "land"

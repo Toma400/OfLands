@@ -1,6 +1,48 @@
 # Roadmap
 This list here is non-exhaustive, but also non-declarative planning for features.
 
+### Nearest todo
+- **CODE**
+  - Roads
+    - improvement to performance
+      - use of threadpools 
+      - data check by chunks, with smart system going outwards from chunk player spawn in
+    - checks for placement and potential routes (roads should not always go in
+      all 8 directions, see mountains or bridges?)
+  - GUI
+    - move `gui.nim` to `core/gui` (rename to `main.nim`?)
+    - fix Nico's GUI text size
+    - **create proper theme with custom colours**
+  - Entities moving
+    - make list of entities on particular tile and let player select entity
+    - when selected, let player move the entity and show the "path" with cost per tile
+      (and summed up)
+      - make movement "accumulate" travel points and let this reset only after
+        travel is done (meaning if you change route during travel, it would keep
+        the progress)
+  - Locations
+    - make locations' ownership binding possible on factions' file (also via Tiled)
+  - Settlements
+    - list of resources in the particular tile/settlement, with amounts
+  - Emscripten pipeline to support Linux/MacOS?
+  - Other
+    - Fix palette issue
+    - Check optionality of data (both in Tiled exporter and OL's importer)
+- **TILESETS**
+  - More regular textured tiles (actual meadow, trees v2, grass?, singular tree?) 
+  - Mountains & cliffs
+    - Hill type following these?
+  - More vanilla regions
+  - Split off PTR map at that point (and include PTR regions then!)
+- **TILED INTEGRATION & TOOLING**
+  - plugin for specific shifting
+    - single ID shift (e.g. 5 -> 30)
+      - useful for changes like moving that dumb rock
+    - mass ID shift (.toml file with `A -> B` pairs)
+      - will be super useful for future landmass tileset?
+  - deAI current plugin for god's sake
+    - fix negative moves 
+
 ### 0.1.0
 - Locations (only the ones that can easily have no assignment, e.g. forts)
   - A way to build empty forts to showcase structure & tie them to permanent map data
@@ -18,10 +60,6 @@ This list here is non-exhaustive, but also non-declarative planning for features
     stands on?
   - optionally, you could be introduced to settler entity first and do initial settlement
     via settler (so the system is more coherent)
-- Kingdom system with (for now) one default kingdom with name (set through config)
-  - banners as separate tileset? (one that comes with the map and is noted in
-    .olm, and kingdoms would direct index to it - would make it as value in Kingdom
-    struct)
 - Save-wise (later) it would make sense to keep names of tilesets in Map struct
 - Making sure .oldata tiles can be skipped or not have a name
 
@@ -30,18 +68,8 @@ This list here is non-exhaustive, but also non-declarative planning for features
   - Natural
     - rivers
   - Features
-    - roads
     - bridges
-- Road system
-- Tile features (e.g. locations, roads) represented in .olm file
-  - includes Tiled integration expanded
-  - separated tileset?
 - Expanding tile data (.oldata) with more base info?
-- Minimap? (whole map rendered but scaled 32 times down, thus every cell would take
-            1 pixel each - making currently seen window as 30x30 (MV value); 
-            we could draw a small square with that value, so we see what area is currently
-            seen from whole bigger map, and as we move on bigger map, the small square
-            would also follow
 
 ### 0.?
 - Being able to dump Map object into file and load it afterwards (savegame)

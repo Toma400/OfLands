@@ -15,8 +15,8 @@ FILES = [
     "maps/tiled.md",
     #"music",                   # pure folder!?
     # INCLUDE `tamriel` soundtrack when music works!
-    "tilesets/example.oldata",
-    "tilesets/example.png",
+    "tilesets/land.oldata",
+    "tilesets/land.png",
     "tilesets/locs.oldata",
     "tilesets/locs.png",
     "tilesets/ptr_locs.oldata",  # temporary TES stuff

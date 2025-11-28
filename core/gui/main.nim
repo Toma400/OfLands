@@ -3,14 +3,14 @@ import std/options
 import std/tables
 import std/math
 import questionable
-# OL imports
-import core/render/colours
-import core/settlement
-import core/entity
-import core/time
 import nico
-import game
-import map
+# OL imports
+import ../../core/render/colours
+import ../../core/settlement
+import ../../core/entity
+import ../../core/time
+import ../../game
+import ../../map
 
 # default values (may be later imported from .ini, but would need adjusting GUI)
 const W* = 1280
