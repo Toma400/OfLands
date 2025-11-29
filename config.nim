@@ -1,11 +1,15 @@
+import std/private/osfiles
+import std/private/osdirs
 import std/strformat
 import std/sequtils
 import std/strutils
 import std/parsecfg
 import std/osproc
 import std/tables
+import std/math
 import parsetoml
 import nigui
+import pixie
 import os
 
 import kingdom
@@ -14,17 +18,44 @@ import game
 # TODO
 # - "new Faction" with name TextArea
 
-proc facToSeq (ot: OrderedTable[int, Kingdom]): seq[string] =
+proc facToSeq(ot: OrderedTable[int, Kingdom]): seq[string] =
     for i, k in ot.pairs():
         result.add(k.name)
 
-proc getDescr (k: Kingdom): string =
-    result = k.descr & "\r\n"
-    result = result & "List of settlements:\r\n"
-    for s in k.settlems:
-        result = result & "- \r\n" & s.name
+proc setDescr(ta: TextArea, k: Kingdom) =
+    ta.text = ""
+    if k.descr != "":
+        ta.addLine(k.descr)
+        ta.addLine("")
+    if len(k.settlems) > 0:
+        ta.addLine("List of settlements:")
+        for s in k.settlems:
+            ta.addLine("- " & s.name)
 
-let maps     = toSeq(walkFiles("maps/*.olm"))
+proc setBanner(src: common.Image, kingdom_nb: int, file_index: int) =
+    var img_out = newImage(32, 32)
+    let
+      kd_map_id = kingdom_nb - 1
+      row_tiles = (src.width/32).int
+      x_start = if kingdom_nb mod row_tiles != 0: (kingdom_nb mod row_tiles) - 1  else: row_tiles - 1
+      y_start = if kingdom_nb mod row_tiles != 0: floorDiv(kingdom_nb, row_tiles) else: floorDiv(kingdom_nb, row_tiles) - 1
+    let # coordinates
+      xc_start = x_start*32
+      yc_start = y_start*32
+      xc_end   = xc_start+32-1 # minus to accomodate that range counts xc_start/yc_start, so needs last position excluded (for programming 0...n-1 indexing system)
+      yc_end   = yc_start+32-1
+    for x in xc_start..xc_end:
+      for y in yc_start..yc_end:
+        if not inside(src, x, y):
+            return # return early, skip writing file
+        img_out[x - xc_start, y - yc_start] = src[x, y] # write on 0..32 the contents of `src`
+    img_out = resize(img_out, 64, 64)
+    createDir("_temp")
+    writeFile(img_out, fmt"_temp/banner_{file_index}_used.png")
+
+let maps   = toSeq(walkFiles("maps/*.olm"))
+if existsDir("_temp"):
+    removeDir("_temp")
 
 # data
 var cfg    = loadConfig("oflands.ini")
@@ -33,6 +64,9 @@ var map_dt = newMap(olm_file       = map_nm,
                     player_kingdom = (nb: 0,
                                       nm: getSectionValue(cfg, "", "kingdom")),
                     )
+var banners = if existsFile(fmt"tilesets/{map_dt.data.tfacs}"): readImage(fmt"tilesets/{map_dt.data.tfacs}") else: nil
+var ban_tab : OrderedTable[int, nigui.Image]
+var ban_ix  = 0
 
 # app run
 app.init()
@@ -58,11 +92,11 @@ var cb_facs = newComboBox(facToSeq(map_dt.kingdoms))
 var ch_curs = newCheckBox("Enable custom cursor")
 var ch_road = newCheckBox("Enable roads (experimental: performance heavy)")
 
-# textboxes
-var tb_facs = newTextBox("")
+# textareas
+var ta_facs = newTextArea("")
 
 # images
-# var img_fac = newImage() TODO: `canvas.drawImage()` draws images on layoutcontainers, meaning this is only to register image as a thing
+var img_fac = newImage()
 
 # buttons
 var bt_save = newButton("Save settings")
@@ -84,8 +118,7 @@ block registerMapSettings:
 block registerFactionLayer:
     ct_fac.add(ct_fav)
     ct_fav.add(cb_facs)
-    # todo: ct_fav.add(img_fac) // make it a container
-    ct_fac.add(tb_facs)
+    ct_fac.add(ta_facs)
     # settings
     ct_fac.frame  = newFrame("Faction picker")
     ct_fac.yAlign = YAlign_Top
@@ -106,9 +139,15 @@ cb_maps.index    = find(maps, fmt"maps\{map_nm}")
 cb_facs.index    = if parseInt(getSectionValue(cfg, "", "player")) <= len(cb_facs.options): parseInt(getSectionValue(cfg, "", "player")) - 1 else: 0
 ch_road.checked  = getSectionValue(cfg, "", "roads")  == "true"
 ch_curs.checked  = getSectionValue(cfg, "", "cursor") == "true"
-tb_facs.editable = false
-tb_facs.height   = 100
-tb_facs.text     = getDescr(map_dt.kingdoms[cb_facs.index + 1])
+ta_facs.editable = false
+ta_facs.height   = 100
+ct_fav.height    = 100
+setDescr(ta_facs, map_dt.kingdoms[cb_facs.index + 1])
+if banners != nil: # checks if banner tileset exists
+    setBanner(banners, cb_facs.index + 1, ban_ix)
+if existsFile(fmt"_temp/banner_{ban_ix}_used.png"):
+    ban_tab[ban_ix] = newImage()
+    ban_tab[ban_ix].loadFromFile(fmt"_temp/banner_{ban_ix}_used.png")
 
 proc saveConfig() =
     setSectionKey(cfg, "", "map",    multiReplace(cb_maps.value, [("maps/", ""), (r"maps\", "")]))
@@ -123,9 +162,24 @@ cb_maps.onChange = proc (event: ComboBoxChangeEvent) =
                                       nm: getSectionValue(cfg, "", "kingdom")),
                     )
     cb_facs.options = facToSeq(map_dt.kingdoms)
+    banners = if existsFile(fmt"tilesets/{map_dt.data.tfacs}"): readImage(fmt"tilesets/{map_dt.data.tfacs}") else: nil
 
 cb_facs.onChange = proc (event: ComboBoxChangeEvent) =
-    tb_facs.text = getDescr(map_dt.kingdoms[cb_facs.index + 1])
+    setDescr(ta_facs, map_dt.kingdoms[cb_facs.index + 1])
+    if banners != nil: # checks if banner tileset exists
+        ban_ix += 1
+        setBanner(banners, cb_facs.index + 1, ban_ix)
+        if existsFile(fmt"_temp/banner_{ban_ix}_used.png"):
+            ban_tab[ban_ix] = newImage()
+            ban_tab[ban_ix].loadFromFile(fmt"_temp/banner_{ban_ix}_used.png")
+        else: ban_ix -= 1
+        forceRedraw(ct_fav)
+
+ct_fav.onDraw = proc (event: DrawEvent) =
+    let canvas = event.control.canvas
+    if ban_ix in ban_tab:
+        canvas.drawImage(ban_tab[ban_ix], x=45,
+                                          y=30)
 
 bt_save.onClick = proc (event: ClickEvent) =
     saveConfig()
@@ -134,6 +188,12 @@ bt_save.onClick = proc (event: ClickEvent) =
 bt_svrn.onClick = proc (event: ClickEvent) =
     saveConfig()
     discard execCmd("OfLands.exe")
+
+# window.onCloseClick = proc(event: CloseClickEvent) =
+#     # cleaning after finishing
+#     if existsDir("_temp"):
+#         removeDir("_temp")
+#     window.dispose()
 
 window.show()
 app.run()

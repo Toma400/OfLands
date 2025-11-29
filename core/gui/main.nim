@@ -15,6 +15,45 @@ import ../../map
 # default values (may be later imported from .ini, but would need adjusting GUI)
 const W* = 1280
 const H* = 960
+# module-specific values
+const sidbr_padding = TL*3 # width of sidebar (320) is 10 tiles, so with 2-tiled focus (2x scale) and 1-tiled frame (*2) it leaves us 6 (3 tiles each side)
+const focus_padding = TL*4 # focus padding from -drawSidebar- adjusted to exclude frame
+
+proc drawTileContents(tile: Tile, x, y: int, scale: int) =
+    # shared proc for `drawMap` and `drawFocus` to draw tile contents
+    if tile.road > 0 and tile.roadch:
+        useSpritesheet(XSys)
+        for road_piece in tile.roaddraw:
+            sprs(road_piece, x = x, y = y, dw = scale, dh = scale)
+
+    if hasObject(tile):
+        if tile.location.isSome:
+            useSpritesheet(XLoc)
+            let location = (!tile.location)
+            sprs(location.index, x = x, y = y, dw = scale, dh = scale)
+
+        elif tile.settile.isSome:
+            useSpritesheet(XSys)
+            let settlement = (!tile.settile).settlem
+            if tile.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
+                sprs(5, x = x, y = y, dw = scale, dh = scale)
+            sprs(settlement.tier.ord + 1, x = x, y = y, dw = scale, dh = scale) # todo: SETTLEMENT_TIER.ord is temporary!
+
+    let entity_count = getEntityList(tile).len
+    if entity_count > 0:
+        useSpritesheet(XSys)
+        sprs(getEntityList(tile)[entity_count-1].role.ord, x = x, y = y, dw = scale, dh = scale) # uses last entity that moved onto tile
+
+proc drawFactionInfo(map: Map, owner, player_nb: int, stype: string) =
+    let name  = if owner in map.kingdoms: map.kingdoms[owner].name else: "Unowned"
+    printc(name, x = H+TL*5, y = TL*10, 4)
+    # banner
+    if owner in map.kingdoms:
+        useSpritesheet(XFac)
+        sprs(owner - 1, x = H+focus_padding, y = TL*11, dw = 2, dh = 2)
+    # note on player's ownership
+    if owner == player_nb:
+        printc(fmt"Your {stype}!", x = H+TL*5, y = TL*13, 4)
 
 proc drawCursor(map: Map, ses: Session, ccursor: bool) =
     # replaces cursor with custom one
@@ -44,7 +83,6 @@ proc drawCursor(map: Map, ses: Session, ccursor: bool) =
             sprRot(3, mouse()[0], mouse()[1], 0.0)
 
 proc drawSidebar(map: Map) =
-    let focus_padding = TL*3 # width of sidebar (320) is 10 tiles, so with 2-tiled focus (2x scale) and 1-tiled frame (*2) it leaves us 6 (3 tiles each side)
     setColor(0)
 
     spr(0, H, 0)                               # corner (upper left)
@@ -63,23 +101,22 @@ proc drawSidebar(map: Map) =
       for y in 1..int((H-TL*2)/TL):
         spr(5, x*TL, y*TL)
     # focus window
-    spr(0,  H+focus_padding,      0+focus_padding)
-    spr(1,  H+focus_padding+TL,   0+focus_padding)
-    spr(1,  H+focus_padding+TL*2, 0+focus_padding)
-    spr(2,  H+focus_padding+TL*3, 0+focus_padding)
-    spr(4,  H+focus_padding,      0+focus_padding+TL)
-    spr(4,  H+focus_padding,      0+focus_padding+TL*2)
-    spr(10, H+focus_padding+TL*3, 0+focus_padding+TL*3)
-    spr(6,  H+focus_padding+TL*3, 0+focus_padding+TL)
-    spr(6,  H+focus_padding+TL*3, 0+focus_padding+TL*2)
-    spr(8,  H+focus_padding,      0+focus_padding+TL*3)
-    spr(9,  H+focus_padding+TL,   0+focus_padding+TL*3)
-    spr(9,  H+focus_padding+TL*2, 0+focus_padding+TL*3)
+    spr(0,  H+sidbr_padding,      0+sidbr_padding)
+    spr(1,  H+sidbr_padding+TL,   0+sidbr_padding)
+    spr(1,  H+sidbr_padding+TL*2, 0+sidbr_padding)
+    spr(2,  H+sidbr_padding+TL*3, 0+sidbr_padding)
+    spr(4,  H+sidbr_padding,      0+sidbr_padding+TL)
+    spr(4,  H+sidbr_padding,      0+sidbr_padding+TL*2)
+    spr(10, H+sidbr_padding+TL*3, 0+sidbr_padding+TL*3)
+    spr(6,  H+sidbr_padding+TL*3, 0+sidbr_padding+TL)
+    spr(6,  H+sidbr_padding+TL*3, 0+sidbr_padding+TL*2)
+    spr(8,  H+sidbr_padding,      0+sidbr_padding+TL*3)
+    spr(9,  H+sidbr_padding+TL,   0+sidbr_padding+TL*3)
+    spr(9,  H+sidbr_padding+TL*2, 0+sidbr_padding+TL*3)
     # time
     printc(fmt"{map.time.day} {Month[map.time.month]} {map.time.year}, {map.time.hour}", x = H+TL*5, y = H-TL*2, 3)
 
 proc drawFocus (map: Map, ses: Session, player_nb: int) =
-    let focus_padding = TL*4 # focus padding from -drawSidebar- adjusted to exclude frame
     useSpritesheet(XMap)
     setColor(0) # black
     if isTileWithinMap(map, ses.focus):
@@ -91,58 +128,40 @@ proc drawFocus (map: Map, ses: Session, player_nb: int) =
         else:
             sprs(tile_focused.index,   x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
 
-    # road drawing
-    if tile_focused.road > 0 and tile_focused.roadch:
-        useSpritesheet(XSys)
-        for road_piece in tile_focused.roaddraw:
-            sprs(road_piece, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
+    drawTileContents(tile_focused, H+focus_padding, 0+focus_padding, scale=2)
 
     # location
-    # IMPORTANT: needs to also be updated in `drawMap`
     if hasObject(tile_focused):
         if tile_focused.location.isSome:
-            useSpritesheet(XLoc)
             let location = (!tile_focused.location)
-            sprs(location.index, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
             # location data
             printc(location.name, x = H+TL*5, y = TL*7, 4) # loc name | below coordinates
-            # location name
-            let owner = location.owner
-            let name  = if owner in map.kingdoms: map.kingdoms[owner].name else: "Unowned"
-            printc(name, x = H+TL*5, y = TL*10, 4)
-            if owner in map.kingdoms:
-                useSpritesheet(XFac)
-                sprs(owner - 1, x = H+focus_padding, y = TL*12, dw = 2, dh = 2) # draw faction banner in 2x scale
-            if owner == player_nb:
-                printc("Your location!", x = H+TL*5, y = TL*13, 4)
+
+            drawFactionInfo(map, location.owner, player_nb, "location")
 
         elif tile_focused.settile.isSome:
-            useSpritesheet(XSys)
             let settlement = (!tile_focused.settile).settlem
-            if tile_focused.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
-                sprs(5, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2)
-            sprs(settlement.tier.ord + 1, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # todo: SETTLEMENT_TIER.ord is temporary!
             # settlement data
             printc($settlement.tier, x = H+TL*5, y = TL*7, 4) # settlement tier | below coordinates
             printc(settlement.name,  x = H+TL*5, y = TL*8, 4) # settlement name | below coordinates
-            # kingdom name
-            let owner = settlement.knb
-            let kname = if owner in map.kingdoms: map.kingdoms[owner].name else: "Unowned"
-            printc(kname, x = H+TL*5, y = TL*10, 4)
-            if owner in map.kingdoms:
-                useSpritesheet(XFac)
-                sprs(owner - 1, x = H+focus_padding, y = TL*11, dw = 2, dh = 2) # draw faction banner in 2x scale
-            if owner == player_nb:
-                printc("Your settlement!", x = H+TL*5, y = TL*14, 4)
 
-    let entity_count = getEntityList(tile_focused).len
-    if entity_count > 0:
-        useSpritesheet(XSys)
-        sprs(getEntityList(tile_focused)[entity_count-1].role.ord, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # uses last entity that moved onto tile
+            drawFactionInfo(map, settlement.knb, player_nb, "settlement")
 
     # info box
     printc(tile_focused.name, x = H+TL*5, y = TL*1, 4) # name   | in the middle between top and focus window
     printc($ses.focus,        x = H+TL*5, y = TL*2, 3) # coords | in the middle below focus window
+
+proc drawMap* (map: Map) =
+    for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
+        for tile in 0..<MV:                   # adjusted to moved map
+            let moved_coords = (tile + map.move[0], row + map.move[1])
+            let tile_drawn   = map.data.mapping[moved_coords]
+            block TILE_DRAWING:
+                useSpritesheet(XMap)
+                if getSeason(map.time.month) == WINTER: spr(tile_drawn.wint_ix, tile * TL, row * TL)
+                else:                                   spr(tile_drawn.index,   tile * TL, row * TL)
+
+            drawTileContents(map.data.mapping[moved_coords], tile * TL, row * TL, scale=1)
 
 proc drawGUI* (map: Map, ses: Session, ccursor: bool, player_nb: int) =
     useSpritesheet(XGUI)
@@ -153,36 +172,4 @@ proc drawGUI* (map: Map, ses: Session, ccursor: bool, player_nb: int) =
 
 proc drawGrid* () =
     useSpritesheet(XGrid)
-    #setSpritesheet(3) # grid drawing
     spr(0, 0, 0)
-
-proc drawMap* (map: Map) =
-    # IMPORTANT: needs to also be updated in `drawFocus`
-    for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
-        for tile in 0..<MV:                   # adjusted to moved map
-            let moved_coords = (tile + map.move[0], row + map.move[1])
-            let tile_drawn   = map.data.mapping[moved_coords]
-            block TILE_DRAWING:
-                useSpritesheet(XMap)
-                if getSeason(map.time.month) == WINTER: spr(tile_drawn.wint_ix, tile * TL, row * TL)
-                else:                                   spr(tile_drawn.index,   tile * TL, row * TL)
-            # road drawing
-            if map.data.mapping[moved_coords].road > 0 and map.data.mapping[moved_coords].roadch:
-                useSpritesheet(XSys)
-                for road_piece in map.data.mapping[moved_coords].roaddraw:
-                    spr(road_piece, tile * TL, row * TL)
-            #     discard # here would be another `spr` that draws road on top, using also .roadcnn to determine tile
-            if tile_drawn.location.isSome:
-                useSpritesheet(XLoc)
-                spr((!tile_drawn.location).index, tile * TL, row * TL)
-            elif tile_drawn.settile.isSome:
-                useSpritesheet(XSys)
-                if tile_drawn.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
-                    spr(5, tile * TL, row * TL)
-                spr((!tile_drawn.settile).settlem.tier.ord + 1, tile * TL, row * TL) # TODO: temporary!
-            let entity_count = getEntityList(tile_drawn).len
-            if entity_count > 0:
-                useSpritesheet(XSys)
-                spr(getEntityList(tile_drawn)[entity_count-1].role.ord, tile * TL, row * TL) # uses last entity that moved onto tile
-
-# TODO: MAKE SHARED PROC FOR `needs to also be updated` todo!!

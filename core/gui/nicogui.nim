@@ -2,7 +2,7 @@ import nico/gui
 import nico
 # OL imports
 import ../../game
-import gui
+import main
 
 const
   MW = MV*TL  # map width

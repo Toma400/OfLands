@@ -51,7 +51,7 @@ var olmMapFormat = {
                     olf = olf + "start_coordinates = " + "[" + faction_tile.property("start_coords") + "]\n";
                 }
                 if ("description" in faction_prop) {
-                    olf = olf + "description = " + String.raw`'''` + "\n" + faction_tile.property("description") + "\n" + String.raw`'''` + "\n";
+                    olf = olf + "description = " + String.raw`'''` + faction_tile.property("description") + String.raw`'''` + "\n";
                 }
             }
 //            for (const kingdom_nb of Array(999).keys()) { // checks for kingdom registry, needs to have consecutive numbers
