@@ -29,7 +29,7 @@ Versions:
   - Settlements have unique icon, depending on their tier and location
   - Settlements can be initialised with custom `.olf` file
 - Added road system
-- Added turn system
+- Added turn system, advancing game time
 - Added initial starting mode, which requires you to drop settler on some 
   walkable tile (if you don't have settlement)
 - Included Configurator to serve as placeholder starting tool before proper "new game"

@@ -19,8 +19,14 @@ const H* = 960
 const sidbr_padding = TL*3 # width of sidebar (320) is 10 tiles, so with 2-tiled focus (2x scale) and 1-tiled frame (*2) it leaves us 6 (3 tiles each side)
 const focus_padding = TL*4 # focus padding from -drawSidebar- adjusted to exclude frame
 
-proc drawTileContents(tile: Tile, x, y: int, scale: int) =
+proc drawTileContents(map: Map, tile: Tile, x, y: int, scale: int) =
     # shared proc for `drawMap` and `drawFocus` to draw tile contents
+    useSpritesheet(XMap)
+    if getSeason(map.time.month) == WINTER:
+        sprs(tile.wint_ix, x = x, y = y, dw = scale, dh = scale)
+    else:
+        sprs(tile.index,   x = x, y = y, dw = scale, dh = scale)
+
     if tile.road > 0 and tile.roadch:
         useSpritesheet(XSys)
         for road_piece in tile.roaddraw:
@@ -58,6 +64,7 @@ proc drawFactionInfo(map: Map, owner, player_nb: int, stype: string) =
 proc drawCursor(map: Map, ses: Session, ccursor: bool) =
     # replaces cursor with custom one
     if ccursor: hideMouse()
+    useSpritesheet(XGUI)
 
     if ses.mode == EXPLORE and ccursor:
         sprRot(3, mouse()[0], mouse()[1], 0.0)
@@ -117,18 +124,12 @@ proc drawSidebar(map: Map) =
     printc(fmt"{map.time.day} {Month[map.time.month]} {map.time.year}, {map.time.hour}", x = H+TL*5, y = H-TL*2, 3)
 
 proc drawFocus (map: Map, ses: Session, player_nb: int) =
-    useSpritesheet(XMap)
     setColor(0) # black
     if isTileWithinMap(map, ses.focus):
         highlightTile(map, ses.focus)
     let tile_focused = map.data.mapping[ses.focus]
-    block TILE_DRAWING:
-        if getSeason(map.time.month) == WINTER:
-            sprs(tile_focused.wint_ix, x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
-        else:
-            sprs(tile_focused.index,   x = H+focus_padding, y = 0+focus_padding, dw = 2, dh = 2) # draw highlighted tile in 2x scale
 
-    drawTileContents(tile_focused, H+focus_padding, 0+focus_padding, scale=2)
+    drawTileContents(map, tile_focused, H+focus_padding, 0+focus_padding, scale=2)
 
     # location
     if hasObject(tile_focused):
@@ -156,19 +157,15 @@ proc drawMap* (map: Map) =
         for tile in 0..<MV:                   # adjusted to moved map
             let moved_coords = (tile + map.move[0], row + map.move[1])
             let tile_drawn   = map.data.mapping[moved_coords]
-            block TILE_DRAWING:
-                useSpritesheet(XMap)
-                if getSeason(map.time.month) == WINTER: spr(tile_drawn.wint_ix, tile * TL, row * TL)
-                else:                                   spr(tile_drawn.index,   tile * TL, row * TL)
 
-            drawTileContents(map.data.mapping[moved_coords], tile * TL, row * TL, scale=1)
+            drawTileContents(map, tile_drawn, tile * TL, row * TL, scale=1)
 
 proc drawGUI* (map: Map, ses: Session, ccursor: bool, player_nb: int) =
     useSpritesheet(XGUI)
     drawSidebar(map)
-    drawCursor(map, ses, ccursor)
     if ses.focus != (-1, -1):
         drawFocus(map, ses, player_nb)
+    drawCursor(map, ses, ccursor)
 
 proc drawGrid* () =
     useSpritesheet(XGrid)

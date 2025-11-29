@@ -10,7 +10,6 @@ This list here is non-exhaustive, but also non-declarative planning for features
     - checks for placement and potential routes (roads should not always go in
       all 8 directions, see mountains or bridges?)
   - GUI
-    - move `gui.nim` to `core/gui` (rename to `main.nim`?)
     - fix Nico's GUI text size
     - **create proper theme with custom colours**
   - Entities moving
@@ -24,7 +23,7 @@ This list here is non-exhaustive, but also non-declarative planning for features
     - make locations' ownership binding possible on factions' file (also via Tiled)
   - Settlements
     - list of resources in the particular tile/settlement, with amounts
-  - Emscripten pipeline to support Linux/MacOS?
+  - [Emscripten pipeline to support Linux/MacOS?](https://github.com/treeform/nim_emscripten_tutorial)
   - Other
     - Fix palette issue
     - Check optionality of data (both in Tiled exporter and OL's importer)
