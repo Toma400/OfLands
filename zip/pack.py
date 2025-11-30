@@ -1,4 +1,5 @@
 import zipfile
+import shutil
 import os
 
 FILES = [
@@ -44,6 +45,8 @@ TILED_BACKUP = [
 ]
 
 os.system("compile.bat")
+
+shutil.copy("oflands.ini", "../oflands.ini")
 
 with zipfile.ZipFile("../OfLands.zip", mode="w") as archive:
     for f in FILES:

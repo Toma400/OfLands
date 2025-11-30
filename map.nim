@@ -58,6 +58,13 @@ proc getTileBase* (id: string): TileBase =
       of "lava":  return LAVA
       else:       return VOID
 
+proc canExist (t: TilePrefab, r_ix: int): int =
+    # checker for whether the road can exist or not
+    # todo: check for any(route) == true
+    if r_ix notin [1, 2]: return 0 # check for valid road types/existence
+    if t.tbase != LAND:   return 0
+    return r_ix
+
 proc defaultTilePrefab* (): TilePrefab =
     # default values; used when there's no data available
     result.name   = ""
@@ -83,7 +90,7 @@ proc newTile* (tp: TilePrefab, ix: int, coords: tuple[x, y: int], road: int = 0)
     result.location = Location.none       # set later
     result.settile  = SettlementTile.none # set later
     result.entities = newSeq[Entity]()    # empty, use `addEntity()` proc to fill
-    result.road     = road                # 0 = no road; 1 = dirt road; 2 = rock road
+    result.road     = canExist(tp, road)  # 0 = no road; 1 = dirt road; 2 = rock road
     result.roadch   = false               # TODO: if this becomes axed field (e.g. because of different way to calculate), do the same
     result.routes   = (0, 0, 0, 0, 0, 0, 0, 0) # default value, also TODO
     result.roaddraw = newSeq[int]()       # empty as default to be overwritten later when `roadch` is marked, also TODO

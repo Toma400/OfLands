@@ -53,6 +53,14 @@ proc setBanner(src: common.Image, kingdom_nb: int, file_index: int) =
     createDir("_temp")
     writeFile(img_out, fmt"_temp/banner_{file_index}_used.png")
 
+proc setMapInfo(map: Map, sl, kcl, scl: var Label) =
+    sl.text  = fmt"| Map size: {map.data.size[0]}, {map.data.size[1]}"
+    kcl.text = fmt"| Kingdoms: {len(map.kingdoms)}"
+    var scount = 0
+    for _, k in map.kingdoms.pairs:
+      for s in k.settlems: scount += 1
+    scl.text = fmt"| Settlements: {scount}"
+
 let maps   = toSeq(walkFiles("maps/*.olm"))
 if existsDir("_temp"):
     removeDir("_temp")
@@ -64,6 +72,7 @@ var map_dt = newMap(olm_file       = map_nm,
                     player_kingdom = (nb: 0,
                                       nm: getSectionValue(cfg, "", "kingdom")),
                     )
+
 var banners = if existsFile(fmt"tilesets/{map_dt.data.tfacs}"): readImage(fmt"tilesets/{map_dt.data.tfacs}") else: nil
 var ban_tab : OrderedTable[int, nigui.Image]
 var ban_ix  = 0
@@ -83,6 +92,9 @@ var ct_fin = newLayoutContainer(Layout_Horizontal)
 
 # labels
 var map_label = newLabel("Map used: ")
+var map_size  = newLabel("") # size
+var map_kd_ct = newLabel("") # kingdom count
+var map_st_ct = newLabel("") # settlement count
 
 # comboboxes
 var cb_maps = newComboBox(maps)
@@ -95,9 +107,6 @@ var ch_road = newCheckBox("Enable roads (experimental: performance heavy)")
 # textareas
 var ta_facs = newTextArea("")
 
-# images
-var img_fac = newImage()
-
 # buttons
 var bt_save = newButton("Save settings")
 var bt_svrn = newButton("Save and start the game")
@@ -106,6 +115,9 @@ var bt_svrn = newButton("Save and start the game")
 block registerMapLayer:
     ct_map.add(map_label)
     ct_map.add(cb_maps)
+    ct_map.add(map_size)
+    ct_map.add(map_kd_ct)
+    ct_map.add(map_st_ct)
     # settings
     ct_map.frame  = newFrame("Map picker")
     ct_map.yAlign = YAlign_Center
@@ -148,6 +160,7 @@ if banners != nil: # checks if banner tileset exists
 if existsFile(fmt"_temp/banner_{ban_ix}_used.png"):
     ban_tab[ban_ix] = newImage()
     ban_tab[ban_ix].loadFromFile(fmt"_temp/banner_{ban_ix}_used.png")
+setMapInfo(map_dt, map_size, map_kd_ct, map_st_ct)
 
 proc saveConfig() =
     setSectionKey(cfg, "", "map",    multiReplace(cb_maps.value, [("maps/", ""), (r"maps\", "")]))
@@ -163,6 +176,7 @@ cb_maps.onChange = proc (event: ComboBoxChangeEvent) =
                     )
     cb_facs.options = facToSeq(map_dt.kingdoms)
     banners = if existsFile(fmt"tilesets/{map_dt.data.tfacs}"): readImage(fmt"tilesets/{map_dt.data.tfacs}") else: nil
+    setMapInfo(map_dt, map_size, map_kd_ct, map_st_ct)
 
 cb_facs.onChange = proc (event: ComboBoxChangeEvent) =
     setDescr(ta_facs, map_dt.kingdoms[cb_facs.index + 1])
