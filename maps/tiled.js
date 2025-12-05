@@ -46,6 +46,8 @@ var olmMapFormat = {
                 olf = olf + `[kingdom.${faction_ix + 1}]`                          + "\n"; // header
                 if ("name" in faction_prop) {
                     olf = olf + "name = " + String.raw`"${faction_tile.property('name')}"` + "\n";
+                } else {
+                    olf = olf + "name = " + String.raw`""` + "\n"; // put empty 'name' to avoid .toml parsing issues with empty category
                 }
                 if ("start_coords" in faction_prop) {
                     olf = olf + "start_coordinates = " + "[" + faction_tile.property("start_coords") + "]\n";

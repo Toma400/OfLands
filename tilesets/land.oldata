@@ -833,3 +833,243 @@ tbase = "land"
 mv_cost = 20
 name = "Mountain Slope"
 tbase = "land"
+[tile.192]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.193]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.194]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.195]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.196]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.197]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.198]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.199]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.200]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.201]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.202]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.203]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.204]
+mv_cost = 20
+name = "Lake"
+tbase = "water"
+[tile.205]
+mv_cost = 15
+name = "Rocky Steppe"
+tbase = "land"
+[tile.206]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.207]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.208]
+mv_cost = 15
+name = "Island"
+tbase = "land"
+[tile.209]
+mv_cost = 20
+name = "Hill"
+tbase = "land"
+[tile.210]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.211]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.212]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.213]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.214]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.215]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.216]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.217]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.218]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.219]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.220]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.221]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.222]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.223]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.224]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.225]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.226]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.227]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.228]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.229]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.230]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.231]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.232]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.233]
+mv_cost = 15
+name = "Grassland"
+tbase = "land"
+[tile.234]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.235]
+mv_cost = 20
+name = "Desert"
+tbase = "land"
+[tile.236]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.237]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.238]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.239]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.240]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.241]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.242]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.243]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.244]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.245]
+mv_cost = 15
+name = "Steppe"
+tbase = "land"
+[tile.246]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.247]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.248]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.249]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.250]
+mv_cost = 15
+name = "Shore"
+tbase = "land"
+[tile.251]
+mv_cost = 15
+name = "Shore"
+tbase = "land"

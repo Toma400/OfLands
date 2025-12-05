@@ -112,7 +112,8 @@ Depending on tileset type, it will require you to have different metadata to all
 - `name` _: string_ - name of the faction
 - `description` _: string_ - description of what the faction is (optional)
 - `start_coords` _: string, string_ - two coordinates indicating starting position when
-                                      playing this particular faction (optional) 
+                                      playing this particular faction (optional);
+                                      see also relevant note on `0, 0` coords [here](#----starting-coordinates----)
 
 ### Additional map metadata
 Additionally to the above, you can also set some data to the map itself. You can enter
@@ -124,6 +125,10 @@ should be string, but contain `int, int` data (e.g. `128, 128`) as it will be tr
 in such form to .olm file.  
 Mind you, faction starting coordinates take priority over map ones. If no property is
 set, default value is `0, 0`.
+
+**NOTE**: Do not set value `0, 0` if you add this property - for some reason Of Lands'
+file parser has issues with collection of pure zeroes. Mark it as `1, 1`, or just do
+not add property since the default will set you at this exact area.
 
 #### --- Starting date ---
 Default date map is set with is 1st January, of year 1. If you want to set it to different

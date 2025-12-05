@@ -21,18 +21,25 @@ This list here is non-exhaustive, but also non-declarative planning for features
         the progress)
   - Locations
     - make locations' ownership binding possible on factions' file (also via Tiled)
+      - colours could be inherited from banners, randomised, or custom - in the last
+        case however we would need to make them work with palette registry *and* make
+        a way for OL to know what index to point at (see [#6 GH's issue](https://github.com/Toma400/OfLands/issues/6#issuecomment-3616103920)
+        that has similar concern re: colours)
   - Settlements
     - list of resources in the particular tile/settlement, with amounts
   - [Emscripten pipeline to support Linux/MacOS?](https://github.com/treeform/nim_emscripten_tutorial)
+  - Factions
+    - button to special mode where it would show faction alignment through colours
+      - colours would need to be a part of palette somehow
   - Other
-    - Fix palette issue
-    - Check optionality of data (both in Tiled exporter and OL's importer)
+    - fix palette issue
+    - check optionality of data (both in Tiled exporter and OL's importer)
 - **TILESETS**
-  - More regular textured tiles (actual meadow, trees v2, grass?, singular tree?) 
-  - Mountains & cliffs
-    - Hill type following these?
-  - More vanilla regions
-  - Split off PTR map at that point (and include PTR regions then!)
+  - more regular textured tiles (actual meadow, trees v2, grass?, singular tree?) 
+  - mountains & cliffs
+    - hill type following these?
+  - more vanilla regions
+  - split off PTR map at that point (and include PTR regions then!)
 - **TILED INTEGRATION & TOOLING**
   - plugin for specific shifting
     - single ID shift (e.g. 5 -> 30)
