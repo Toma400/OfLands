@@ -7,6 +7,7 @@ FILES = [
     "gui/font.png.dat",
     "gui/grid.png",
     "gui/gui.png",
+    "gui/gui.toml",
     # TODO: removed so players can't break their game! "maps/default.olm",    # those to be replaced later
     # TODO: removed so players can't break their game! "maps/default2.olm",
     "maps/tamriel.olm",        # temporary TES stuff
