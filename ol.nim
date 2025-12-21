@@ -31,6 +31,7 @@ let cfg = loadConfig("oflands.ini")
 let grd = getSectionValue(cfg, "", "grid")   == "true"
 let cur = getSectionValue(cfg, "", "cursor") == "true"
 let roa = getSectionValue(cfg, "", "roads")  == "true" # TODO: EXPERIMENTAL
+let gvi = getSectionValue(cfg, "", "gui")    == "true" # TODO: EXPERIMENTAL
 
 let player = parseInt(getSectionValue(cfg, "", "player"))
 let map_fl = getSectionValue(cfg, "", "map")
@@ -82,8 +83,8 @@ proc turn() =
     passTime(mvp, ses, 12) # progresses hours 12 hours
 
 proc gameGUI() =
-    #turnButton(turn)
-    discard
+    if gvi:
+        turnButton(turn)
 
 proc gameUpdate(dt: float32) =
     if btn(pcLeft):  moveMap(mvp, (-1,  0), dt)
@@ -122,10 +123,9 @@ proc gameUpdate(dt: float32) =
 proc gameDraw() =
     cls()
     drawMap(mvp)
-    drawGUI(mvp, ses, cur, player)
+    drawGUI(mvp, ses, gameGUI, cur, player)
     if grd: # checks if grid setting is set
         drawGrid()
-    G.draw(gameGUI)
 
 nico.init(org=AUTHOR, app=GAME_NAME)
 nico.createWindow(GAME_NAME, W, H, 1, false)

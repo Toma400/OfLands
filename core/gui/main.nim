@@ -3,6 +3,7 @@ import std/options
 import std/tables
 import std/math
 import questionable
+import nico/gui
 import nico
 # OL imports
 import ../../core/render/colours
@@ -160,11 +161,12 @@ proc drawMap* (map: Map) =
 
             drawTileContents(map, tile_drawn, tile * TL, row * TL, scale=1)
 
-proc drawGUI* (map: Map, ses: Session, ccursor: bool, player_nb: int) =
+proc drawGUI* (map: Map, ses: Session, nico_gui: proc, ccursor: bool, player_nb: int) =
     useSpritesheet(XGUI)
     drawSidebar(map)
     if ses.focus != (-1, -1):
         drawFocus(map, ses, player_nb)
+    G.draw(nico_gui)
     drawCursor(map, ses, ccursor)
 
 proc drawGrid* () =

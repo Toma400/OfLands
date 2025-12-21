@@ -1,6 +1,8 @@
+import std/tables
 import nico/gui
 import nico
 # OL imports
+import ../render/colours
 import ../../game
 import main
 
@@ -36,10 +38,10 @@ proc initGUITheme* () =
 
     colorSetLight[gDefault].hoverOutline = 10
 
-    colorSetLight[gDefault].textFlat = 190
-    colorSetLight[gDefault].textInset = 6
-    colorSetLight[gDefault].textOutset = 190
-    colorSetLight[gDefault].textDisabled = 5
+    colorSetLight[gDefault].textFlat     = col_referrer[CTFLT]
+    colorSetLight[gDefault].textInset    = col_referrer[CTINS]
+    colorSetLight[gDefault].textOutset   = col_referrer[CTOTS]
+    colorSetLight[gDefault].textDisabled = col_referrer[CTDIS]
 
     colorSetLight[gDefault].outlineFlat = 5
     colorSetLight[gDefault].outlineInset = 5

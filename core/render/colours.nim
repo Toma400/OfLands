@@ -17,16 +17,26 @@ type
     XSys  = 5
     XGrid = 6
   BaseCols* = enum # if you edit any values here, make sure to also adjust `basePalette.COLS`
+    # base OL colours
     CTEXT = "text"
     CWARN = "warn"
+    # Nico's GUI : text
+    CTFLT = "text_flt" # flat
+    CTINS = "text_ins" # inset
+    CTOTS = "text_ots" # outset
+    CTDIS = "text_dis" # disabled
 
 var col_referrer* : OrderedTable[BaseCols, int] # allows for quick referencing to Palette grid (int = index) with adjustment to repeated values
 
 proc basePalette (referrer: var OrderedTable[BaseCols, int]): Palette =
     # default values - get replaced by .toml values later
     var COLS = {
-        "text": (0.uint8,   0.uint8, 0.uint8), # 0 | pure black
-        "warn": (225.uint8, 6.uint8, 0.uint8), # 1 | bright red
+        "text":     (0.uint8,     0.uint8,   0.uint8), # 0 | pure black
+        "warn":     (225.uint8,   6.uint8,   0.uint8), # 1 | bright red
+        "text_flt": (0.uint8,     0.uint8,   0.uint8), #
+        "text_ins": (100.uint8,   0.uint8,   0.uint8), #
+        "text_ots": (0.uint8,     0.uint8,   0.uint8), #
+        "text_dis": (128.uint8, 128.uint8, 128.uint8), # 2 | gray
     }.toOrderedTable
 
     if existsFile("gui/gui.toml"): # if it doesn't, defaults are applied
