@@ -53,7 +53,8 @@ var ses = newSession()
 
 proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
-    registerPalettes(map = fmt"tilesets/{mvp.data.tterrain}",
+    registerPalettes(cref = col_referrer,
+                     map = fmt"tilesets/{mvp.data.tterrain}",
                      loc = fmt"tilesets/{mvp.data.tlocs}",
                      fac = fmt"tilesets/{mvp.data.tfacs}",
                      sys = fmt"tilesets/{mvp.data.tsys}",

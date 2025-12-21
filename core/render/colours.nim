@@ -1,5 +1,6 @@
 import nico/backends/common
 import std/strformat
+import std/strutils
 import std/sequtils
 import std/tables
 import parsetoml
@@ -15,8 +16,13 @@ type
     XGUI  = 4
     XSys  = 5
     XGrid = 6
+  BaseCols* = enum # if you edit any values here, make sure to also adjust `basePalette.COLS`
+    CTEXT = "text"
+    CWARN = "warn"
 
-proc basePalette (): Palette =
+var col_referrer* : OrderedTable[BaseCols, int] # allows for quick referencing to Palette grid (int = index) with adjustment to repeated values
+
+proc basePalette (referrer: var OrderedTable[BaseCols, int]): Palette =
     # default values - get replaced by .toml values later
     var COLS = {
         "text": (0.uint8,   0.uint8, 0.uint8), # 0 | pure black
@@ -42,6 +48,9 @@ proc basePalette (): Palette =
     for i in 0..len(palcols) - 1:
         result.data[i] = palcols[i]
         result.size   += 1
+
+    for ckind in BaseCols.low..BaseCols.high: # sets the indexes, so that these values can be accessed later
+        referrer[ckind] = find(palcols, COLS[$ckind])
 
 # proc basePalette (): Palette =
 #     const COL = [
@@ -153,11 +162,11 @@ proc `+` (p1, p2: Palette): Palette =
     result.size = needle
     #todo: echo "MERGED NUMBER: " & $needle
 
-proc registerPalettes* (map: string, loc: string, fac: string, gui: string, sys: string) =
+proc registerPalettes* (cref: OrderedTable[BaseCols, int], map: string, loc: string, fac: string, gui: string, sys: string) =
     # ensures the correct indexes exist
     #setPalette(basePalette() + getPalette(map) + getPalette(loc) + getPalette(fac) + getPalette(gui) + getPalette(sys)) # loads palettes, merge them and sets as currently used
     #setPalette(deduplicatePalette(basePalette() + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys)))# + getPalette(loc)))
-    setPalette(basePalette() + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys))# + getPalette(loc))
+    setPalette(basePalette(cref) + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys))# + getPalette(loc))
     #setPalette(basePalette() + getPalette(map, fac, gui, sys, loc))
 
 proc useSpritesheet* (ix: Indexes) =
