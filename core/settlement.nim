@@ -9,6 +9,9 @@ type
     TOWN    = 1
     CITY    = 2
     POLIS   = 3
+    # special types
+    TENT    = 4
+    CASTLE  = 5
   SettlementTile* = ref object # Tile variation that covers data of particular tile
     settlem* : Settlement
     coords*  : tuple[x, y: int]
@@ -19,6 +22,10 @@ type
     knb*   : int
 
 const TIER_STR* = { # string representation for .olf parsing
+    "camp":    TENT,   # alias
+    "tent":    TENT,
+    "fort":    CASTLE, # alias
+    "castle":  CASTLE,
     "village": VILLAGE,
     "town":    TOWN,
     "city":    CITY,

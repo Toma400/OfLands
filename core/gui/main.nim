@@ -43,7 +43,7 @@ proc drawTileContents(map: Map, tile: Tile, x, y: int, scale: int) =
             useSpritesheet(XSys)
             let settlement = (!tile.settile).settlem
             if tile.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
-                sprs(5, x = x, y = y, dw = scale, dh = scale)
+                sprs(SettlementTier.high.ord + 2, x = x, y = y, dw = scale, dh = scale)
             sprs(settlement.tier.ord + 1, x = x, y = y, dw = scale, dh = scale) # todo: SETTLEMENT_TIER.ord is temporary!
 
     let entity_count = getEntityList(tile).len

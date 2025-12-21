@@ -109,6 +109,8 @@ Depending on tileset type, it will require you to have different metadata to all
   - `town`
   - `city`
   - `polis`
+  - `castle` - special; fortified settlement or castle/chapel
+  - `tent` - special; tent village
 
 #### --- Factions ---
 - `name` _: string_ - name of the faction
