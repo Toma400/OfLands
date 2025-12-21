@@ -15,6 +15,8 @@ Table of contents:
 - [Additional map metadata](#additional-map-metadata)
   - [Starting coordinates](#----starting-coordinates----)
   - [Starting date](#----starting-date----)
+- [Non-Tiled moddability](#non-tiled-moddability)
+  - [GUI colours](#----gui-colours----)
 
 ### Setting up layers and tilesets
 Of Lands functions upon multiple layers and tilesets, although not every single one
@@ -137,3 +139,27 @@ value (e.g. `300, 10, 1`). The date format goes in order of year, month and day.
 set less values (e.g. just year) but keep in mind any values past three will be skipped.  
 Also be careful to not set month or day values that would be impossible in regular
 calendar, as it can result in crashing the game.
+
+### Non-Tiled moddability
+While most things are editable through Tiled directly, some of more miscellaneous aspects
+of the game need direct changes to files.
+
+#### --- GUI colours ---
+To edit colours of GUI (that are not set in `gui.png` tileset), open (or create, if the
+file doesn't exist) `gui.toml` file in `gui` folder.  
+Next, write or edit any of following keys to set their values:
+- `text` - colour of regular game text
+- `warn` - colour of warnings and GUI elements related
+- `text_flt` - text on GUI elements (buttons etc.), flat
+- `text_ins` - text on GUI elements (buttons etc.), inset
+- `text_ots` - text on GUI elements (buttons etc.), outset
+- `text_dis` - text on GUI elements (buttons etc.), disabled
+
+Key values are meant to be array of three `uint8` (numbers of range 0-255) values, 
+representing respective RGB value.  
+Example: `[128, 128, 128]`  
+**Important note**: using `[0, 0, 0]` will produce crash due to Of Lands' file parser
+bug, so in this case it's recommended to use values such as `1, 1, 1`
+
+If respective key is not filled, the default value will be used. Default values can
+be seen in [this file](/core/render/colours.nim), under `basePalette.COLS` table.

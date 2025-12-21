@@ -52,7 +52,7 @@ name = "Shore"
 tbase = "land"
 winter_tile = 91
 [tile.12]
-mv_cost = 25
+mv_cost = 20
 name = "Forest"
 tbase = "land"
 winter_tile = 88
@@ -72,7 +72,7 @@ name = "Shore"
 tbase = "land"
 winter_tile = 107
 [tile.16]
-mv_cost = 25
+mv_cost = 20
 name = "Forest"
 tbase = "land"
 winter_tile = 88
@@ -388,7 +388,7 @@ mv_cost = 20
 name = "Shore"
 tbase = "land"
 [tile.88]
-mv_cost = 20
+mv_cost = 25
 name = "Forest"
 tbase = "land"
 [tile.89]
@@ -1072,4 +1072,32 @@ tbase = "land"
 [tile.251]
 mv_cost = 15
 name = "Shore"
+tbase = "land"
+[tile.252]
+mv_cost = 15
+name = "Tree"
+tbase = "land"
+winter_tile = 256
+[tile.253]
+mv_cost = 15
+name = "Tree"
+tbase = "land"
+winter_tile = 256
+[tile.254]
+mv_cost = 20
+name = "Forest"
+tbase = "land"
+winter_tile = 257
+[tile.255]
+mv_cost = 20
+name = "Forest"
+tbase = "land"
+winter_tile = 257
+[tile.256]
+mv_cost = 25
+name = "Tree"
+tbase = "land"
+[tile.257]
+mv_cost = 25
+name = "Forest"
 tbase = "land"
