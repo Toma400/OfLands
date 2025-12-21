@@ -79,10 +79,10 @@ proc drawCursor(map: Map, ses: Session, ccursor: bool) =
         if isPxWithinMap(map, mouse()):
             let cell = getCellCoords(map, mouse())
             if not canStand(map.data.mapping[cell], SETTLER): # sets square to red to indicate impossibility of placing the settler
-                setColor(1)
+                useColour(CWARN)
             rect(x1 = floor((cell[0]-map.move[0])*TL),   y1 = floor((cell[1]-map.move[1])*TL),
                  x2 = floor((cell[0]-map.move[0]+1)*TL), y2 = floor((cell[1]-map.move[1]+1))*TL)
-            setColor(0) # resets colour to black, so it works for sidebar/text/cell that can have settler
+            useColour(CTEXT) # resets colour to black, so it works for sidebar/text/cell that can have settler
             # draws settler
             useSpritesheet(XSys)
             spr(EntityRole.SETTLER.ord, floor((cell[0]-map.move[0])*TL), floor((cell[1]-map.move[1])*TL))
@@ -90,7 +90,7 @@ proc drawCursor(map: Map, ses: Session, ccursor: bool) =
             sprRot(3, mouse()[0], mouse()[1], 0.0)
 
 proc drawSidebar(map: Map) =
-    setColor(0)
+    useColour(CTEXT)
 
     spr(0, H, 0)                               # corner (upper left)
     for x in int((H+TL)/TL)..int((W-TL*2)/TL): # basically upper part; 992-1248 (excludes corners)
@@ -124,7 +124,7 @@ proc drawSidebar(map: Map) =
     printc(fmt"{map.time.day} {Month[map.time.month]} {map.time.year}, {map.time.hour}", x = H+TL*5, y = H-TL*2, 3)
 
 proc drawFocus (map: Map, ses: Session, player_nb: int) =
-    setColor(0) # black
+    useColour(CTEXT) # black
     if isTileWithinMap(map, ses.focus):
         highlightTile(map, ses.focus)
     let tile_focused = map.data.mapping[ses.focus]
