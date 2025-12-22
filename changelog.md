@@ -13,6 +13,7 @@ Versions:
   - Custom cursor replacing mouse
   - Clicking on tile highlights it and showcases zoom-in and information about it
     in the sidebar
+  - Map modes switch view on map between terrain and faction overlay
   - Buttons can have customised colour theme
 - Added time system, showcased on GUI
   - Winter is also seen on tiles that can change their appearance as the season comes
@@ -33,8 +34,6 @@ Versions:
 - Added turn system, advancing game time
 - Added initial starting mode, which requires you to drop settler on some 
   walkable tile (if you don't have settlement)
-- Added map modes, allowing you to see either map with terrain and features, or faction
-  overlay showcasing political influences
 - Included Configurator to serve as placeholder starting tool before proper "new game"
   menu is made
 - Game and Configurator have icons both in-game and embed into executable

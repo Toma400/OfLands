@@ -31,7 +31,6 @@ let cfg = loadConfig("oflands.ini")
 let grd = getSectionValue(cfg, "", "grid")   == "true"
 let cur = getSectionValue(cfg, "", "cursor") == "true"
 let roa = getSectionValue(cfg, "", "roads")  == "true" # TODO: EXPERIMENTAL
-let gvi = getSectionValue(cfg, "", "gui")    == "true" # TODO: EXPERIMENTAL
 
 let player = parseInt(getSectionValue(cfg, "", "player"))
 let map_fl = getSectionValue(cfg, "", "map")
@@ -83,12 +82,8 @@ proc turn() =
     passTime(mvp, ses, 12) # progresses hours 12 hours
 
 proc gameGUI() =
-    proc switchFactionMode() =
-        if ses.mmode == FACTIONS: ses.mmode = TERRAIN elif ses.mmode == TERRAIN: ses.mmode = FACTIONS
-
-    if gvi:
-        turnButton(turn)
-        facmodeButton(switchFactionMode)
+    turnButton(turn)
+    facmodeButton(ses)
 
 proc gameUpdate(dt: float32) =
     if btn(pcLeft):  moveMap(mvp, (-1,  0), dt)

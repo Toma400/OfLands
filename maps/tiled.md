@@ -154,6 +154,7 @@ Next, write or edit any of following keys to set their values:
 - `warn` - colour of warnings and GUI elements related
 - `main` - colour of GUI elements (buttons etc.) when idle
 - `active` - colour of GUI elements (buttons etc.) when clicked
+- `outline` - outline of GUI elements (buttons etc.) when idle
 - `hover_ol` - outline of GUI elements (buttons etc.) when hovered
 - `text_flt` - text on GUI elements (buttons etc.), flat
 - `text_ins` - text on GUI elements (buttons etc.), inset

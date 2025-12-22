@@ -1,4 +1,5 @@
 --d:release
+--threads:on # optional ig
 --app:gui
 --out:OfLands.exe
 

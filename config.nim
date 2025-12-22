@@ -104,7 +104,6 @@ var cb_facs = newComboBox(facToSeq(map_dt.kingdoms))
 # checkboxes
 var ch_curs = newCheckBox("Enable custom cursor")
 var ch_road = newCheckBox("Enable roads (can slow down the game)")
-var ch_gui  = newCheckBox("Enable additional GUI")
 
 # textareas
 var ta_facs = newTextArea("")
@@ -130,7 +129,6 @@ block registerMapSettings:
     ct_mst.yAlign = YAlign_Center
 block registerMapExperimentalSettings:
     ct_mex.add(ch_road)
-    ct_mex.add(ch_gui)
     # settings
     ct_mex.frame  = newFrame("Experimental settings")
     ct_mex.yAlign = YAlign_Center
@@ -157,7 +155,6 @@ window.add(main)
 # initial values configuration
 cb_maps.index    = find(maps, fmt"maps\{map_nm}")
 cb_facs.index    = if parseInt(getSectionValue(cfg, "", "player")) <= len(cb_facs.options): parseInt(getSectionValue(cfg, "", "player")) - 1 else: 0
-ch_gui.checked   = getSectionValue(cfg, "", "gui")    == "true"
 ch_road.checked  = getSectionValue(cfg, "", "roads")  == "true"
 ch_curs.checked  = getSectionValue(cfg, "", "cursor") == "true"
 ta_facs.editable = false
@@ -176,7 +173,6 @@ proc saveConfig() =
     setSectionKey(cfg, "", "player", $(cb_facs.index + 1))
     setSectionKey(cfg, "", "cursor", $ch_curs.checked)
     setSectionKey(cfg, "", "roads",  $ch_road.checked)
-    setSectionKey(cfg, "", "gui",    $ch_gui.checked)
     writeConfig(cfg, "oflands.ini")
 
 cb_maps.onChange = proc (event: ComboBoxChangeEvent) =

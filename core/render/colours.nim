@@ -21,6 +21,7 @@ type
     CTEXT = "text"
     CWARN = "warn"
     # Nico's GUI : main
+    COUTL = "outline"  # used for GUI elements' colouring of major areas (outline)
     CMAIN = "main"     # used for GUI elements' colouring of major areas (idle)
     CACTV = "active"   # used for GUI elements' colouring of major areas (during click)
     # Nico's GUI : text
@@ -44,7 +45,8 @@ proc basePalette (referrer: var OrderedTable[BaseCols, int]): Palette =
         "text_dis": (128.uint8, 128.uint8, 128.uint8), # 3 | gray
         "hover_ol": (198.uint8, 150.uint8,  16.uint8), # 4 | golden
         "main":     (84.uint8,   46.uint8,  39.uint8), # 5 | brown
-        "active":   (198.uint8, 150.uint8,  16.uint8)  #   | golden (4)
+        "active":   (198.uint8, 150.uint8,  16.uint8), #   | golden (4)
+        "outline":  (84.uint8,   46.uint8,  39.uint8), # 6 | dark brown
         #"active":   (251.uint8, 199.uint8,  54.uint8)  # super gold (brighter)
     }.toOrderedTable
 
