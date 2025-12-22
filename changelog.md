@@ -13,6 +13,7 @@ Versions:
   - Custom cursor replacing mouse
   - Clicking on tile highlights it and showcases zoom-in and information about it
     in the sidebar
+  - Buttons can have customised colour theme
 - Added time system, showcased on GUI
   - Winter is also seen on tiles that can change their appearance as the season comes
 - Added location system, including rendering of locations put on map

@@ -23,19 +23,27 @@ var
   bTURN_on  : bool = true
 
   # o tempora(ry) o mores
-  bFM_stY = bTURN_stY - 50
+  bFM_stY = bTURN_stY - 60
+
+proc WORKAROUND_TEXT (text: string, x, y: int | Pint) =
+    # proc that is meant to be replaced with Nico rework on GUI blitting - things like buttons should be able to have text size adjusted
+    # but until then, we will just blit text on top of empty GUI objects and call it a day
+    useColour(CTFLT) # guess what, we use NicoGUI's colours even
+    printc(text, x = x + 100, y = y + 15, 3)
 
 proc turnButton* (proced: proc) =
     if G.beginWindow("", bTURN_stX, bTURN_stY, bTURN_szX, bTURN_szY, bTURN_on):
-        if G.button("End Turn", bTURN_stX, bTURN_stY, bTURN_szX, bTURN_szY):
+        if G.button("", bTURN_stX, bTURN_stY, bTURN_szX, bTURN_szY): # End Turn
             proced()
         G.endArea()
+    WORKAROUND_TEXT("End Turn", bTURN_stX, bTURN_stY)
 
 proc facmodeButton* (proced: proc) =
     if G.beginWindow("", bTURN_stX, bFM_stY, bTURN_szX, bTURN_szY, bTURN_on):
-        if G.button("See Factions", bTURN_stX, bFM_stY, bTURN_szX, bTURN_szY):
+        if G.button("", bTURN_stX, bFM_stY, bTURN_szX, bTURN_szY): # See Factions
             proced()
         G.endArea()
+    WORKAROUND_TEXT("See Factions", bTURN_stX, bFM_stY)
 
 proc initGUITheme* () =
     colorSetLight[gDefault].modalOutline = 0
@@ -44,24 +52,24 @@ proc initGUITheme* () =
     colorSetLight[gDefault].windowTitleFill = 1
     colorSetLight[gDefault].windowTitleText = 6
 
-    colorSetLight[gDefault].hoverOutline = 10
+    colorSetLight[gDefault].hoverOutline = col_referrer[CHVOL]
 
     colorSetLight[gDefault].textFlat     = col_referrer[CTFLT]
     colorSetLight[gDefault].textInset    = col_referrer[CTINS]
     colorSetLight[gDefault].textOutset   = col_referrer[CTOTS]
     colorSetLight[gDefault].textDisabled = col_referrer[CTDIS]
 
-    colorSetLight[gDefault].outlineFlat = 5
-    colorSetLight[gDefault].outlineInset = 5
-    colorSetLight[gDefault].outlineInsetLit = 7
-    colorSetLight[gDefault].outlineInsetDark = 1
-    colorSetLight[gDefault].outlineOutset = 6
-    colorSetLight[gDefault].outlineOutsetLit = 7
-    colorSetLight[gDefault].outlineOutsetDark = 1
+    colorSetLight[gDefault].outlineFlat       = col_referrer[CMAIN] # no idea what is it? | 5
+    colorSetLight[gDefault].outlineInset      = col_referrer[CMAIN] # no idea what is it? | 5
+    colorSetLight[gDefault].outlineInsetLit   = col_referrer[CMAIN] # no idea what is it? | 7
+    colorSetLight[gDefault].outlineInsetDark  = col_referrer[CMAIN] # no idea what is it? | 1
+    colorSetLight[gDefault].outlineOutset     = col_referrer[CMAIN] # todo? sides of the button
+    colorSetLight[gDefault].outlineOutsetLit  = col_referrer[CMAIN] # todo? upper part of button
+    colorSetLight[gDefault].outlineOutsetDark = col_referrer[CMAIN] # todo? bottom part of button
 
-    colorSetLight[gDefault].fillFlat = 13
-    colorSetLight[gDefault].fillOutset = 6
-    colorSetLight[gDefault].fillInset = 5
+    colorSetLight[gDefault].fillFlat   = col_referrer[CMAIN] # no idea what is it? | 13
+    colorSetLight[gDefault].fillOutset = col_referrer[CMAIN] # main contents (e.g. button colour)
+    colorSetLight[gDefault].fillInset  = col_referrer[CACTV] # fill when clicked
 
     colorSetLight[gDefault].sliderFill = 13
     colorSetLight[gDefault].sliderHandle = 7

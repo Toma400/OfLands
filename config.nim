@@ -104,7 +104,7 @@ var cb_facs = newComboBox(facToSeq(map_dt.kingdoms))
 # checkboxes
 var ch_curs = newCheckBox("Enable custom cursor")
 var ch_road = newCheckBox("Enable roads (can slow down the game)")
-var ch_gui  = newCheckBox("Enable additional GUI (buggy)")
+var ch_gui  = newCheckBox("Enable additional GUI")
 
 # textareas
 var ta_facs = newTextArea("")

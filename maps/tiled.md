@@ -152,6 +152,9 @@ file doesn't exist) `gui.toml` file in `gui` folder.
 Next, write or edit any of following keys to set their values:
 - `text` - colour of regular game text
 - `warn` - colour of warnings and GUI elements related
+- `main` - colour of GUI elements (buttons etc.) when idle
+- `active` - colour of GUI elements (buttons etc.) when clicked
+- `hover_ol` - outline of GUI elements (buttons etc.) when hovered
 - `text_flt` - text on GUI elements (buttons etc.), flat
 - `text_ins` - text on GUI elements (buttons etc.), inset
 - `text_ots` - text on GUI elements (buttons etc.), outset

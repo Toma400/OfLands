@@ -20,11 +20,16 @@ type
     # base OL colours
     CTEXT = "text"
     CWARN = "warn"
+    # Nico's GUI : main
+    CMAIN = "main"     # used for GUI elements' colouring of major areas (idle)
+    CACTV = "active"   # used for GUI elements' colouring of major areas (during click)
     # Nico's GUI : text
     CTFLT = "text_flt" # flat
     CTINS = "text_ins" # inset
     CTOTS = "text_ots" # outset
     CTDIS = "text_dis" # disabled
+    # Nico's GUI : hover
+    CHVOL = "hover_ol" # outline
 
 var col_referrer* : OrderedTable[BaseCols, int] # allows for quick referencing to Palette grid (int = index) with adjustment to repeated values
 
@@ -34,9 +39,13 @@ proc basePalette (referrer: var OrderedTable[BaseCols, int]): Palette =
         "text":     (0.uint8,     0.uint8,   0.uint8), # 0 | pure black
         "warn":     (225.uint8,   6.uint8,   0.uint8), # 1 | bright red
         "text_flt": (0.uint8,     0.uint8,   0.uint8), #
-        "text_ins": (100.uint8,   0.uint8,   0.uint8), #
+        "text_ins": (100.uint8,   0.uint8,   0.uint8), # 2 | reddish-like?
         "text_ots": (0.uint8,     0.uint8,   0.uint8), #
-        "text_dis": (128.uint8, 128.uint8, 128.uint8), # 2 | gray
+        "text_dis": (128.uint8, 128.uint8, 128.uint8), # 3 | gray
+        "hover_ol": (198.uint8, 150.uint8,  16.uint8), # 4 | golden
+        "main":     (84.uint8,   46.uint8,  39.uint8), # 5 | brown
+        "active":   (198.uint8, 150.uint8,  16.uint8)  #   | golden (4)
+        #"active":   (251.uint8, 199.uint8,  54.uint8)  # super gold (brighter)
     }.toOrderedTable
 
     if existsFile("gui/gui.toml"): # if it doesn't, defaults are applied
