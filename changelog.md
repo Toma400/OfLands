@@ -32,6 +32,8 @@ Versions:
 - Added turn system, advancing game time
 - Added initial starting mode, which requires you to drop settler on some 
   walkable tile (if you don't have settlement)
+- Added map modes, allowing you to see either map with terrain and features, or faction
+  overlay showcasing political influences
 - Included Configurator to serve as placeholder starting tool before proper "new game"
   menu is made
 - Game and Configurator have icons both in-game and embed into executable

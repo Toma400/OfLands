@@ -20,7 +20,12 @@ const H* = 960
 const sidbr_padding = TL*3 # width of sidebar (320) is 10 tiles, so with 2-tiled focus (2x scale) and 1-tiled frame (*2) it leaves us 6 (3 tiles each side)
 const focus_padding = TL*4 # focus padding from -drawSidebar- adjusted to exclude frame
 
-proc drawTileContents(map: Map, tile: Tile, x, y: int, scale: int) =
+type
+  DrawingCtx = enum # meant to not be exported
+    dMAP # map (main render)
+    dFOC # focus
+
+proc drawTileContents(map: Map, ses: Session, tile: Tile, x, y: int, scale: int, context: DrawingCtx = dMAP) =
     # shared proc for `drawMap` and `drawFocus` to draw tile contents
     useSpritesheet(XMap)
     if getSeason(map.time.month) == WINTER:
@@ -35,16 +40,27 @@ proc drawTileContents(map: Map, tile: Tile, x, y: int, scale: int) =
 
     if hasObject(tile):
         if tile.location.isSome:
-            useSpritesheet(XLoc)
             let location = (!tile.location)
-            sprs(location.index, x = x, y = y, dw = scale, dh = scale)
+
+            if ses.mmode == FACTIONS and context == dMAP and location.owner in map.kingdoms: # keep order, short-circuiting in play
+                useSpritesheet(XFac)
+                sprs(location.owner - 1, x = x, y = y, dw = scale, dh = scale)
+            else:
+                useSpritesheet(XLoc)
+                sprs(location.index, x = x, y = y, dw = scale, dh = scale)
 
         elif tile.settile.isSome:
-            useSpritesheet(XSys)
             let settlement = (!tile.settile).settlem
-            if tile.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
-                sprs(SettlementTier.high.ord + 2, x = x, y = y, dw = scale, dh = scale)
-            sprs(settlement.tier.ord + 1, x = x, y = y, dw = scale, dh = scale) # todo: SETTLEMENT_TIER.ord is temporary!
+
+            if ses.mmode == FACTIONS and context == dMAP and settlement.owner in map.kingdoms: # keep order, short-circuiting in play
+                useSpritesheet(XFac)
+                sprs(settlement.owner - 1, x = x, y = y, dw = scale, dh = scale)
+
+            else:
+                useSpritesheet(XSys)
+                if tile.name in ["Shore", "Beach", "Island"]: # todo: temporary, adds platform for water tiles
+                    sprs(SettlementTier.high.ord + 2, x = x, y = y, dw = scale, dh = scale)
+                sprs(settlement.tier.ord + 1, x = x, y = y, dw = scale, dh = scale) # todo: SETTLEMENT_TIER.ord is temporary!
 
     let entity_count = getEntityList(tile).len
     if entity_count > 0:
@@ -67,16 +83,16 @@ proc drawCursor(map: Map, ses: Session, ccursor: bool) =
     if ccursor: hideMouse()
     useSpritesheet(XGUI)
 
-    if ses.mode == EXPLORE and ccursor:
+    if ses.gmode == EXPLORE and ccursor:
         sprRot(3, mouse()[0], mouse()[1], 0.0)
-    elif ses.mode == ROUTE:
+    elif ses.gmode == ROUTE:
         if isPxWithinMap(map, mouse()):
             let cell = getCellCoords(map, mouse())
             rect(x1 = floor((cell[0]-map.move[0])*TL),   y1 = floor((cell[1]-map.move[1])*TL),
                  x2 = floor((cell[0]-map.move[0]+1)*TL), y2 = floor((cell[1]-map.move[1]+1))*TL)
         elif ccursor: # 'else + if ccursor'
             sprRot(3, mouse()[0], mouse()[1], 0.0)
-    elif ses.mode == INIT:
+    elif ses.gmode == INIT:
         if isPxWithinMap(map, mouse()):
             let cell = getCellCoords(map, mouse())
             if not canStand(map.data.mapping[cell], SETTLER): # sets square to red to indicate impossibility of placing the settler
@@ -130,7 +146,7 @@ proc drawFocus (map: Map, ses: Session, player_nb: int) =
         highlightTile(map, ses.focus)
     let tile_focused = map.data.mapping[ses.focus]
 
-    drawTileContents(map, tile_focused, H+focus_padding, 0+focus_padding, scale=2)
+    drawTileContents(map, ses, tile_focused, H+focus_padding, 0+focus_padding, scale=2, dFOC)
 
     # location
     if hasObject(tile_focused):
@@ -147,19 +163,19 @@ proc drawFocus (map: Map, ses: Session, player_nb: int) =
             printc($settlement.tier, x = H+TL*5, y = TL*7, 4) # settlement tier | below coordinates
             printc(settlement.name,  x = H+TL*5, y = TL*8, 4) # settlement name | below coordinates
 
-            drawFactionInfo(map, settlement.knb, player_nb, "settlement")
+            drawFactionInfo(map, settlement.owner, player_nb, "settlement")
 
     # info box
     printc(tile_focused.name, x = H+TL*5, y = TL*1, 4) # name   | in the middle between top and focus window
     printc($ses.focus,        x = H+TL*5, y = TL*2, 3) # coords | in the middle below focus window
 
-proc drawMap* (map: Map) =
+proc drawMap* (map: Map, ses: Session) =
     for row in 0..<MV:      # 30 x 30 map area, adjusted to moved map
         for tile in 0..<MV:                   # adjusted to moved map
             let moved_coords = (tile + map.move[0], row + map.move[1])
             let tile_drawn   = map.data.mapping[moved_coords]
 
-            drawTileContents(map, tile_drawn, tile * TL, row * TL, scale=1)
+            drawTileContents(map, ses, tile_drawn, tile * TL, row * TL, scale=1)
 
 proc drawGUI* (map: Map, ses: Session, nico_gui: proc, ccursor: bool, player_nb: int) =
     useSpritesheet(XGUI)

@@ -22,11 +22,19 @@ var
   # -- options
   bTURN_on  : bool = true
 
+  # o tempora(ry) o mores
+  bFM_stY = bTURN_stY - 50
+
 proc turnButton* (proced: proc) =
     if G.beginWindow("", bTURN_stX, bTURN_stY, bTURN_szX, bTURN_szY, bTURN_on):
         if G.button("End Turn", bTURN_stX, bTURN_stY, bTURN_szX, bTURN_szY):
             proced()
-            #echo ":O"
+        G.endArea()
+
+proc facmodeButton* (proced: proc) =
+    if G.beginWindow("", bTURN_stX, bFM_stY, bTURN_szX, bTURN_szY, bTURN_on):
+        if G.button("See Factions", bTURN_stX, bFM_stY, bTURN_szX, bTURN_szY):
+            proced()
         G.endArea()
 
 proc initGUITheme* () =

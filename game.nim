@@ -19,13 +19,16 @@ const TL* = 32 # tile width/length
 const MV* = 30 # map view size (default = 30)
 
 type
-  MapMode* = enum # modes used by session to filter through actions (e.g. for I/O to not focus on tile if you are now doing building)
+  GameMode* = enum # modes used by session to filter through actions (e.g. for I/O to not focus on tile if you are now doing building)
     INIT            # init mode     | evoked when player does not have any settlements nor entities (before game)
     EXPLORE         # default mode  | clicking on tile focuses on it and allow management if tile belongs to you)
     ROUTE           # route mode    | clicking adds route node
     TRAVEL          # travel mode   | clicking directs entity to particular cell
     TRADE           # trade mode    | clicking sets destination for trade
     BUILDING        # building mode | clicking adds a construction plan
+  MapMode* = enum # modes used by session to showcase different view on map
+    TERRAIN         # terrain mode | standard visualisation of everything
+    FACTIONS        # faction mode | shows reaches of faction control by banners (todo: also colouring) on settlements/locs (todo: also for areas?)
   MapData* = object
     tterrain* : string                            # terrain tileset name
     tlocs*    : string                            # location tileset name
@@ -42,7 +45,8 @@ type
     time*     : tuple[year, month, day, hour: int]
   Session* = object # game object, to store session data
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
-    mode*  : MapMode
+    gmode* : GameMode
+    mmode* : MapMode
     tick*  : int        # serves as a counter of each frame (used for some events)
     bdb*   : int        # todo: temporary building helper
 
@@ -300,6 +304,7 @@ proc highlightTile* (map: Map, tcoord: (int, int)) =
 
 proc newSession* (): Session =
     result.focus = (-1, -1)
-    result.mode  = EXPLORE
+    result.gmode = EXPLORE
+    result.mmode = TERRAIN
     result.tick  = 1
     result.bdb   = -1 # no selection (default)

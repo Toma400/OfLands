@@ -19,7 +19,7 @@ type
     name*  : string
     tier*  : SettlementTier
     tiles* : seq[SettlementTile]
-    knb*   : int
+    owner* : int
 
 const TIER_STR* = { # string representation for .olf parsing
     "camp":    TENT,   # alias
@@ -33,7 +33,7 @@ const TIER_STR* = { # string representation for .olf parsing
 }.toTable
 
 proc `$`* (s: Settlement): string =
-    result = fmt"{s.name} | Tier: {s.tier} | Kingdom index: {s.knb}"
+    result = fmt"{s.name} | Tier: {s.tier} | Kingdom index: {s.owner}"
 
 proc generateRandomName* (): string =
     const B = ["La", "Ni", "Te", "Ku", "Me", "Su", "Hag"]
@@ -50,9 +50,9 @@ proc newSettlement* (name: string, init_tiles: seq[SettlementTile], kingdom: int
     # helper proc, should not be used by itself (you need to assign settlement to kingdom)
     # todo: use `addSettlement` from either `map.nim` or `game.nim` depending on need
     new(result)
-    result.name = name
-    result.tier = tier
-    result.knb  = kingdom
+    result.name  = name
+    result.tier  = tier
+    result.owner = kingdom
     for tile in init_tiles:
         tile.settlem = result # autoreference binding
         result.tiles.add(tile)
