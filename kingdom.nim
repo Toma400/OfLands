@@ -1,6 +1,7 @@
 import std/strutils
 import std/tables
 import core/settlement
+import core/resources
 import core/entity
 
 type
@@ -23,12 +24,13 @@ type
     name*  : string
     bcond* : BuildingConditions
   Location* = object
-    index* : int               # location tile index
+    index* : int                  # location tile index
     name*  : string
+    res*   : Table[Resource, int] # resources stored
     bcond* : BuildingConditions
-    owner* : int               # 0 for unowned, otherwise takes kingdom index (1-n) used by the Map object
+    owner* : int                  # 0 for unowned, otherwise takes kingdom index (1-n) used by the Map object
     # todo: settlement ownership?
-    walls* : int               # 0 for no walls, 1 for pallisade, 2 for stone wall | todo: .oldata should be able to overwrite this
+    walls* : int                  # 0 for no walls, 1 for pallisade, 2 for stone wall | todo: .oldata should be able to overwrite this
     # todo: storage for resources
 
 proc `$`* (k: Kingdom): string =

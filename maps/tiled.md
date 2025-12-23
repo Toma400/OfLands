@@ -36,11 +36,7 @@ system to properly export. See [here](#----landscape----) and [here](#----locati
 for what is additionally needed.
 
 #### --- Roads ---
-Roads are currently supported only as a ghost data - it gets exported, but doesn't
-get read by the game. You can sketch out the roads however for when this feature is
-available.
-
-To make roads exported, simply create layer named `Roads`. The layer is optional, so
+To make roads, simply create layer named `Roads`. The layer is optional, so
 not having it in the Tiled map won't cause any issues during export.  
 Next, use tileset that will have indexes `1` and `2` available (so, second and third
 tile). Index 1 (second tile) is dirt road, while index 2 (third tile) is stone road.  
@@ -55,8 +51,8 @@ this number of factions on faction tileset.
 Next step is making tileset, shared between faction registry and settlement one. It
 should be named `Factions` and contain at least amount of tiles equal to faction count
 set above.  
-Faction registry works upon checking amount of tiles equal to this count - iterating
-over tile's data and art, respectively for faction's information and icon visible in-game.
+Faction registry works by checking amount of tiles equal to this count - iterating
+over tiles' data and art, respectively for faction's information and icon visible in-game.
 
 Any tiles past that count can be used freely for settlement markers - they do not need
 to have any art, as the marker only matters by its ID placed on map and data stored on
@@ -77,7 +73,7 @@ Depending on tileset type, it will require you to have different metadata to all
 
 #### --- Landscape ---
 - `name` _: string_ - name of the tile
-- `lbase` _: string_ - base the tile uses; dictates things like movability of building conditions;
+- `lbase` _: string_ - base the tile uses; dictates things like movability or building conditions;
             can use following values:
   - `land` - contains primarily landmass
   - `water` - contains primarily water

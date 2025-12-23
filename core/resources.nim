@@ -1,6 +1,6 @@
 type
-  Resources = enum
-    COIN # GOLD?
+  ResourceKind = enum
+    COIN
     # building resources
     WOOD
     CLAY
@@ -17,6 +17,7 @@ type
     SPICES    # : used to decrease food usage (exclusive)
     # utility
     IRON
+    GOLD
     COPPER
     BRICKS
     WOOL
@@ -29,6 +30,24 @@ type
     # exclusive  | important for late game, improve citizens' morale
     SILK
     JEWELRY
+
+  Resource* = object
+    kind* : ResourceKind
+    qual* : int          # quality value | if not applicable, value of 0 is used (default)
+    fuel* : int          # fuel value    | non-fuels should just have value of 0 (default)
+
+proc newResource* (k: ResourceKind, fuel: int = 0): Resource =
+    result.kind = k
+    result.fuel = fuel
+
+# List of resources for PTR map:
+#[
+  - base
+    - septim (coin)
+  - buildings
+    - wood
+    - clay  -> bricks
+    - stone
 
 # idea: settlements' limits would force you to make multiple settlement, each producing goods?
 #       this way village A would need to help village B to reach town tier, and village B would

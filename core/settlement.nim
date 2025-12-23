@@ -1,6 +1,7 @@
 import std/strformat
 import std/tables
 import std/random
+import resources
 randomize()
 
 type
@@ -15,6 +16,7 @@ type
   SettlementTile* = ref object # Tile variation that covers data of particular tile
     settlem* : Settlement
     coords*  : tuple[x, y: int]
+    res*     : Table[Resource, int] # resources stored
   Settlement* = ref object
     name*  : string
     tier*  : SettlementTier

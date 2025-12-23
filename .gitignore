@@ -2,6 +2,7 @@
 /maps/default2.tmx
 /maps/summerset.tmx
 /maps/Of Lands (Main).tsx
+/maps/Resources.tsx
 /maps/Locations.tsx
 /maps/Settlements.tsx
 /maps/ol.tiled-project
@@ -26,6 +27,7 @@ tilesets/transparency_cleaner.exe
 tilesets/factions_ptr.png
 tilesets/ptr_locs.png
 tilesets/ptr_locs.oldata
+tilesets/resources_ptr.png
 maps/tamriel.olf
 maps/tamriel.olm
 
