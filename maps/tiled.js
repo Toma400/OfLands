@@ -8,7 +8,7 @@ var olmMapFormat = {
 
     outputFiles: function(map, fileName) {
         const baseName = fileName.substring(0, fileName.lastIndexOf("."));
-        return [baseName + "olm", baseName + "olf", baseName + "oldata"];
+        return [baseName + "olm", baseName + "olf", baseName + "olr", baseName + "oldata"];
     },
 
     write: function(map, fileName) {
@@ -26,7 +26,8 @@ var olmMapFormat = {
                                     dict[x.name] = x;
                                     return dict;
         }, {});
-        var faction_count     = "factions_count" in map.properties() ? map.property("factions_count") : 0;
+        var map_properties    = map.properties();
+        var faction_count     = "factions_count" in map_properties ? map.property("factions_count") : 0;
         // TODO: make faction tileset optional!!!!!!
         var tileset_terrain   = tilesets_dict["Landscape"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
         var tileset_locations = tilesets_dict["Locations"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
@@ -65,20 +66,19 @@ var olmMapFormat = {
 //                    break; // breaks when finds the gap
 //                }
 //            }
-            if ("Factions" in tilesets_dict) {
-                var settlements = tilesets_dict["Factions"].tiles;
-                for (const settlement of settlements) {
-                    if (settlement.id >= faction_count) { // skips faction registry
-                        // checks if tile has data (required & optional)
-                        var settlement_properties = settlement.properties();
-                        if (("kingdom" in settlement_properties) && ("tier" in settlement_properties) && ("name" in settlement_properties)) {
-                            // checks if tile has properly set required data
-                            if ((settlement.property("kingdom") != 0) && (settlement.property("tier") != "")) {
-                                olf = olf + `[settlement.${settlement.id}]`                             + "\n";
-                                olf = olf + "kingdom = " + settlement.property("kingdom")               + "\n";
-                                olf = olf + "name    = " + String.raw`"${settlement.property('name')}"` + "\n";
-                                olf = olf + "tier    = " + String.raw`"${settlement.property('tier')}"` + "\n";
-                            }
+            // faction check is done on top, so there's no need to check for it again here
+            var settlements = tilesets_dict["Factions"].tiles;
+            for (const settlement of settlements) {
+                if (settlement.id >= faction_count) { // skips faction registry
+                    // checks if tile has data (required & optional)
+                    var settlement_properties = settlement.properties();
+                    if (("kingdom" in settlement_properties) && ("tier" in settlement_properties) && ("name" in settlement_properties)) {
+                        // checks if tile has properly set required data
+                        if ((settlement.property("kingdom") != 0) && (settlement.property("tier") != "")) {
+                            olf = olf + `[settlement.${settlement.id}]`                             + "\n";
+                            olf = olf + "kingdom = " + settlement.property("kingdom")               + "\n";
+                            olf = olf + "name    = " + String.raw`"${settlement.property('name')}"` + "\n";
+                            olf = olf + "tier    = " + String.raw`"${settlement.property('tier')}"` + "\n";
                         }
                     }
                 }
@@ -104,12 +104,36 @@ var olmMapFormat = {
             }
         }
 
+        // resources
+        if ("Resources" in tilesets_dict) { // todo: make it required?
+            var olr            = ""; // output file string
+            var resource_tiles = tilesets_dict["Resources"].tiles;
+
+            for (let res_ix = 0; res_ix < resource_tiles.length; res_ix++) {
+                var res_tile = resource_tiles[res_ix];
+                var res_prop = res_tile.properties();
+                if (("name" in res_prop) && ("quality" in res_prop) && ("fuel" in res_prop)) {
+                    // checks if tile has properly set required data
+                    olr = olr + `[resource.${res_ix}]`                                    + "\n";
+                    olr = olr + "name    = " + String.raw`"${res_tile.property('name')}"` + "\n";
+                    olr = olr + "quality = " + res_tile.property("quality")               + "\n";
+                    olr = olr + "fuel    = " + res_tile.property("fuel")                  + "\n";
+                }
+            }
+
+            if (olr.length > 0) {
+                var resourceFile = new TextFile(baseName + ".olr", TextFile.WriteOnly); // writes .olr named samely as map
+                resourceFile.write(olr);
+                resourceFile.commit();
+            }
+        }
+
         // .olm file contents
         var out = "";
-        if ("start_coords" in map.properties()) { // optional
+        if ("start_coords" in map_properties) { // optional
             out = out + "start_coordinates = " + "[" + map.property("start_coords") + "]\n";
         }
-        if ("start_date" in map.properties()) { // optional
+        if ("start_date" in map_properties) { // optional
             out = out + "start_date        = " + "[" + map.property("start_date") + "]\n";
         }
         if (olf.length > 0) { // if kingdoms are registered

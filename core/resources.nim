@@ -31,7 +31,7 @@ type
     SILK
     JEWELRY
 
-  Resource* = object
+  Resource* = ref object # todo: ref??? just so you can do comparison for inventories/tables I guess
     kind* : ResourceKind
     qual* : int          # quality value | if not applicable, value of 0 is used (default)
     fuel* : int          # fuel value    | non-fuels should just have value of 0 (default)

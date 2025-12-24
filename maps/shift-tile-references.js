@@ -181,7 +181,7 @@ var action = tiled.registerAction("ShiftTileReferencesWithDialog", function() {
     }
 
     // Build Dialog
-    const dialog = new Dialog("Shift Tile References");
+    const dialog = new Dialog("Mass Shift Tile References");
 
     const tilesetNames = tilesets.map(ts => ts.name);
     const tilesetCombo = dialog.addComboBox("Tileset", tilesetNames);
@@ -235,7 +235,7 @@ var action = tiled.registerAction("ShiftTileReferencesWithDialog", function() {
 	dialog.exec();
 });
 
-action.text = "Shift Tile References…";
+action.text = "Mass Shift Tile References…";
 action.iconVisibleInMenu = false;
 
 // Add to Edit menu

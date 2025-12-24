@@ -12,6 +12,7 @@ FILES = [
     # TODO: removed so players can't break their game! "maps/default2.olm",
     "maps/tamriel.olm",        # temporary TES stuff
     "maps/tamriel.olf",        # temporary TES stuff
+    "maps/tamriel.olr",        # temporary TES stuff
     # "maps/summerset.olm",
     "maps/tiled.js",
     "maps/tiled.md",
