@@ -6,10 +6,10 @@ type
     SHIP    = 10 # todo: temporary?
   Entity* = ref object
     role*   : EntityRole
-    res*    : Table[Resource, int] # resources stored
-    owner*  : int        # kingdom number
-    mov_rg  : int        # movement points regained each turn
-    mov_pt* : int        # movement points reference has
+    res*    : Table[string, int] # resources stored (resource ID, amount)
+    owner*  : int                # kingdom number
+    mov_rg  : int                # movement points regained each turn
+    mov_pt* : int                # movement points reference has
     # potentially Tile? so it's backtracked, *but* be mindful of circular imports
 
 const

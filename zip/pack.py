@@ -54,12 +54,14 @@ shutil.copy("oflands.ini", "../oflands.ini")
 
 with zipfile.ZipFile("../OfLands.zip", mode="w") as archive:
     for f in FILES:
-        with archive.open(f, "w") as fw:
-            with open(f"../{f}", "rb") as fr:
-                fw.write(fr.read())
+        if os.path.exists(f): # skip if doesn't exist
+            with archive.open(f, "w") as fw:
+                with open(f"../{f}", "rb") as fr:
+                    fw.write(fr.read())
 
 with zipfile.ZipFile("../OfLands_TILED_BACKUP.zip", mode="w") as archive:
     for f in TILED_BACKUP:
-        with archive.open(f, "w") as fw:
-            with open(f"../{f}", "rb") as fr:
-                fw.write(fr.read())
+        if os.path.exists(f): # skip if doesn't exist
+            with archive.open(f, "w") as fw:
+                with open(f"../{f}", "rb") as fr:
+                    fw.write(fr.read())

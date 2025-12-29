@@ -31,14 +31,23 @@ type
     SILK
     JEWELRY
 
-  Resource* = ref object # todo: ref??? just so you can do comparison for inventories/tables I guess
-    kind* : ResourceKind
-    qual* : int          # quality value | if not applicable, value of 0 is used (default)
-    fuel* : int          # fuel value    | non-fuels should just have value of 0 (default)
+  Resource* = ref object # ref bc used for comparison in inventories/storages (only one instance in map.data.rdefs)
+    name*  : string       # visible name
+    index* : int          # tile int (for rendering)
+    #kind*  : ResourceKind
+    qual*  : int          # quality value | if not applicable, value of 0 is used (default)
+    fuel*  : int          # fuel value    | non-fuels should just have value of 0 (default)
 
-proc newResource* (k: ResourceKind, fuel: int = 0): Resource =
-    result.kind = k
-    result.fuel = fuel
+proc newResource* (name: string, index: int, qual, fuel: int): Resource =
+    new(result)
+    result.name  = name
+    result.index = index
+    result.qual  = qual
+    result.fuel  = fuel
+
+# proc newResource* (k: ResourceKind, fuel: int = 0): Resource =
+#     result.kind = k
+#     result.fuel = fuel
 
 # List of resources for PTR map:
 #[

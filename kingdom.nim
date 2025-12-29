@@ -26,7 +26,7 @@ type
   Location* = object
     index* : int                  # location tile index
     name*  : string
-    res*   : Table[Resource, int] # resources stored
+    res*   : Table[string, int]   # resources stored (resource ID, amount)
     bcond* : BuildingConditions
     owner* : int                  # 0 for unowned, otherwise takes kingdom index (1-n) used by the Map object
     # todo: settlement ownership?

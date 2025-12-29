@@ -5,10 +5,12 @@ that can be used to export maps into Of Lands' formats (`olm`, `olf`, `oldata`).
 Table of contents:
 - [Setting up layer and tilesets](#setting-up-layers-and-tilesets)
   - [Landscape and locations](#----landscape-and-locations----)
+  - [Resources](#----resources----)
   - [Roads](#----roads----)
   - [Factions and settlements](#----factions-and-settlements----)
 - [Tilesets metadata](#tilesets-metadata)
   - [Landscape](#----landscape----)
+  - [Resources](#----resources-----1)
   - [Locations](#----locations----)
   - [Settlements](#----settlements----)
   - [Factions](#----factions----)
@@ -34,6 +36,17 @@ you will be able to export this data to OL files.
 Mind you, creating tilesets and layers and putting tiles on map isn't enough for OL map
 system to properly export. See [here](#----landscape----) and [here](#----locations----)
 for what is additionally needed.
+
+#### --- Resources ---
+Resources are defined in `Resources` tileset. Each tile will then be analysed by the game
+to create registry of items, used by the map. Required data can be found [here](#----resources-----1).
+
+Unlike other data, resources work upon text IDs, not index numbers. IDs are created from
+resource's name, so any items having the same name will have data overwritten with whatever
+item comes later.
+To prevent that from happening without renaming the item, you can create `id` property
+that will take priority over automatic ID. IDs are not visible to the player, and are only
+used internally.
 
 #### --- Roads ---
 To make roads, simply create layer named `Roads`. The layer is optional, so
@@ -87,6 +100,13 @@ Depending on tileset type, it will require you to have different metadata to all
                     defaults to regular appearance)
   - `winter_mv_cost` - cost of movement (if doesn't exist, the `winter_tile`'s movement
                        is used (so if this value doesn't exist, it's value of `mv_cost`))
+
+#### --- Resources ---
+- `id` _: string_ - resources are IDed by their name, but if this property is used, it will
+                    be used instead
+- `name` _: string_ - name of the resource
+- `qual` _: int_ - quality (optional); if not applicable, use 0
+- `fuel` _: int_ - fuel value (optional); if not applicable, use 0
 
 #### --- Locations ---
 - `name` _: string_ - name of the location

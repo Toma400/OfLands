@@ -30,6 +30,8 @@ Versions:
 - Added settlement system
   - Settlements have unique icon, depending on their tier and location
   - Settlements can be initialised with custom `.olf` file
+- Created resources system
+  - Resources can be registered by `.olr` file
 - Added road system
 - Added turn system, advancing game time
 - Added initial starting mode, which requires you to drop settler on some 

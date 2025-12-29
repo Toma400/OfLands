@@ -31,6 +31,7 @@ var olmMapFormat = {
         // TODO: make faction tileset optional!!!!!!
         var tileset_terrain   = tilesets_dict["Landscape"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
         var tileset_locations = tilesets_dict["Locations"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
+        var tileset_resources = tilesets_dict["Resources"].imageFileName.match(String.raw`(\w*.png)`);  // regexed only file name, without path
         var tileset_factions  = tilesets_dict["Factions"].imageFileName.match(String.raw`(\w*.png)`);   // regexed only file name, without path
         var tileset_system    = tilesets_dict["System"].imageFileName.match(String.raw`(\w*.png)`);     // regexed only file name, without path
         var data_terrain      = tileset_terrain[0].replace(".png", ".oldata");           // sets .oldata to have the same name as tileset image
@@ -113,11 +114,28 @@ var olmMapFormat = {
                 var res_tile = resource_tiles[res_ix];
                 var res_prop = res_tile.properties();
                 if (("name" in res_prop) && ("quality" in res_prop) && ("fuel" in res_prop)) {
-                    // checks if tile has properly set required data
-                    olr = olr + `[resource.${res_ix}]`                                    + "\n";
-                    olr = olr + "name    = " + String.raw`"${res_tile.property('name')}"` + "\n";
-                    olr = olr + "quality = " + res_tile.property("quality")               + "\n";
-                    olr = olr + "fuel    = " + res_tile.property("fuel")                  + "\n";
+                    if (res_tile.property("name") != "") {
+                        // checks if tile has required keys and that name is not empty
+                        function multireplace(og_str, replace_array, replace_char) {
+                            for array_char in replace_array {
+                                og_str = og_str.replace(array_char, replace_char);
+                            }
+                            return og_str;
+                        }
+
+                        var res_id = ("id" in res_prop) ? res_tile.property("id") // if "id" field exists, it is used
+                                                        : res_tile.property("name").multireplace([" ", ".", ",", ";"],
+                                                                             "_").toLowerCase();
+                        // optional values
+                        var res_qual = ("quality" in res_prop) ? res_tile.property("quality") : 0;
+                        var res_fuel = ("fuel" in res_prop)    ? res_tile.property("fuel")    : 0;
+
+                        olr = olr + `[resource.${res_id}]`                                    + "\n";
+                        olr = olr + "name    = " + String.raw`"${res_tile.property('name')}"` + "\n";
+                        olr = olr + "index   = " + res_ix                                     + "\n";
+                        olr = olr + "quality = " + res_qual                                   + "\n";
+                        olr = olr + "fuel    = " + res_fuel                                   + "\n";
+                    }
                 }
             }
 
@@ -141,9 +159,11 @@ var olmMapFormat = {
         }
         out = out + "tileset_terrain   = " + String.raw`"${tileset_terrain[0]}"` + "\n";   // for some reason `match` yields two same entries
         out = out + "tileset_locations = " + String.raw`"${tileset_locations[0]}"` + "\n"; // for some reason `match` yields two same entries
+        out = out + "tileset_resources = " + String.raw`"${tileset_resources[0]}"` + "\n"; // for some reason `match` yields two same entries
         out = out + "tileset_factions  = " + String.raw`"${tileset_factions[0]}"` + "\n";  // for some reason `match` yields two same entries
         out = out + "tileset_system    = " + String.raw`"${tileset_system[0]}"` + "\n";    // for some reason `match` yields two same entries
-        out = out + "data_terrain      = " + String.raw`"${data_terrain}"` + "\n";
+        out = out + "data_terrain      = " + String.raw`"${data_terrain}"`   + "\n";
+        out = out + "data_resources    = " + String.raw`"${pureName}.olr"`   + "\n";
         out = out + "data_locations    = " + String.raw`"${data_locations}"` + "\n";
         out = out + "terrain = [" + "\n";
 

@@ -11,7 +11,9 @@ import nico
 # OL imports
 import core/render/colours
 import core/settlement
+import core/resources
 import core/entity
+import core/files
 import kingdom
 import map
 
@@ -33,9 +35,11 @@ type
     tterrain* : string                            # terrain tileset name
     tlocs*    : string                            # location tileset name
     tfacs*    : string                            # faction tileset name
+    tres*     : string                            # resource tileset name
     tsys*     : string                            # system tileset name
     tdefs*    : OrderedTable[int, TilePrefab]     # tile definitions | index, TilePrefab object     | meant to be static reference/preset without edits
-    ldefs*    : OrderedTable[int, LocationPrefab] # loc definitions  | index, LocationPrefab object | meant to be static reference/present without edits
+    ldefs*    : OrderedTable[int, LocationPrefab] # loc definitions  | index, LocationPrefab object | meant to be static reference/preset without edits
+    rdefs*    : OrderedTable[string, Resource]    # res definitions  | string ID, Resource object   | meant to be static reference/preset without edits
     mapping*  : OrderedTable[(int, int), Tile]    # tile mapping     | (coords), Tile               | meant to be mutable (data can change)
     size*     : (int, int)                        # size             | (width, length)
   Map* = object
@@ -123,14 +127,17 @@ proc parseOLM (olm: TomlValueRef): MapData =
     result.tterrain = olm["tileset_terrain"].getStr()
     result.tlocs    = olm["tileset_locations"].getStr()
     result.tfacs    = olm["tileset_factions"].getStr()
+    result.tres     = olm["tileset_resources"].getStr()
     result.tsys     = olm["tileset_system"].getStr()
     var tdefs_path  = olm["data_terrain"].getStr()
     var ldefs_path  = olm["data_locations"].getStr()
+    var rdefs_path  = olm["data_resources"].getStr()
     # before files are used, we ensure they exist
     for f in [result.tterrain, result.tlocs, result.tsys, tdefs_path, ldefs_path]:
         if not fileExists(Path(fmt"tilesets/{f}")): raise newException(Exception, fmt"Map file directs to missing file: {f}")
     result.tdefs = parseTerrainOLDATA(tdefs_path)
     result.ldefs = parseLocationOLDATA(ldefs_path)
+    result.rdefs = parseResourcesFile(rdefs_path)
     # road mapping
     var roads_mapping: Table[tuple[x, y: int], int]
     proc getRoad (mapping: Table[tuple[x, y: int], int], coord: tuple[x, y: int]): int =
@@ -241,17 +248,18 @@ proc parseFactions* (ffile: string, map: var Map, player_k_nb: int, player_k_nm:
     #        seq.add(newSettlement(c)
     #     registerSettlement(data = data, coords = seq)
 
-proc parseDate (olm: TomlValueRef): tuple[year, month, day, hour: int] =
-    result.hour = 1 # default hour no matter the settings
-    if olm.hasKey("start_date"):
-        let dates = olm["start_date"].getElems()
-        if len(dates) >= 3:
-            return (year: dates[0].getInt(), month: dates[1].getInt(), day: dates[2].getInt(), hour: 1)
-        elif len(dates) == 2:
-            return (year: dates[0].getInt(), month: dates[1].getInt(), day: 1,                 hour: 1)
-        elif len(dates) == 1:
-            return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: 1)
-    return (year: 1, month: 1, day: 1, hour: 1)
+# TODO: remove after `core/files.nim` export works:
+# proc parseDate (olm: TomlValueRef): tuple[year, month, day, hour: int] =
+#     result.hour = 1 # default hour no matter the settings
+#     if olm.hasKey("start_date"):
+#         let dates = olm["start_date"].getElems()
+#         if len(dates) >= 3:
+#             return (year: dates[0].getInt(), month: dates[1].getInt(), day: dates[2].getInt(), hour: 1)
+#         elif len(dates) == 2:
+#             return (year: dates[0].getInt(), month: dates[1].getInt(), day: 1,                 hour: 1)
+#         elif len(dates) == 1:
+#             return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: 1)
+#     return (year: 1, month: 1, day: 1, hour: 1)
 
 proc getInitialCoords (olm: TomlValueRef, p_kingdom: Kingdom): (int, int) =
     if p_kingdom.start != (0, 0):
