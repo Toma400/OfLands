@@ -117,15 +117,17 @@ var olmMapFormat = {
                     if (res_tile.property("name") != "") {
                         // checks if tile has required keys and that name is not empty
                         function multireplace(og_str, replace_array, replace_char) {
-                            for array_char in replace_array {
+                            for (array_char in replace_array) {
                                 og_str = og_str.replace(array_char, replace_char);
                             }
                             return og_str;
                         }
 
                         var res_id = ("id" in res_prop) ? res_tile.property("id") // if "id" field exists, it is used
-                                                        : res_tile.property("name").multireplace([" ", ".", ",", ";"],
-                                                                             "_").toLowerCase();
+                                                        : multireplace(
+                                                            res_tile.property("name"), // og string
+                                                            [" ", ".", ",", ";"],      // things to be replaced
+                                                             "_").toLowerCase();       // replacement, and getting ID unified
                         // optional values
                         var res_qual = ("quality" in res_prop) ? res_tile.property("quality") : 0;
                         var res_fuel = ("fuel" in res_prop)    ? res_tile.property("fuel")    : 0;

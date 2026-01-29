@@ -1,3 +1,4 @@
+import std/tables
 import resources
 
 type

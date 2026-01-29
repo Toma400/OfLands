@@ -63,4 +63,4 @@ proc newResource* (name: string, index: int, qual, fuel: int): Resource =
 #       also exchange its unique resources to village A helping it in return
 # (e.g. if village is up to 2 tiles, and you can't afford making [woodworker, inn, brickmason, church, market, smith]
 #       buildings, you can spread those into two villages where A would have woodworker, B would have
-#       brickmason, and they'd exchange those resources simply)
+#       brickmason, and they'd exchange those resources simply) ]#
