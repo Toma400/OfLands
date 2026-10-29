@@ -45,10 +45,6 @@ proc newResource* (name: string, index: int, qual, fuel: int): Resource =
     result.qual  = qual
     result.fuel  = fuel
 
-# proc newResource* (k: ResourceKind, fuel: int = 0): Resource =
-#     result.kind = k
-#     result.fuel = fuel
-
 # List of resources for PTR map:
 #[
   - base

@@ -10,10 +10,10 @@ Table of contents:
   - [Factions and settlements](#----factions-and-settlements----)
 - [Tilesets metadata](#tilesets-metadata)
   - [Landscape](#----landscape----)
-  - [Resources](#----resources-----1)
-  - [Locations](#----locations----)
-  - [Settlements](#----settlements----)
-  - [Factions](#----factions----)
+  - [Resources](#----resource----)
+  - [Locations](#----location----)
+  - [Settlements](#----settlement----)
+  - [Factions](#----faction----)
 - [Additional map metadata](#additional-map-metadata)
   - [Starting coordinates](#----starting-coordinates----)
   - [Starting date](#----starting-date----)
@@ -101,14 +101,14 @@ Depending on tileset type, it will require you to have different metadata to all
   - `winter_mv_cost` - cost of movement (if doesn't exist, the `winter_tile`'s movement
                        is used (so if this value doesn't exist, it's value of `mv_cost`))
 
-#### --- Resources ---
+#### --- Resource ---
 - `id` _: string_ - resources are IDed by their name, but if this property is used, it will
                     be used instead
 - `name` _: string_ - name of the resource
 - `qual` _: int_ - quality (optional); if not applicable, use 0
 - `fuel` _: int_ - fuel value (optional); if not applicable, use 0
 
-#### --- Locations ---
+#### --- Location ---
 - `name` _: string_ - name of the location
 - `bcond` _: string_ - condition for location to be placed (also on premade map); can use following values:
   - `land`  - can be placed on land tiles
@@ -117,7 +117,7 @@ Depending on tileset type, it will require you to have different metadata to all
   - `air`   - can be placed on tiles that do not obstruct sky (most of them)
   - `all`   - can be anywhere
 
-#### --- Settlements ---
+#### --- Settlement ---
 - `kingdom` _: integer_ - faction number the settlement belongs to (must be positive)
 - `name` _: string_ - name of the settlement (optional)
 - `tier` _: string_ - tier of the settlement, one of following:
@@ -128,7 +128,7 @@ Depending on tileset type, it will require you to have different metadata to all
   - `castle` - special; fortified settlement or castle/chapel
   - `tent` - special; tent village
 
-#### --- Factions ---
+#### --- Faction ---
 - `name` _: string_ - name of the faction
 - `description` _: string_ - description of what the faction is (optional)
 - `start_coords` _: string, string_ - two coordinates indicating starting position when

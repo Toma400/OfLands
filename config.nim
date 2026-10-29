@@ -67,6 +67,7 @@ if existsDir("_temp"):
 
 # data
 var cfg    = loadConfig("oflands.ini")
+let ver    = getSectionValue(cfg, "", "version")
 let map_nm = getSectionValue(cfg, "", "map")
 var map_dt = newMap(olm_file       = map_nm,
                     player_kingdom = (nb: 0,

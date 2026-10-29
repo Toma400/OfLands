@@ -1,6 +1,10 @@
 # Roadmap
 This list here is non-exhaustive, but also non-declarative planning for features.
 
+### 0.1.1.
+- check for updates? IoA-style, could be visible via configurator instead of game
+- settlement tile storage of resources?
+
 ### Nearest todo
 - **CODE**
   - Roads
