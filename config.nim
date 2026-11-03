@@ -77,7 +77,7 @@ proc isOutdated(local, compared: string): bool =
     # -1s indicate standardisation error
     let lc_numbers = versionStandardise(local)
     let cp_numbers = versionStandardise(compared)
-    if lc_numbers.major != -1 or cp_numbers.major != -1: return false # err
+    if lc_numbers.major == -1 or cp_numbers.major == -1: return false # err
     else: # both correctly standardised
         if   lc_numbers.major < cp_numbers.major: return true  # too low, outdated
         elif lc_numbers.major > cp_numbers.major: return false # too high (indev?), newer
@@ -152,7 +152,7 @@ var update  = false # default status for update notification
 # version check & comparison
 block versionCheck:
     var client = newHttpClient()
-    let verref = client.get("https://github.com/Toma400/OfLands/blob/town/oflands.ini")
+    let verref = client.get("https://raw.githubusercontent.com/Toma400/OfLands/refs/heads/town/oflands.ini")
     if verref.status == "200 OK":
         let vercomp = getSectionValue(loadConfig(verref.bodyStream), "", "ref_version")
         update = isOutdated(ver, vercomp) # err counts as 'false'
