@@ -23,7 +23,6 @@ import map # only for `canExist`, remove if not needed
 randomize()
 ###########################################
 const GAME_NAME = "Of Lands"
-const GAME_VER  = "0.1.0"
 const AUTHOR    = "Toma400"
 const LICENSE   = "All Rights Reserved (C) Tomasz Stępień 2025"
 ###########################################
@@ -35,6 +34,8 @@ let roa = getSectionValue(cfg, "", "roads")  == "true" # TODO: EXPERIMENTAL
 let player = parseInt(getSectionValue(cfg, "", "player"))
 let map_fl = getSectionValue(cfg, "", "map")
 let map_nm = replace(map_fl, ".olm", "")
+
+let GAME_VER = getSectionValue(cfg, "", "version") # taken out of `const` field as now dependent on config
 
 var mvp = newMap(olm_file       = map_fl,
                  player_kingdom = (nb: player,

@@ -1,5 +1,7 @@
 import std/private/osfiles
 import std/private/osdirs
+import std/httpclient
+import std/browsers
 import std/strformat
 import std/sequtils
 import std/strutils
@@ -8,6 +10,7 @@ import std/osproc
 import std/tables
 import std/math
 import parsetoml
+import system
 import nigui
 import pixie
 import os
@@ -17,6 +20,73 @@ import game
 
 # TODO
 # - "new Faction" with name TextArea
+
+type CHARTYPE = enum
+    LETTER, NUMBER, MIXED, ELSE
+proc charType(st: string): CHARTYPE =
+    var lt, nmb, e : int
+    for ch in st:
+      if isDigit(ch):          nmb += 1 # pure number
+      elif isAlphaNumeric(ch): lt += 1  # pure letter
+      else:                    e += 1   # non-typical
+    if e > 0: return ELSE
+    elif lt > 0:
+        if nmb > 0: return MIXED
+        else: return LETTER
+    elif nmb > 0: return NUMBER # no lt
+    else: return ELSE # ""
+proc ord(st: string): int = return ord(st[0]) # ord with str->char converter
+
+proc versionStandardise(v: string): tuple[major, minor, fix: int] =
+    # standardises non-standard versioning into n.n.n format (n = number, x = letter)
+    # versioning options available:
+    # - n (0)         = 0.0.0
+    # - n.n (0.1)     = 0.1.0
+    # - n.x (0.b)     = 0.1.0
+    # - n.nx (0.1b)   = 0.1.1
+    # - n.n.x (0.1.b) = 0.1.1
+    # - n.n.n (0.1.1) = 0.1.1
+    let vs = split(v, ".")
+    case len(vs):
+      of 1:
+          if charType(vs[0]) == NUMBER: return (parseInt(vs[0]), 0, 0)
+      of 2:
+          if charType(vs[0]) == NUMBER: # prerequisite
+            case charType(vs[1]):
+              of NUMBER: return (parseInt(vs[0]), parseInt(vs[1]), 0)
+              of LETTER: return (parseInt(vs[0]), ord(vs[1]) - 65, 0)
+              of MIXED:
+                  var mr_ver = ""
+                  for ch in vs[1]:
+                    if charType($ch) == NUMBER: mr_ver = fmt"{mr_ver}{ch}" # expanding minor version
+                    else: # letter found, end of versioning
+                      return (parseInt(vs[0]), parseInt(mr_ver), ord(ch) - 65)
+              else: discard # flows to end (error) return
+      of 3:
+          if charType(vs[0]) == NUMBER: # prerequisite
+            if charType(vs[1]) == NUMBER: # follow up prerequisite
+              case charType(vs[2]):
+                of NUMBER: return (parseInt(vs[0]), parseInt(vs[1]), parseInt(vs[2]))
+                of LETTER: return (parseInt(vs[0]), parseInt(vs[1]), ord(vs[2]) - 65)
+                else: discard # flows to end (error) return
+      else: return (-1, -1, -1) # 3+ dots is incorrect (so 4+ elements)
+    return (-1, -1, -1) # in case of any errors
+
+proc isOutdated(local, compared: string): bool =
+    # error returns as 'false', silent failure similarly to GET != 200
+    # -1s indicate standardisation error
+    let lc_numbers = versionStandardise(local)
+    let cp_numbers = versionStandardise(compared)
+    if lc_numbers.major != -1 or cp_numbers.major != -1: return false # err
+    else: # both correctly standardised
+        if   lc_numbers.major < cp_numbers.major: return true  # too low, outdated
+        elif lc_numbers.major > cp_numbers.major: return false # too high (indev?), newer
+        else: # equal, forward with comparisons
+          if   lc_numbers.minor < cp_numbers.minor: return true  # too low, outdated
+          elif lc_numbers.minor > cp_numbers.minor: return false # too high (indev?), newer:
+          else: # equal, forward with comparisons
+            if   lc_numbers.fix < cp_numbers.fix: return true  # too low, outdated
+            else:                                 return false # too high (indev?) or equal
 
 proc facToSeq(ot: OrderedTable[int, Kingdom]): seq[string] =
     for i, k in ot.pairs():
@@ -67,7 +137,7 @@ if existsDir("_temp"):
 
 # data
 var cfg    = loadConfig("oflands.ini")
-let ver    = getSectionValue(cfg, "", "version")
+let ver    = getSectionValue(cfg, "", "version") # version of the game (local files)
 let map_nm = getSectionValue(cfg, "", "map")
 var map_dt = newMap(olm_file       = map_nm,
                     player_kingdom = (nb: 0,
@@ -77,6 +147,15 @@ var map_dt = newMap(olm_file       = map_nm,
 var banners = if existsFile(fmt"tilesets/{map_dt.data.tfacs}"): readImage(fmt"tilesets/{map_dt.data.tfacs}") else: nil
 var ban_tab : OrderedTable[int, nigui.Image]
 var ban_ix  = 0
+var update  = false # default status for update notification
+
+# version check & comparison
+block versionCheck:
+    var client = newHttpClient()
+    let verref = client.get("https://github.com/Toma400/OfLands/blob/town/oflands.ini")
+    if verref.status == "200 OK":
+        let vercomp = getSectionValue(loadConfig(verref.bodyStream), "", "ref_version")
+        update = isOutdated(ver, vercomp) # err counts as 'false'
 
 # app run
 app.init()
@@ -86,7 +165,9 @@ window.iconPath = "ol.png"
 # containers
 var main   = newLayoutContainer(Layout_Vertical)
 var ct_map = newLayoutContainer(Layout_Horizontal)
-var ct_mst = newLayoutContainer(Layout_Horizontal)
+var ct_sub = newLayoutContainer(Layout_Horizontal) # settings + update bar
+var ct_mst = newLayoutContainer(Layout_Horizontal) # <-/
+var ct_upd = newLayoutContainer(Layout_Horizontal) # <-/
 var ct_mex = newLayoutContainer(Layout_Horizontal)
 var ct_fac = newLayoutContainer(Layout_Horizontal)
 var ct_fav = newLayoutContainer(Layout_Vertical)
@@ -97,6 +178,7 @@ var map_label = newLabel("Map used: ")
 var map_size  = newLabel("") # size
 var map_kd_ct = newLabel("") # kingdom count
 var map_st_ct = newLabel("") # settlement count
+var lbl_ver   = newLabel("") # update info
 
 # comboboxes
 var cb_maps = newComboBox(maps)
@@ -110,6 +192,7 @@ var ch_road = newCheckBox("Enable roads (can slow down the game)")
 var ta_facs = newTextArea("")
 
 # buttons
+var bt_upd  = newButton("Update the game")
 var bt_save = newButton("Save settings")
 var bt_svrn = newButton("Save and start the game")
 
@@ -128,6 +211,12 @@ block registerMapSettings:
     # settings
     ct_mst.frame  = newFrame("Game settings")
     ct_mst.yAlign = YAlign_Center
+block registerUpdate:
+    ct_upd.add(lbl_ver)
+    ct_upd.add(bt_upd)
+    # settings
+    ct_upd.frame  = newFrame("Update")
+    ct_upd.yAlign = YAlign_Center
 block registerMapExperimentalSettings:
     ct_mex.add(ch_road)
     # settings
@@ -148,7 +237,10 @@ block registerFinalLayer:
 block registerLayers:
     main.add(ct_map)
     main.add(ct_fac)
-    main.add(ct_mst)
+    block settingsUpdatesBar:
+      ct_sub.add(ct_mst)
+      ct_sub.add(ct_upd)
+      main.add(ct_sub)
     main.add(ct_mex)
     main.add(ct_fin)
 window.add(main)
@@ -168,6 +260,11 @@ if existsFile(fmt"_temp/banner_{ban_ix}_used.png"):
     ban_tab[ban_ix] = newImage()
     ban_tab[ban_ix].loadFromFile(fmt"_temp/banner_{ban_ix}_used.png")
 setMapInfo(map_dt, map_size, map_kd_ct, map_st_ct)
+
+# update notification
+let upd_note = if update: "New update available!" else: "Game up to date."
+lbl_ver.text = fmt"Of Lands version: {ver} | {upd_note}"
+bt_upd.enabled = update # disables if update not available
 
 proc saveConfig() =
     setSectionKey(cfg, "", "map",    multiReplace(cb_maps.value, [("maps/", ""), (r"maps\", "")]))
@@ -201,6 +298,9 @@ ct_fav.onDraw = proc (event: DrawEvent) =
     if ban_ix in ban_tab:
         canvas.drawImage(ban_tab[ban_ix], x=45,
                                           y=30)
+
+bt_upd.onClick = proc (event: ClickEvent) =
+    openDefaultBrowser("https://github.com/Toma400/OfLands/releases")
 
 bt_save.onClick = proc (event: ClickEvent) =
     saveConfig()

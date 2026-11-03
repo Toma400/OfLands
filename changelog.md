@@ -1,6 +1,12 @@
 # Changelog
 Versions:
-- [0.1.0](#0.1.0)
+- 0.1.x
+  - [0.1.1](#0.1.1) 
+  - [0.1.0](#0.1.0)
+
+### 0.1.1
+- Configurator recognises Of Lands version and informs you if it's outdated regarding
+  latest released one
 
 ### 0.1.0
 - Created minimal .olm/.oldata system with its parsers

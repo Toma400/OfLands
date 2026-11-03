@@ -1,3 +1,4 @@
 --d:release
+--d:ssl
 --app:gui
 --out:OfLandsConfigurator.exe
