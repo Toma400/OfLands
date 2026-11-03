@@ -39,7 +39,7 @@ type
     tsys*     : string                            # system tileset name
     tdefs*    : OrderedTable[int, TilePrefab]     # tile definitions | index, TilePrefab object     | meant to be static reference/preset without edits
     ldefs*    : OrderedTable[int, LocationPrefab] # loc definitions  | index, LocationPrefab object | meant to be static reference/preset without edits
-    rdefs*    : OrderedTable[string, Resource]    # res definitions  | string ID, Resource object   | meant to be static reference/preset without edits
+    rdefs*    : OrderedTable[int, Resource]       # res definitions  | index, Resource object       | meant to be static reference/preset without edits
     mapping*  : OrderedTable[(int, int), Tile]    # tile mapping     | (coords), Tile               | meant to be mutable (data can change)
     size*     : (int, int)                        # size             | (width, length)
   Map* = object

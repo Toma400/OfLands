@@ -2,9 +2,36 @@
 This list here is non-exhaustive, but also non-declarative planning for features.
 
 ### 0.1.1.
-- settlement tile storage of resources?
+- have resources storeable in settlements, ideally with some visible interface listing 
+  them??
+  - search for GUI to showcase resources as expandable list
+  - introduce map exports for resource storing
+- debloat of the code, making more map data/files optional, alternatively making OL 
+  files loadable by Tiled
+  - use `files.nim` to debloat `game.nim`
+- map versioning? for now simple == equaling, later on could work like IoA dependency
+- expand Tamriel map to, I dunno, include entire Summerset? Maybe some new factions?
+- mapmakers should be able to both dictate resources already existing in settlement tile 
+  and make randomly generated ones (unsure if it's scope of 0.1.1, buttt)
 
-### Nearest todo
+### 0.1.2.
+
+### 0.2.0.
+
+### General todo
+- **REWORKS**
+  - Tile system being separated onto "background" and "top" (e.g. forest layer and grass
+    layer)
+    - this allows for huge versatility of designs, e.g. forests in combinations that would
+      normally require ton of additional tile copies
+    - mix-matching region/region objects could also exist for borders
+    - deforestation etc. could likely be done through "upper tile" context
+  - custom format
+    - make example files/blank map
+    - make .olf/.olm/etc. importable
+    - make files more optional/have fallback
+    - ^ above only makes sense if Tile system is reworked/agreed on
+  - adjustable resolution?
 - **CODE**
   - Roads
     - improvement to performance
@@ -52,7 +79,7 @@ This list here is non-exhaustive, but also non-declarative planning for features
   - deAI current plugin for god's sake
     - fix negative moves 
 
-### 0.1.0
+### 0.1.x
 - Locations (only the ones that can easily have no assignment, e.g. forts)
   - A way to build empty forts to showcase structure & tie them to permanent map data
     - Route mode should be turned into architecture mode?
@@ -72,7 +99,7 @@ This list here is non-exhaustive, but also non-declarative planning for features
 - Save-wise (later) it would make sense to keep names of tilesets in Map struct
 - Making sure .oldata tiles can be skipped or not have a name
 
-### 0.2.0
+### 0.2.x
 - More tiles
   - Natural
     - rivers
@@ -84,3 +111,4 @@ This list here is non-exhaustive, but also non-declarative planning for features
 - Being able to dump Map object into file and load it afterwards (savegame)
 - Scaling up? (60x60 tiles, 15x15 map view, x2 scale (the same system that showcases
   tile highlight))
+- Fog of war, with certain distances enabled by owned settlements, locations and entities

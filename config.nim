@@ -262,8 +262,8 @@ if existsFile(fmt"_temp/banner_{ban_ix}_used.png"):
 setMapInfo(map_dt, map_size, map_kd_ct, map_st_ct)
 
 # update notification
-let upd_note = if update: "New update available!" else: "Game up to date."
-lbl_ver.text = fmt"Of Lands version: {ver} | {upd_note}"
+let upd_note = if update: "New update available!" else: "Game up to date!"
+lbl_ver.text = fmt"Of Lands version: {ver} | {upd_note}   "
 bt_upd.enabled = update # disables if update not available
 
 proc saveConfig() =

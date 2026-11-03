@@ -123,16 +123,16 @@ var olmMapFormat = {
                             return og_str;
                         }
 
-                        var res_id = ("id" in res_prop) ? res_tile.property("id") // if "id" field exists, it is used
-                                                        : multireplace(
-                                                            res_tile.property("name"), // og string
-                                                            [" ", ".", ",", ";"],      // things to be replaced
-                                                             "_").toLowerCase();       // replacement, and getting ID unified
+//                        var res_id = ("id" in res_prop) ? res_tile.property("id") // if "id" field exists, it is used
+//                                                        : multireplace(
+//                                                            res_tile.property("name"), // og string
+//                                                            [" ", ".", ",", ";"],      // things to be replaced
+//                                                             "_").toLowerCase();       // replacement, and getting ID unified
                         // optional values
                         var res_qual = ("quality" in res_prop) ? res_tile.property("quality") : 0;
                         var res_fuel = ("fuel" in res_prop)    ? res_tile.property("fuel")    : 0;
 
-                        olr = olr + `[resource.${res_id}]`                                    + "\n";
+                        olr = olr + `[resource.${res_ix}]`                                    + "\n";
                         olr = olr + "name    = " + String.raw`"${res_tile.property('name')}"` + "\n";
                         olr = olr + "index   = " + res_ix                                     + "\n";
                         olr = olr + "quality = " + res_qual                                   + "\n";

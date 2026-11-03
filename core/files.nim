@@ -4,6 +4,7 @@
 # Module for all parsing
 #################################################
 import std/strformat
+import std/strutils
 import parsetoml
 import resources
 
@@ -18,13 +19,14 @@ proc parseDate* (olm: TomlValueRef): tuple[year, month, day, hour: int] =
             return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: 1)
     return (year: 1, month: 1, day: 1, hour: 1)
 
-proc parseResourcesFile* (olr_path: string): OrderedTable[string, Resource] =
+proc parseResourcesFile* (olr_path: string): OrderedTable[int, Resource] =
     let olr = parseFile(fmt"maps/{olr_path}") # gets TomlValueRef
     if existsKey(olr, "resource"):
         for res_id in olr["resource"].getTable.keys():
-            result[res_id] = newResource(
-                                         name  = olr["resource"][res_id]["name"].getStr(),
-                                         index = olr["resource"][res_id]["index"].getInt(),
-                                         qual  = olr["resource"][res_id]["quality"].getInt(0),
-                                         fuel  = olr["resource"][res_id]["fuel"].getInt(0)
-                                         )
+            let ix = parseInt(res_id)
+            result[ix] = newResource(
+                                     name  = olr["resource"][res_id]["name"].getStr(""),
+                                     index = ix,
+                                     qual  = olr["resource"][res_id]["quality"].getInt(0),
+                                     fuel  = olr["resource"][res_id]["fuel"].getInt(0)
+                                     )

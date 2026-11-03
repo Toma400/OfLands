@@ -7,6 +7,10 @@ Versions:
 ### 0.1.1
 - Configurator recognises Of Lands version and informs you if it's outdated regarding
   latest released one
+- Resources
+  - Reworked their system to use numerical ID **| mapbreaking**
+    - `ID` field is now out of use
+    - change for more uniform/bug-free format that doesn't affect translations
 
 ### 0.1.0
 - Created minimal .olm/.oldata system with its parsers
@@ -38,6 +42,8 @@ Versions:
   - Settlements can be initialised with custom `.olf` file
 - Created resources system
   - Resources can be registered by `.olr` file
+  - Technically they are storeable in settlements, there's no system to make them
+    stored there however
 - Added road system
 - Added turn system, advancing game time
 - Added initial starting mode, which requires you to drop settler on some 

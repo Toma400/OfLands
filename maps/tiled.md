@@ -34,19 +34,12 @@ Samely, initialise tilesets named the same way. When putting tiles of respective
 you will be able to export this data to OL files.
 
 Mind you, creating tilesets and layers and putting tiles on map isn't enough for OL map
-system to properly export. See [here](#----landscape----) and [here](#----locations----)
+system to properly export. See [here](#----landscape----) and [here](#----location----)
 for what is additionally needed.
 
 #### --- Resources ---
 Resources are defined in `Resources` tileset. Each tile will then be analysed by the game
-to create registry of items, used by the map. Required data can be found [here](#----resources-----1).
-
-Unlike other data, resources work upon text IDs, not index numbers. IDs are created from
-resource's name, so any items having the same name will have data overwritten with whatever
-item comes later.
-To prevent that from happening without renaming the item, you can create `id` property
-that will take priority over automatic ID. IDs are not visible to the player, and are only
-used internally.
+to create registry of items, used by the map. Required data can be found [here](#----resource----).
 
 #### --- Roads ---
 To make roads, simply create layer named `Roads`. The layer is optional, so
@@ -73,11 +66,12 @@ tile. Therefore it is important to also create `Settlements` layer, where settle
 markers can be put.  
 This is a good opportunity to use placeholder icons for the settlement marker, as it can
 help you with indicating what particular marker represents. It is however crucial to
-include all required properties (which can be found [here](#----settlements----)) of
+include all required properties (which can be found [here](#----settlement----)) of
 settlement marker for it to be recognised as settlement and registered by the game.
 
 Faction number required by settlement is faction's index + 1 (so, it starts from
-number 1 (being index 0 on tileset)).
+number 1 (being index 0 on tileset)).  
+Faction is only recognised by the game if it owns at least one settlement.
 
 ### Tilesets metadata
 Making tilesets, you can use Tiled's metadata feature to export .oldata and .olf files.
@@ -102,8 +96,8 @@ Depending on tileset type, it will require you to have different metadata to all
                        is used (so if this value doesn't exist, it's value of `mv_cost`))
 
 #### --- Resource ---
-- `id` _: string_ - resources are IDed by their name, but if this property is used, it will
-                    be used instead
+Resources in-game are recognised by their numerical IDs. Tiled exporter starts with the
+number 0.
 - `name` _: string_ - name of the resource
 - `qual` _: int_ - quality (optional); if not applicable, use 0
 - `fuel` _: int_ - fuel value (optional); if not applicable, use 0

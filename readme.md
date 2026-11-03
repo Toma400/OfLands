@@ -24,3 +24,8 @@ added by each.
 
 ### Discord
 [![Discord](https://img.shields.io/badge/Discord-Join%20our%20server!-7289da.svg?longCache=true&style=for-the-badge)](https://discord.gg/GbTw9KqnrE)
+
+### Name
+Initially meant as placeholder, "Of Lands" now stayed as final. It indicates both the
+dependency on environment (main OL's gameplay theme) and is also nudge to the old game(s)
+of mine that I also uncreatively called as just "Lands".
