@@ -14,6 +14,7 @@ import nico
 import core/render/colours
 import core/gui/nicogui
 import core/gui/main
+import core/logging
 import core/roads
 import core/time
 import kingdom
@@ -37,6 +38,7 @@ let map_nm = replace(map_fl, ".olm", "")
 
 let GAME_VER = getSectionValue(cfg, "", "version") # taken out of `const` field as now dependent on config
 
+var log = initLog(GAME_VER)
 var mvp = newMap(olm_file       = map_fl,
                  player_kingdom = (nb: player,
                                    nm: getSectionValue(cfg, "", "kingdom")),
@@ -54,6 +56,7 @@ var ses = newSession()
 
 proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
+    log <- "Registering colour palettes..."
     registerPalettes(cref = col_referrer,
                      map = fmt"tilesets/{mvp.data.tterrain}",
                      loc = fmt"tilesets/{mvp.data.tlocs}",
@@ -61,16 +64,20 @@ proc gameInit() =
                      sys = fmt"tilesets/{mvp.data.tsys}",
                      gui = "gui/gui.png"
     )
+    log <- "Loading spreadsheets..."
     loadSpritesheet(XMap.ord,  fmt"tilesets/{mvp.data.tterrain}",  TL,  TL) # 1 | map
     loadSpritesheet(XLoc.ord,  fmt"tilesets/{mvp.data.tlocs}",     TL,  TL) # 2 | locations
     loadSpritesheet(XFac.ord,  fmt"tilesets/{mvp.data.tfacs}",     TL,  TL) # 3 | factions
     loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 4 | gui
     loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 5 | system
     loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 6 | grid
+    log <- "Loading fonts..."
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
+    log <- "All initial resources loaded successfully"
     # initialises game (may need to be changed when game saves are made, so it makes you fail the game when this is achieved post-init stage)
     if mvp.kingdoms[player].settlems.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
         ses.gmode = INIT
+    log <- "Initialising GUI theme..."
     initGUITheme()
     #updateRoads(addr mvp)
     # var settlement_count: int
@@ -130,4 +137,8 @@ proc gameDraw() =
 nico.init(org=AUTHOR, app=GAME_NAME)
 nico.createWindow(GAME_NAME, W, H, 1, false)
 setWindowIcon("ol.ico")
-nico.run(gameInit, gameUpdate, gameDraw)
+try:
+  nico.run(gameInit, gameUpdate, gameDraw)
+except Exception as exc:
+  dumpLog(log, exc.msg); quit() # continues with crash
+dumpLog(log)

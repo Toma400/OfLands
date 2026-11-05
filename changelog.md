@@ -11,6 +11,8 @@ Versions:
   - Reworked their system to use numerical ID **| mapbreaking**
     - `ID` field is now out of use
     - change for more uniform/bug-free format that doesn't affect translations
+- Technical
+  - Added logging system
 
 ### 0.1.0
 - Created minimal .olm/.oldata system with its parsers

@@ -8,6 +8,7 @@ FILES = [
     "gui/grid.png",
     "gui/gui.png",
     "gui/gui.toml",
+    "logs/.gitignore", # ideally could be removed in favour of pure folder addition, but `mkdir` somehow doesn't work
     # TODO: removed so players can't break their game! "maps/default.olm",    # those to be replaced later
     # TODO: removed so players can't break their game! "maps/default2.olm",
     "maps/tamriel.olm",        # temporary TES stuff
@@ -54,18 +55,15 @@ shutil.copy("oflands.ini", "../oflands.ini")
 
 with zipfile.ZipFile("../OfLands.zip", mode="w") as archive:
     for f in FILES:
-        print("X!!!")
         if os.path.exists(f"../{f}"): # skip if doesn't exist
-            print("X!!! Confirmed")
             with archive.open(f, "w") as fw:
                 with open(f"../{f}", "rb") as fr:
                     fw.write(fr.read())
+    # archive.mkdir("logs")
 
 with zipfile.ZipFile("../OfLands_TILED_BACKUP.zip", mode="w") as archive:
     for f in TILED_BACKUP:
-        print("Y!!!")
         if os.path.exists(f"../{f}"): # skip if doesn't exist
-            print("Y!!! Confirmed")
             with archive.open(f, "w") as fw:
                 with open(f"../{f}", "rb") as fr:
                     fw.write(fr.read())

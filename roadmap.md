@@ -1,22 +1,40 @@
 # Roadmap
 This list here is non-exhaustive, but also non-declarative planning for features.
 
+Ideas for versioning:
+- 0.1.x - basic features, implementation of surface systems/objects
+- 0.2.x - game-breaking, technical revamps
+- 0.3.x - actual gameplay introduction
+
 ### 0.1.1.
-- have resources storeable in settlements, ideally with some visible interface listing 
-  them??
-  - search for GUI to showcase resources as expandable list
-  - introduce map exports for resource storing
-- debloat of the code, making more map data/files optional, alternatively making OL 
-  files loadable by Tiled
+- resources in settlements
+  - Tiled-based system to supply settlement tiles with resources
+    - preset values
+    - randomised values? separated from the above
+  - visible feedback of stored resources that wraps up so it doesn't overflow GUI
+    - check for some GUI elements in Nico
+- resources
+  - proper requirements for their registration and expanded properties
+  - what is optional should be actually optional, `name` should be registry requirement?
+- technical
+  - logging allowing to track map loading process and technicals
+  - map versioning? for now simple == equaling, later on could work like IoA dependency
+- debloat of the code, making more map data/files optional
   - use `files.nim` to debloat `game.nim`
-- map versioning? for now simple == equaling, later on could work like IoA dependency
-- expand Tamriel map to, I dunno, include entire Summerset? Maybe some new factions?
-- mapmakers should be able to both dictate resources already existing in settlement tile 
-  and make randomly generated ones (unsure if it's scope of 0.1.1, buttt)
+- Tamriel map expansion
+  - continuing High Rock kingdoms/landmass
+  - registering more resources
 
 ### 0.1.2.
 
 ### 0.2.0.
+- tile system rework?? think this through and _fully_ finalise design doc/planning
+  before that to have clear road forward (0.2.0)
+- importable .olm/.olr/.olf? (0.2.1 - after all map-specific pieces are done)
+  - cheatsheet generator for resources/factions in Tiled?
+- resolution adjustability (0.2.2)
+- road performance improvements (0.2.3)
+- ... (0.2.4+)
 
 ### General todo
 - **REWORKS**
