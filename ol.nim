@@ -1,8 +1,5 @@
-import std/private/osdirs
 import std/strformat
 import std/strutils
-import std/sequtils
-import std/parsecfg
 import std/options
 import std/tables
 import std/random
@@ -15,6 +12,7 @@ import core/render/colours
 import core/gui/nicogui
 import core/gui/main
 import core/logging
+import core/system
 import core/roads
 import core/time
 import kingdom
@@ -22,12 +20,9 @@ import game
 import map # only for `canExist`, remove if not needed
 
 randomize()
-###########################################
-const GAME_NAME = "Of Lands"
-const AUTHOR    = "Toma400"
-const LICENSE   = "All Rights Reserved (C) Tomasz Stępień 2025"
-###########################################
-let cfg = loadConfig("oflands.ini")
+#################################################################
+# Config values (later = editable, reachable via `core/system`)
+#----------------------------------------------------------------
 let grd = getSectionValue(cfg, "", "grid")   == "true"
 let cur = getSectionValue(cfg, "", "cursor") == "true"
 let roa = getSectionValue(cfg, "", "roads")  == "true" # TODO: EXPERIMENTAL
@@ -36,9 +31,6 @@ let player = parseInt(getSectionValue(cfg, "", "player"))
 let map_fl = getSectionValue(cfg, "", "map")
 let map_nm = replace(map_fl, ".olm", "")
 
-let GAME_VER = getSectionValue(cfg, "", "version") # taken out of `const` field as now dependent on config
-
-var log = initLog(GAME_VER)
 var mvp = newMap(olm_file       = map_fl,
                  player_kingdom = (nb: player,
                                    nm: getSectionValue(cfg, "", "kingdom")),
@@ -56,7 +48,7 @@ var ses = newSession()
 
 proc gameInit() =
     assetPath = basePath  # resets so folder structure can be fully configured
-    log <- "Registering colour palettes..."
+    log |: "Registering colour palettes..."
     registerPalettes(cref = col_referrer,
                      map = fmt"tilesets/{mvp.data.tterrain}",
                      loc = fmt"tilesets/{mvp.data.tlocs}",
@@ -64,20 +56,20 @@ proc gameInit() =
                      sys = fmt"tilesets/{mvp.data.tsys}",
                      gui = "gui/gui.png"
     )
-    log <- "Loading spreadsheets..."
-    loadSpritesheet(XMap.ord,  fmt"tilesets/{mvp.data.tterrain}",  TL,  TL) # 1 | map
-    loadSpritesheet(XLoc.ord,  fmt"tilesets/{mvp.data.tlocs}",     TL,  TL) # 2 | locations
-    loadSpritesheet(XFac.ord,  fmt"tilesets/{mvp.data.tfacs}",     TL,  TL) # 3 | factions
-    loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 4 | gui
-    loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 5 | system
-    loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 6 | grid
-    log <- "Loading fonts..."
+    log |> "Loading spreadsheets...":
+      loadSpritesheet(XMap.ord,  fmt"tilesets/{mvp.data.tterrain}",  TL,  TL) # 1 | map
+      loadSpritesheet(XLoc.ord,  fmt"tilesets/{mvp.data.tlocs}",     TL,  TL) # 2 | locations
+      loadSpritesheet(XFac.ord,  fmt"tilesets/{mvp.data.tfacs}",     TL,  TL) # 3 | factions
+      loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 4 | gui
+      loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 5 | system
+      loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 6 | grid
+    log |: "Loading fonts..."
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
-    log <- "All initial resources loaded successfully"
+    log |: "All initial resources loaded successfully"
     # initialises game (may need to be changed when game saves are made, so it makes you fail the game when this is achieved post-init stage)
     if mvp.kingdoms[player].settlems.len == 0 and mvp.kingdoms[player].entities.len == 0: # todo: replace `locations` with `settlements` ig
         ses.gmode = INIT
-    log <- "Initialising GUI theme..."
+    log |: "Initialising GUI theme..."
     initGUITheme()
     #updateRoads(addr mvp)
     # var settlement_count: int

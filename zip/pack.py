@@ -59,7 +59,7 @@ with zipfile.ZipFile("../OfLands.zip", mode="w") as archive:
             with archive.open(f, "w") as fw:
                 with open(f"../{f}", "rb") as fr:
                     fw.write(fr.read())
-    # archive.mkdir("logs")
+    # archive.mkdir("logs") # see: https://docs.python.org/3/library/zipfile.html#zipfile.ZipFile.mkdir
 
 with zipfile.ZipFile("../OfLands_TILED_BACKUP.zip", mode="w") as archive:
     for f in TILED_BACKUP:

@@ -7,6 +7,7 @@ import std/strformat
 import std/strutils
 import parsetoml
 import resources
+import logging
 
 proc parseDate* (olm: TomlValueRef): tuple[year, month, day, hour: int] =
     if olm.hasKey("start_date"):
@@ -20,9 +21,11 @@ proc parseDate* (olm: TomlValueRef): tuple[year, month, day, hour: int] =
     return (year: 1, month: 1, day: 1, hour: 1)
 
 proc parseResourcesFile* (olr_path: string): OrderedTable[int, Resource] =
+    log |: fmt"Parsing resource file: {olr_path}"
     let olr = parseFile(fmt"maps/{olr_path}") # gets TomlValueRef
     if existsKey(olr, "resource"):
         for res_id in olr["resource"].getTable.keys():
+            log |: fmt"Analysing resource: {res_id}" # TODO: should be DEBUG type
             let ix = parseInt(res_id)
             result[ix] = newResource(
                                      name  = olr["resource"][res_id]["name"].getStr(""),

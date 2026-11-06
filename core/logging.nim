@@ -6,6 +6,7 @@ import std/sequtils
 import std/random
 import std/macros
 import std/times
+import system
 randomize()
 
 type
@@ -15,13 +16,12 @@ type
     INFO
     DEBUG
   Log* = ref object
-    ver  : string   # game version
     init : DateTime # initial timestamp for filename
     msgs : seq[tuple[msg: string, mtype: LogMessageType, time: DateTime]]
 
 const LIMIT       = 5
-const LOG_FORMAT  = "YYYY'_'MM'_'dd'__'hh'_'mm" # filename
-const LOG_FORMAT2 = "YYYY'.'MM'.'dd' 'hh':'mm"  # cleaner txt format
+const LOG_FORMAT  = "YYYY'_'MM'_'dd'__'HH'_'mm"      # filename
+const LOG_FORMAT2 = "YYYY'.'MM'.'dd' 'HH':'mm':'ss"  # cleaner txt format
 const SYS_MSGS = [ # fun messages because Minecraft ones were cool (trying to combine OL's theme with idea of defeat (bug/crash) lol)
     "Reign wisely.",
     # CICERO
@@ -45,10 +45,9 @@ proc purgeLogs () =
       for lg in logs[0..logc-LIMIT]:
           removeFile(lg)
 
-proc initLog* (ver: string): Log =
+proc initLog* (): Log =
     purgeLogs()
     new(result)
-    result.ver  = ver
     result.init = now()
 
 proc dumpLog* (l: Log, msg: string = "") =
@@ -56,7 +55,7 @@ proc dumpLog* (l: Log, msg: string = "") =
     add(contents, fmt"""[Of Lands' Log]
     {sample(SYS_MSGS)}
     --------------------------
-    Version: {l.ver}
+    Version: {GAME_VER}
     Date:    {l.init.format(LOG_FORMAT2)}
     --------------------------
     """.unindent())
@@ -70,8 +69,10 @@ proc dumpLog* (l: Log, msg: string = "") =
     writeFile(fmt"logs/{l.init.format(LOG_FORMAT)}.log", contents)
     discard
 
-proc log* (l: Log, msg: string, mtype: LogMessageType = INFO) =
+proc logMsg (l: Log, msg: string, mtype: LogMessageType = INFO) =
     add(l.msgs, (msg: msg, mtype: mtype, time: now()))
+
+var log* = initLog()
 
 #=====================================
 # SYNTAX SUGAR
@@ -79,18 +80,34 @@ proc log* (l: Log, msg: string, mtype: LogMessageType = INFO) =
 proc `|`* (msg: string, mtype: LogMessageType): tuple[msg: string, mtype: LogMessageType] =
     return (msg, mtype)
 
-proc `<-`* (l: Log, msg: string) =
-    # alias | allows for `log <- "message"` syntax
-    log(l, msg)
+# proc `>`* (t1, t2: tuple[msg: string, mtype: LogMessageType]): tuple[msg_start: string, mtype1: LogMessageType,
+#                                                                      msg_end: string,   mtype2: LogMessageType] =
+#     return (t1.msg, t1.mtype, t2.msg, t2.mtype)
 
-proc `<-`* (l: Log, m: tuple[msg: string, mtype: LogMessageType]) =
-    # alias | allows for `log <- "message" | TYPE` syntax
-    log(l, m.msg, m.mtype)
+proc `|:`* (l: Log, msg: string) =
+    # alias | allows for `log |: "message"` syntax (of default INFO type)
+    logMsg(l, msg)
 
-# macro `logBlock`* (l: static[Log], msg: static[string], cont_given: untyped): untyped =
-#     #l <- msg # logging process | all else goes below:
-#     var contents = newSeq[NimNode]() # block's contents
-#     for c in cont_given:             # adds everything identated within block
-#         add(contents, c)
-#     # tribalify's chain of additions, translated into pure Nim due to not using tribalify here v
-#     add(newStmtList(newSeq[NimNode]()), add(newBlockStmt(newNimNode(nnkEmpty)), newStmtList(contents)))
+# proc `|:`* (l: Log, m: tuple[msg: string, mtype: LogMessageType]) =
+#     # alias | allows for `log |: "message" | TYPE` syntax
+#     logMsg(l, m.msg, m.mtype)
+
+template `|>`* (l: Log, msg: string, process: untyped) =
+    # starts block while prompting logging process at the start (of default INFO type)
+    # `log |> str:`
+    l |: msg
+    process
+
+# TODO: below doesn't work for some reason
+# template `|>`* (l: Log, m: tuple[msg: string, mtype: LogMessageType], process: untyped) =
+#     # starts block while prompting logging process at the start
+#     # `log |> str | TYPE:`
+#     l |: m.msg | m.mtype
+#     process
+#
+# template process* (l: Log, m: tuple[msg_start: string, mtype1: LogMessageType, msg_end: string, mtype2: LogMessageType], process: untyped) =
+#     # starts block while prompting logging process at the start and end
+#     # `log.process |: str1 | TYPE1 > str2 | TYPE2:`
+#     l |: m.msg_start | m.mtype1
+#     process
+#     l |: m.msg_end | m.mtype2
