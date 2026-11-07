@@ -7,6 +7,9 @@ Versions:
 ### 0.1.1
 - Configurator recognises Of Lands version and informs you if it's outdated regarding
   latest released one
+- Settlements
+  - Resources can be stored on settlement tile (only registering in Tiled/.olf implemented
+    yet)
 - Resources
   - Reworked their system to use numerical ID **| mapbreaking**
     - `ID` field is now out of use

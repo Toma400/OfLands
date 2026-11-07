@@ -121,6 +121,30 @@ number 0.
   - `polis`
   - `castle` - special; fortified settlement or castle/chapel
   - `tent` - special; tent village
+- `tile_resources` _: string_ - resources stored in each settlement's tile (optional)
+  - although this field is of string type, it relies on extended writing mode (three
+    dots)
+  - you can mimic this behaviour by including "\n" symbol whenever new line should
+    be (extended mode puts them automatically)
+  - the formatting of the file reminds one of TOML, but with some differences
+    - `[X, Y]` indicates coordinate and is required for registration of resources
+    - resources use `ID : count` syntax and are added to the tile used above them
+    - you can make resource comment by putting `| comment` in between ID and colon
+    - any line without brackets or colon is ignored/can be used as comment/separator
+    - count can be either static (single number) or range (two numbers separated by `-`);
+      in second case, the final number of resources will be randomly selected from
+      between both values (including)
+    - whitespaces are ignored and can be used to prettify the formatting
+    - coordinates without resources listed are ignored (so can be used as future reminder)
+    - resource registry example:
+```yaml
+[15, 70]
+0 | money : 100
+1 | wood  : 0-10
+ore section (ignored line)
+11 | iron : 5
+12 | gold : 5
+```
 
 #### --- Faction ---
 - `name` _: string_ - name of the faction

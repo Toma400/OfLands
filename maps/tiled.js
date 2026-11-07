@@ -80,6 +80,49 @@ var olmMapFormat = {
                             olf = olf + "kingdom = " + settlement.property("kingdom")               + "\n";
                             olf = olf + "name    = " + String.raw`"${settlement.property('name')}"` + "\n";
                             olf = olf + "tier    = " + String.raw`"${settlement.property('tier')}"` + "\n";
+                            // lists resources if provided
+                            if ("tile_resources" in settlement_properties) {
+                                // PARSER -- may make sense to move it to `func` eventually for wider use
+                                var res_dict  = {};
+                                var res_lines = settlement.property("tile_resources").split("\n");
+                                var coords    = []; // coords pointer
+                                var cord_dict = {}; // coords-specific dict (nested into `res_dict`)
+                                for (var ln = 0; ln < res_lines.length; ++ln) {
+                                    if (res_lines[ln].startsWith("[") && res_lines[ln].endsWith("]")) {
+                                        if (coords.length == 2) { // each new coords round resets the dict
+                                            cord_dict = {}
+                                        }
+                                        var coords_clean = res_lines[ln].replace(" ", "").replace("[", "").replace("]", "");
+                                        var coords_spl   = coords_clean.split(",");
+                                        if (coords_spl.length == 2) { // correct count
+                                            coords = coords_spl;
+                                        }
+                                        continue; // proceeds to next line
+                                    } // else:
+                                    if (coords.length == 2) { // analyses line only if provided with coords pointer
+                                        var key_val = res_lines[ln].split(":");
+                                        // ^ line w/o ":" has len==1 and is treated as comment (ignored)
+                                        if (key_val.length == 2) { // correct count
+                                            var key_prs = key_val[0].split("|"); // parses key string
+                                            var key_cln = key_prs[0]; // clean key
+                                            var key_cmt = (key_prs.length == 2) ? ` # ${key_prs[1].trim()}` // comment
+                                                                                : ""
+                                            // registering the item/count
+                                            cord_dict[key_cln.trim()] = `"${key_val[1].trim()}"${key_cmt}`;
+                                            // overwrites with increasingly bigger dict
+                                            res_dict[`${coords[0]}__${coords[1]}`] = cord_dict;
+                                        }
+                                    }
+                                }
+                                for (const [coo, items] of Object.entries(res_dict)) {
+                                    if (Object.keys(items).length > 0) { // if coords have any resources listed
+                                        olf = olf + `[settlement.${settlement.id}.resources.${coo}]` + "\n";
+                                        for (const [itm, amount] of Object.entries(items)) {
+                                            olf = olf + `${itm} = ${amount}` + "\n";
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

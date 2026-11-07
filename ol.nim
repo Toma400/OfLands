@@ -57,12 +57,12 @@ proc gameInit() =
                      gui = "gui/gui.png"
     )
     log |> "Loading spreadsheets...":
-      loadSpritesheet(XMap.ord,  fmt"tilesets/{mvp.data.tterrain}",  TL,  TL) # 1 | map
-      loadSpritesheet(XLoc.ord,  fmt"tilesets/{mvp.data.tlocs}",     TL,  TL) # 2 | locations
-      loadSpritesheet(XFac.ord,  fmt"tilesets/{mvp.data.tfacs}",     TL,  TL) # 3 | factions
-      loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 4 | gui
-      loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 5 | system
-      loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 6 | grid
+        loadSpritesheet(XMap.ord,  fmt"tilesets/{mvp.data.tterrain}",  TL,  TL) # 1 | map
+        loadSpritesheet(XLoc.ord,  fmt"tilesets/{mvp.data.tlocs}",     TL,  TL) # 2 | locations
+        loadSpritesheet(XFac.ord,  fmt"tilesets/{mvp.data.tfacs}",     TL,  TL) # 3 | factions
+        loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 4 | gui
+        loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 5 | system
+        loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 6 | grid
     log |: "Loading fonts..."
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
     log |: "All initial resources loaded successfully"

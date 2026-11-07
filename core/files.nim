@@ -20,6 +20,9 @@ proc parseDate* (olm: TomlValueRef): tuple[year, month, day, hour: int] =
             return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: 1)
     return (year: 1, month: 1, day: 1, hour: 1)
 
+#################################################
+# RESOURCES
+#################################################
 proc parseResourcesFile* (olr_path: string): OrderedTable[int, Resource] =
     log |: fmt"Parsing resource file: {olr_path}"
     let olr = parseFile(fmt"maps/{olr_path}") # gets TomlValueRef
@@ -33,3 +36,11 @@ proc parseResourcesFile* (olr_path: string): OrderedTable[int, Resource] =
                                      qual  = olr["resource"][res_id]["quality"].getInt(0),
                                      fuel  = olr["resource"][res_id]["fuel"].getInt(0)
                                      )
+
+#################################################
+# FACTIONS
+#################################################
+proc getFactionFile* (olm: TomlValueRef): string =
+    if olm.hasKey("factions"):
+        return olm["factions"].getStr()
+    return "" # aka "no file provided, start with only player"

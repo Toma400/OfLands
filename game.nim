@@ -12,6 +12,7 @@ import nico
 import core/render/colours
 import core/settlement
 import core/resources
+import core/logging
 import core/entity
 import core/files
 import kingdom
@@ -248,36 +249,19 @@ proc parseFactions* (ffile: string, map: var Map, player_k_nb: int, player_k_nm:
     #        seq.add(newSettlement(c)
     #     registerSettlement(data = data, coords = seq)
 
-# TODO: remove after `core/files.nim` export works:
-# proc parseDate (olm: TomlValueRef): tuple[year, month, day, hour: int] =
-#     result.hour = 1 # default hour no matter the settings
-#     if olm.hasKey("start_date"):
-#         let dates = olm["start_date"].getElems()
-#         if len(dates) >= 3:
-#             return (year: dates[0].getInt(), month: dates[1].getInt(), day: dates[2].getInt(), hour: 1)
-#         elif len(dates) == 2:
-#             return (year: dates[0].getInt(), month: dates[1].getInt(), day: 1,                 hour: 1)
-#         elif len(dates) == 1:
-#             return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: 1)
-#     return (year: 1, month: 1, day: 1, hour: 1)
-
 proc getInitialCoords (olm: TomlValueRef, p_kingdom: Kingdom): (int, int) =
     if p_kingdom.start != (0, 0):
         return p_kingdom.start
-    if olm.hasKey("start_coordinates"):
+    elif olm.hasKey("start_coordinates"):
         let coords = olm["start_coordinates"].getElems()
         if len(coords) == 2:
             return (coords[0].getInt(), coords[1].getInt())
     return (0, 0)
 
-proc getFactionFile* (olm: TomlValueRef): string =
-    if olm.hasKey("factions"):
-        return olm["factions"].getStr()
-    return "" # aka "no file provided, start with only player"
-
 proc newMap* (olm_file: string, player_kingdom: tuple[nb: int, nm: string]): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
+    log |: fmt"Parsing map file: {olm_file} | Player ID: {player_kingdom.nb} ({player_kingdom.nm})" # TODO: eventually move to -files-
     let olm         = parseFile(fmt"maps/{olm_file}")
     let pix         = if player_kingdom.nb > 0: player_kingdom.nb else: 1 # checks for positive number
 
@@ -311,6 +295,7 @@ proc highlightTile* (map: Map, tcoord: (int, int)) =
          x2 = TL * (tcoord[0]+1-map.move[0]), y2 = TL * (tcoord[1]+1-map.move[1]))
 
 proc newSession* (): Session =
+    log |: "Initialising new session..."
     result.focus = (-1, -1)
     result.gmode = EXPLORE
     result.mmode = TERRAIN
