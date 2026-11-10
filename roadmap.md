@@ -8,24 +8,62 @@ Ideas for versioning:
 
 ### 0.1.1.
 - resources in settlements
-  - Tiled-based system to supply settlement tiles with resources
-    - preset values
-    - randomised values? separated from the above
   - visible feedback of stored resources that wraps up so it doesn't overflow GUI
     - check for some GUI elements in Nico
+    - try to include this for locations also
 - resources
   - proper requirements for their registration and expanded properties
   - what is optional should be actually optional, `name` should be registry requirement?
 - technical
-  - logging allowing to track map loading process and technicals
   - map versioning? for now simple == equaling, later on could work like IoA dependency
 - debloat of the code, making more map data/files optional
   - use `files.nim` to debloat `game.nim`
 - Tamriel map expansion
   - continuing High Rock kingdoms/landmass
   - registering more resources
+- location as `ref object` and with added storage capacity (as metadata) and equivalent procs
+- exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
+  - laptop: provide "vanilla" map for release
 
 ### 0.1.2.
+- resource limits (straight for now, but code to be extendable with upgrades)
+- locations' resources producing (to see increase of items, and then reaching the cap)
+  - GUI
+    - any management GUI would only appear in case of owning settlement
+    - resource count requires either ownership _or_ entity standing on it? (semi-fog
+      of war)
+  - possibly boolean on `active/inactive` for location
+    - switchable manually? and switchable automatically if cap is reached
+    - automatic one could unswitch or something (registering different context)
+      - could have `[x] tick` GUI for enabling unswitch
+- system for faction owned locations
+
+### 0.1.3.
+- entities' movement
+  - system for 'planning' the move and calculating cost/turn count
+  - per-tile differences in speed
+- claimage of unowned locations
+- entity storage
+- ability for entity to take resources from same-faction tile
+- ability for entity to drop resources onto same-faction tile
+- automation `possible 0.1.4 feature split if 0.1.3 scope is deemed too big`
+  - system for 'planning' the automated routes
+  - automating the movement?
+  - automating the pickup?
+  - automating the drop?
+  - handling the errors (e.g. no resources to take, reaching cap on delivery place)
+- entities production in cities?? `possible 0.1.4 too`
+  - requires location producing food
+  - would test the pipeline of (automating) delivery > hiring from resources produced
+  - would test ability to increase delivery by increasingly more entities involved
+- food/money consumption? `possible 0.1.4 too`
+  - entity having health bar/food needs, restored upon eating food periodically
+  - management system of automatically feasting if below particular level?
+  - degrading health with starvation? slower movement? perishing upon reaching 0 hp?
+  - question: should food be restored w/o cost in cities, or with lesser cost?
+    - management system prioritising city feast over "below level" one? (to save food)
+  - lack of payment could queue but lower the morale? (what morale would be used for
+    outside of army?)
 
 ### 0.2.0.
 - tile system rework?? think this through and _fully_ finalise design doc/planning
@@ -35,6 +73,15 @@ Ideas for versioning:
 - resolution adjustability (0.2.2)
 - road performance improvements (0.2.3)
 - ... (0.2.4+)
+
+### 0.3.0.
+- culture contextuality (locations/settlements/entities per culture?)
+- [settlement buildings/system drawing them correctly]
+  - limits on buildings per tier
+  - settlement tier advancing?
+  - resource requirements (possible to achieve with pre-made locations? and if entity
+    system has builders at this point, they could also setup locations)
+  - storage = upping the storage cap
 
 ### General todo
 - **REWORKS**

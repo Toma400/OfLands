@@ -10,6 +10,7 @@ import nico
 # OL imports
 import core/render/colours
 import core/gui/nicogui
+import core/settlement # temp for checking when clicking
 import core/gui/main
 import core/logging
 import core/system
@@ -92,17 +93,27 @@ proc gameUpdate(dt: float32) =
     if btn(pcDown):  moveMap(mvp, (0,   1), dt)
     if btnpr(pcA): # space/Z/Y
         turn() # todo: should keep us from doing this action again before all turn things process on screen/data
-    if mousebtnpr(0):
+    if mousebtnpr(0): # left click
         if ses.gmode == EXPLORE:
             if ses.focus != getCellCoords(mvp, mouse()):
                 ses.focus = getCellCoords(mvp, mouse())
             else: ses.focus = (-1, -1)
+            # TODO: temporary for resource checking
+            if isPxWithinMap(mvp, mouse()):
+              echo "YES"
+              let tl = mvp.data.mapping[getCellCoords(mvp, mouse())]
+              if hasObject(tl):
+                  if tl.settile.isSome:
+                      let stl = (!tl.settile)
+                      echo fmt"{stl.res_wgt}/{storageCap(stl)}"
+                      for it_id, it_am in stl.res:
+                        echo fmt"- {mvp.data.rdefs[it_id].name} : {it_am}"
         elif ses.gmode == INIT:
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):
                 ses.gmode = EXPLORE
-    if mousebtnpr(1):
+    if mousebtnpr(1): # middle click
         discard addSettlement(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player])
-    if mousebtnpr(2):
+    if mousebtnpr(2): # right click
         if ses.bdb == -1:
             let tile = mvp.data.mapping[getCellCoords(mvp, mouse())]
             if isSome(tile.location):

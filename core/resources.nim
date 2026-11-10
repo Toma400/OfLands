@@ -32,18 +32,20 @@ type
     JEWELRY
 
   Resource* = ref object # ref bc used for comparison in inventories/storages (only one instance in map.data.rdefs)
-    name*  : string       # visible name
-    index* : int          # tile int (for rendering)
+    name*   : string       # visible name
+    index*  : int          # tile int (for rendering)
+    weight* : int          # used to calculate taken size vs tile storage cap
     #kind*  : ResourceKind
-    qual*  : int          # quality value | if not applicable, value of 0 is used (default)
-    fuel*  : int          # fuel value    | non-fuels should just have value of 0 (default)
+    qual*   : int          # quality value | if not applicable, value of 0 is used (default)
+    fuel*   : int          # fuel value    | non-fuels should just have value of 0 (default)
 
 proc newResource* (name: string, index: int, qual, fuel: int): Resource =
     new(result)
-    result.name  = name
-    result.index = index
-    result.qual  = qual
-    result.fuel  = fuel
+    result.name   = name
+    result.index  = index
+    result.weight = 1     # TODO:should be based on data
+    result.qual   = qual
+    result.fuel   = fuel
 
 # List of resources for PTR map:
 #[

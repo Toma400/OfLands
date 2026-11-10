@@ -1,5 +1,6 @@
 import std/strformat
 import std/strutils
+import std/random
 import std/tables
 import std/files
 import std/paths
@@ -17,6 +18,7 @@ import core/entity
 import core/files
 import kingdom
 import map
+randomize()
 
 const TL* = 32 # tile width/length
 const MV* = 30 # map view size (default = 30)
@@ -73,7 +75,12 @@ proc getCellCoords* (map: Map, px_coord: (int, int)): (int, int) =
     return (floor(px_coord[0]/TL).int + map.move[0],
             floor(px_coord[1]/TL).int + map.move[1])
 
-proc addSettlement* (map: var Map, tiles_occupied: seq[tuple[x, y: int]], k: var Kingdom, name: string, tier: string) =
+proc addSettlement* (map            : var Map,
+                     tiles_occupied :     seq[tuple[x, y: int]],
+                     k              : var Kingdom,
+                     name           :     string,
+                     tier           :     string,
+                     init_resources :     Table[tuple[x, y: int], Table[int, int]]) =
     # helper proc, different from `map` one so it doesn't put settlement only on one tile
     var stiles = newSeq[SettlementTile]()
     for tile in tiles_occupied:
@@ -81,9 +88,15 @@ proc addSettlement* (map: var Map, tiles_occupied: seq[tuple[x, y: int]], k: var
         if not hasObject(tile_read_only) and canSettlementExist(tile_read_only): # checks if tile is occupied + if settlement can be put
             add(stiles, newSettlementTile(tile))
     if stiles.len > 0:
-        for stile in stiles:
-            map.data.mapping[stile.coords].settile = stile.some       # binds SettlementTile to Tile
-        k.settlems.add(newSettlement(name, stiles, k.number, TIER_STR[tier])) # binds Settlement to Kingdom
+        for stile in stiles: # binds SettlementTile to Tile
+            map.data.mapping[stile.coords].settile = stile.some
+        let sm = newSettlement(name, stiles, k.number, TIER_STR[tier]) # makes Settlement objeect
+        # parsing of resources (requires Settlement/SettlementTile setup)
+        for tile in sm.tiles:
+          if tile.coords in init_resources:
+            for res_id, res_am in init_resources[tile.coords]: # iterates over resources to add
+                addResources(tile, map.data.rdefs[res_id], MAP_GEN, res_am)
+        k.settlems.add(sm) # binds Settlement to Kingdom
 
 proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
     # parses .oldata file and returns tile definitions in an OrderedTable
@@ -214,6 +227,7 @@ proc parseFactions* (ffile: string, map: var Map, player_k_nb: int, player_k_nm:
                     for index in olf["settlement"].getTable.keys():
                         let ix = parseInt(index)
                         if ix in settlement_library: # skips the settlement if not found on map
+                            log |: fmt"Analysing settlement of index: {index}"
                             let sdata = olf["settlement"][index]
                             # check for values a) existing b) not having no value
                             if sdata["tier"].getStr("") != "" and sdata["kingdom"].getInt(0) != 0:
@@ -222,10 +236,28 @@ proc parseFactions* (ffile: string, map: var Map, player_k_nb: int, player_k_nm:
                                 let snm = if sdata.hasKey("name"): sdata["name"].getStr() else: "" # the only optional value
                                 let str = sdata["tier"].getStr()
 
+                                log |: fmt"Parsing resources for settlement: {snm} (ID: {index})"
+                                var res_pool : Table[tuple[x, y: int], Table[int, int]]
+                                if sdata.hasKey("resources"):
+                                    let res_read = sdata["resources"].getTable()
+                                    for uc in res_read.keys(): # uc = unparsed coordinate
+                                      let pre_pc = uc.split("__")
+                                      if len(pre_pc) == 2: # X, Y
+                                          var rp : Table[int, int]         # resource pool
+                                          let rx = parseInt(pre_pc[0])
+                                          let ry = parseInt(pre_pc[1])
+                                          let rt = res_read[uc].getTable() # resource table : Table[string->int, TomlValueRef->int]
+                                          for ri, ra in rt:
+                                              let rat = parseCountRange(ra.getStr()) # range tuple
+                                              let rap = rand(rat.low..rat.high)      # picks number in range (single number has range n..n)
+                                              rp[parseInt(ri)] = rap
+                                              log |: fmt"Resource {ri} (count: {rap}) for tile ({rx}, {ry}) correctly added!"
+                                          res_pool[(rx, ry)] = rp
+
                                 var tiles_occupied = newSeq[tuple[x, y: int]]()
                                 for tile_coords in settlement_library[ix]:
                                     add(tiles_occupied, tile_coords)
-                                addSettlement(map, tiles_occupied, result[knb], snm, str)
+                                addSettlement(map, tiles_occupied, result[knb], snm, str, res_pool)
 
             if player_k_nb in result:
                 return result

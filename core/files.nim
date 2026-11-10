@@ -9,6 +9,8 @@ import parsetoml
 import resources
 import logging
 
+var MAP_GEN* = -1 # var used for resource draining (`addResources` procs)
+
 proc parseDate* (olm: TomlValueRef): tuple[year, month, day, hour: int] =
     if olm.hasKey("start_date"):
         let dates = olm["start_date"].getElems()
@@ -19,6 +21,13 @@ proc parseDate* (olm: TomlValueRef): tuple[year, month, day, hour: int] =
         elif len(dates) == 1:
             return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: 1)
     return (year: 1, month: 1, day: 1, hour: 1)
+
+proc parseCountRange* (cr: string): tuple[low, high: int] =
+    let crp = cr.split("-")
+    case len(crp):
+      of 1: return (parseInt(crp[0].strip()), parseInt(crp[0].strip()))
+      of 2: return (parseInt(crp[0].strip()), parseInt(crp[1].strip()))
+      else: log |: fmt"Incorrect count range: {cr}"; return (0, 0)
 
 #################################################
 # RESOURCES

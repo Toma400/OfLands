@@ -16,7 +16,8 @@ type
   SettlementTile* = ref object # Tile variation that covers data of particular tile
     settlem* : Settlement
     coords*  : tuple[x, y: int]
-    res*     : Table[string, int] # resources stored (resource ID, amount)
+    res*     : Table[int, int]  # resources stored (resource ID, amount)
+    res_wgt* : int              # resources' weight (for easy access, overridden when res added/removed)
   Settlement* = ref object
     name*  : string
     tier*  : SettlementTier
@@ -47,6 +48,9 @@ proc newSettlementTile* (coords: tuple[x, y: int]): SettlementTile =
     # always use with `newSettlement`, else the tile will not be valid (settlem = None)
     new(result)
     result.coords = coords
+    # defaults:
+    # res     = newTable[int, int]()
+    # res_wgt = 0
 
 proc newSettlement* (name: string, init_tiles: seq[SettlementTile], kingdom: int, tier: SettlementTier = VILLAGE): Settlement =
     # helper proc, should not be used by itself (you need to assign settlement to kingdom)
@@ -58,3 +62,38 @@ proc newSettlement* (name: string, init_tiles: seq[SettlementTile], kingdom: int
     for tile in init_tiles:
         tile.settlem = result # autoreference binding
         result.tiles.add(tile)
+
+proc storageCap* (st: SettlementTile): int =
+    case st.settlem.tier:
+      of VILLAGE: result += 20
+      of TOWN:    result += 30
+      of CITY:    result += 50
+      of POLIS:   result += 75
+      of TENT:    result += 10
+      of CASTLE:  result += 25
+
+proc addResourceCheck* (st: SettlementTile, res: Resource): bool =
+    let sc = storageCap(st)
+    let sw = st.res_wgt
+    let rw = res.weight
+    if res.index notin st.res: # avoids null pointing
+        st.res[res.index] = 0
+    return sw + rw <= sc
+
+proc addResource* (st: SettlementTile, res: Resource, src: var int) =
+    # st  : SettlementTile | settlement the resource is added to
+    # res : Resource       | resource added
+    # src : _var_ int      | source to be substracted from
+    if src > 0 or src < 0: # below 0 means map gen
+      if addResourceCheck(st, res):
+          src               -= 1
+          st.res[res.index] += 1
+          st.res_wgt += res.weight # adds weight of the resource
+
+proc addResources* (st: SettlementTile, res: Resource, src: var int, am: int) =
+    # st  : SettlementTile | settlement the resource is added to
+    # res : Resource       | resource added
+    # src : _var_ int      | source to be substracted from
+    # am  :       int      | amount of resource (iterative)
+    for _ in 1..am:
+      addResource(st, res, src)
