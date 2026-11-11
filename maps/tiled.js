@@ -156,15 +156,15 @@ var olmMapFormat = {
             for (let res_ix = 0; res_ix < resource_tiles.length; res_ix++) {
                 var res_tile = resource_tiles[res_ix];
                 var res_prop = res_tile.properties();
-                if (("name" in res_prop) && ("quality" in res_prop) && ("fuel" in res_prop)) {
+                if (("name" in res_prop) && ("weight" in res_prop)) { // REQUIRED FOR REGISTRATION
                     if (res_tile.property("name") != "") {
                         // checks if tile has required keys and that name is not empty
-                        function multireplace(og_str, replace_array, replace_char) {
-                            for (array_char in replace_array) {
-                                og_str = og_str.replace(array_char, replace_char);
-                            }
-                            return og_str;
-                        }
+//                        function multireplace(og_str, replace_array, replace_char) {
+//                            for (array_char in replace_array) {
+//                                og_str = og_str.replace(array_char, replace_char);
+//                            }
+//                            return og_str;
+//                        }
 
 //                        var res_id = ("id" in res_prop) ? res_tile.property("id") // if "id" field exists, it is used
 //                                                        : multireplace(
@@ -174,12 +174,14 @@ var olmMapFormat = {
                         // optional values
                         var res_qual = ("quality" in res_prop) ? res_tile.property("quality") : 0;
                         var res_fuel = ("fuel" in res_prop)    ? res_tile.property("fuel")    : 0;
+                        var res_wgt  = ("weight" in res_prop)  ? res_tile.property("weight")  : 1;
 
                         olr = olr + `[resource.${res_ix}]`                                    + "\n";
                         olr = olr + "name    = " + String.raw`"${res_tile.property('name')}"` + "\n";
                         olr = olr + "index   = " + res_ix                                     + "\n";
                         olr = olr + "quality = " + res_qual                                   + "\n";
                         olr = olr + "fuel    = " + res_fuel                                   + "\n";
+                        olr = olr + "weight  = " + res_wgt                                    + "\n";
                     }
                 }
             }

@@ -100,7 +100,6 @@ proc gameUpdate(dt: float32) =
             else: ses.focus = (-1, -1)
             # TODO: temporary for resource checking
             if isPxWithinMap(mvp, mouse()):
-              echo "YES"
               let tl = mvp.data.mapping[getCellCoords(mvp, mouse())]
               if hasObject(tl):
                   if tl.settile.isSome:

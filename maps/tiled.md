@@ -99,6 +99,7 @@ Depending on tileset type, it will require you to have different metadata to all
 Resources in-game are recognised by their numerical IDs. Tiled exporter starts with the
 number 0.
 - `name` _: string_ - name of the resource
+- `weight` _: string_ - storage capacity taken by resource
 - `qual` _: int_ - quality (optional); if not applicable, use 0
 - `fuel` _: int_ - fuel value (optional); if not applicable, use 0
 
@@ -122,6 +123,8 @@ number 0.
   - `castle` - special; fortified settlement or castle/chapel
   - `tent` - special; tent village
 - `tile_resources` _: string_ - resources stored in each settlement's tile (optional)
+  - Of Lands analyses the list by order provided, meaning you can troubleshoot issues
+    by expectation of following that logic
   - although this field is of string type, it relies on extended writing mode (three
     dots)
   - you can mimic this behaviour by including "\n" symbol whenever new line should

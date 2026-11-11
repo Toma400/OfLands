@@ -40,10 +40,11 @@ proc parseResourcesFile* (olr_path: string): OrderedTable[int, Resource] =
             log |: fmt"Analysing resource: {res_id}" # TODO: should be DEBUG type
             let ix = parseInt(res_id)
             result[ix] = newResource(
-                                     name  = olr["resource"][res_id]["name"].getStr(""),
-                                     index = ix,
-                                     qual  = olr["resource"][res_id]["quality"].getInt(0),
-                                     fuel  = olr["resource"][res_id]["fuel"].getInt(0)
+                                     name   = olr["resource"][res_id]["name"].getStr(""),   # REQUIRED (in practice optional)
+                                     index  = ix,
+                                     weight = olr["resource"][res_id]["weight"].getInt(),   # REQUIRED
+                                     qual   = olr["resource"][res_id]["quality"].getInt(0), # OPTIONAL
+                                     fuel   = olr["resource"][res_id]["fuel"].getInt(0)     # OPTIONAL
                                      )
 
 #################################################

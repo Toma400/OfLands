@@ -39,11 +39,11 @@ type
     qual*   : int          # quality value | if not applicable, value of 0 is used (default)
     fuel*   : int          # fuel value    | non-fuels should just have value of 0 (default)
 
-proc newResource* (name: string, index: int, qual, fuel: int): Resource =
+proc newResource* (name: string, index: int, weight, qual, fuel: int): Resource =
     new(result)
     result.name   = name
     result.index  = index
-    result.weight = 1     # TODO:should be based on data
+    result.weight = weight
     result.qual   = qual
     result.fuel   = fuel
 

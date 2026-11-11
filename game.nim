@@ -80,7 +80,7 @@ proc addSettlement* (map            : var Map,
                      k              : var Kingdom,
                      name           :     string,
                      tier           :     string,
-                     init_resources :     Table[tuple[x, y: int], Table[int, int]]) =
+                     init_resources :     Table[tuple[x, y: int], OrderedTable[int, int]]) =
     # helper proc, different from `map` one so it doesn't put settlement only on one tile
     var stiles = newSeq[SettlementTile]()
     for tile in tiles_occupied:
@@ -237,13 +237,13 @@ proc parseFactions* (ffile: string, map: var Map, player_k_nb: int, player_k_nm:
                                 let str = sdata["tier"].getStr()
 
                                 log |: fmt"Parsing resources for settlement: {snm} (ID: {index})"
-                                var res_pool : Table[tuple[x, y: int], Table[int, int]]
+                                var res_pool : Table[tuple[x, y: int], OrderedTable[int, int]]
                                 if sdata.hasKey("resources"):
                                     let res_read = sdata["resources"].getTable()
                                     for uc in res_read.keys(): # uc = unparsed coordinate
                                       let pre_pc = uc.split("__")
                                       if len(pre_pc) == 2: # X, Y
-                                          var rp : Table[int, int]         # resource pool
+                                          var rp : OrderedTable[int, int]  # resource pool | OrderedTable sets them in order .olf adds them (predictability)
                                           let rx = parseInt(pre_pc[0])
                                           let ry = parseInt(pre_pc[1])
                                           let rt = res_read[uc].getTable() # resource table : Table[string->int, TomlValueRef->int]

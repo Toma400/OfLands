@@ -9,10 +9,12 @@ Versions:
   latest released one
 - Settlements
   - Resources can be stored on settlement tile (no GUI implementation yet)
+    - Excess resources are cut according to their order
 - Resources
   - Reworked their system to use numerical ID **| mapbreaking**
     - `ID` field is now out of use
     - change for more uniform/bug-free format that doesn't affect translations
+  - Added weight field, so they can't overflow tile storage cap
 - Technical
   - Added logging system
 
