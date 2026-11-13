@@ -273,15 +273,35 @@ var olmMapFormat = {
             var tile      = tilesets_dict["Locations"].tiles[i];
             var tile_data = tile.properties();
 
-            if (Object.keys(tile_data).length > 0) { // skips locations without properties
-                locdata += "[tile." + tile.id + "]\n";
+            if (("name" in tile_data) && ("bcond" in tile_data)) { // REQUIRED FOR REGISTRATION
+                // optional values
+                var loc_storage = ("storage_size" in tile_data) ? tile.property("storage_size") : 0;
+                // required values
 
-                for (var key in tile_data) {
-                    var val = typeof tile_data[key] === "string"  ? "\"" + tile_data[key] + "\""
-                            : typeof tile_data[key] === "number"  ? tile_data[key]
-                            : typeof tile_data[key] === "boolean" ? tile_data[key]
-                            : "";
-                    locdata += key + " = " + val + "\n";
+                locdata = locdata + `[tile.${tile.id}]`                                         + "\n";
+                locdata = locdata + "name         = " + String.raw`"${tile.property('name')}"`  + "\n";
+                locdata = locdata + "bcond        = " + String.raw`"${tile.property('bcond')}"` + "\n";
+                locdata = locdata + "storage_size = " + loc_storage                             + "\n";
+
+                if (loc_storage > 0 && ("storage" in tile_data)) {
+                    var res_dict = {};                                   // resources dict (ID / value)
+                    var stlines  = tile.property("storage").split("\n"); // lines
+                    for (var line = 0; line < stlines.length; ++line) {
+                        var stcont = stlines[line].split(":"); // separates ID from value
+                        // ^ line w/o ":" has len==1 and is treated as comment (ignored)
+                        if (stcont.length == 2) {
+                            var key = stcont[0].split("|")[0].trim(); // ID
+                            var val = stcont[1].trim();               // value
+                            res_dict[key] = val;
+                        }
+                    }
+                    // tiled.log(`Res_dict length of resource: ${tile.property('name')}: ${res_dict.length}`);
+                    if (Object.keys(res_dict).length > 0) { // if any resource is added
+                        locdata = locdata + `[tile.${tile.id}.storage]` + "\n";
+                        for (const [k, v] of Object.entries(res_dict)) {
+                            locdata = locdata + `${k} = "${v}"` + "\n";
+                        }
+                    }
                 }
             }
         }

@@ -111,6 +111,12 @@ number 0.
   - `submerged` - can be placed on both land and water tiles
   - `air`   - can be placed on tiles that do not obstruct sky (most of them)
   - `all`   - can be anywhere
+- `storage_size` - size of the storage (optional) 
+- `storage` - contents appearing in unowned locations
+  - working in similar way to [settlement's `tile_resources`](#----settlement----), but
+    without taking coordinates and affecting only unowned places
+  - since it's meant to be "loot list" more than preparation storage, it's recommended
+    for these values to be ranges starting from 0
 
 #### --- Settlement ---
 - `kingdom` _: integer_ - faction number the settlement belongs to (must be positive)

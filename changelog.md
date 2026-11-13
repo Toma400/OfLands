@@ -10,6 +10,8 @@ Versions:
 - Settlements
   - Resources can be stored on settlement tile (no GUI implementation yet)
     - Excess resources are cut according to their order
+- Locations
+  - Resources can be stored on location tile (only Tiled exporter for now)
 - Resources
   - Reworked their system to use numerical ID **| mapbreaking**
     - `ID` field is now out of use
