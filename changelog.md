@@ -12,6 +12,7 @@ Versions:
     - Excess resources are cut according to their order
 - Locations
   - Resources can be stored on location tile (only Tiled exporter for now)
+  - Unowned locations can have loot pool to generate randomly resources with
 - Resources
   - Reworked their system to use numerical ID **| mapbreaking**
     - `ID` field is now out of use

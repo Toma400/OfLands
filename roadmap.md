@@ -8,8 +8,6 @@ Ideas for versioning:
 
 ### 0.1.1.
 - locations' changes
-  - storage feature
-  - leveled lists for unowned locs
   - conversion to `ref object` format and adjusting any collections so they don't use
     copy etc. but rather direct to one particular place with pointer
   - order resources by index instead of order of inputting? for consistency
@@ -26,6 +24,7 @@ Ideas for versioning:
   - registering more resources
 
 ### 0.1.2.
+- Of Lands' doc, edited and adjusted to new goals, having split off technical section
 - resource limits (straight for now, but code to be extendable with upgrades)
 - locations' resources producing (to see increase of items, and then reaching the cap)
   - GUI
@@ -69,7 +68,8 @@ Ideas for versioning:
   - lack of payment could queue but lower the morale? (what morale would be used for
     outside of army?)
 
-### 0.2.0.
+### 0.2.x.
+- loading bar (0.2.0)
 - tile system rework?? think this through and _fully_ finalise design doc/planning
   before that to have clear road forward (0.2.0)
 - importable .olm/.olr/.olf? (0.2.1 - after all map-specific pieces are done)
@@ -78,7 +78,7 @@ Ideas for versioning:
 - road performance improvements (0.2.3)
 - ... (0.2.4+)
 
-### 0.3.0.
+### 0.3.x.
 - culture contextuality (locations/settlements/entities per culture?)
 - [settlement buildings/system drawing them correctly]
   - limits on buildings per tier

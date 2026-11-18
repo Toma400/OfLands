@@ -32,11 +32,16 @@ let player = parseInt(getSectionValue(cfg, "", "player"))
 let map_fl = getSectionValue(cfg, "", "map")
 let map_nm = replace(map_fl, ".olm", "")
 
-var mvp = newMap(olm_file       = map_fl,
-                 player_kingdom = (nb: player,
-                                   nm: getSectionValue(cfg, "", "kingdom")),
-                 )
-var ses = newSession()
+var mvp : Map
+var ses : Session
+try: # put into try/except so that errors can be caught in logs
+    mvp = newMap(olm_file       = map_fl,
+                   player_kingdom = (nb: player,
+                                     nm: getSectionValue(cfg, "", "kingdom")),
+                   )
+    ses = newSession()
+except Exception as exc:
+    dumpLog(log, exc.msg); quit() # continues with crash
 
 # TODO: MUSIC!!!
 # let music  = if dirExists(fmt"music/{map_nm}"): toSeq(walkFiles(fmt"music/{map_nm}/*.ogg")) else: toSeq(walkFiles(fmt"music/*.ogg"))
@@ -107,6 +112,12 @@ proc gameUpdate(dt: float32) =
                       echo fmt"{stl.res_wgt}/{storageCap(stl)}"
                       for it_id, it_am in stl.res:
                         echo fmt"- {mvp.data.rdefs[it_id].name} : {it_am}"
+                  elif tl.location.isSome:
+                      let stl = (!tl.location)
+                      echo fmt"{stl.res_wgt}/{stl.res_cap}"
+                      for it_id, it_am in stl.res:
+                        echo fmt"- {mvp.data.rdefs[it_id].name} : {it_am}"
+
         elif ses.gmode == INIT:
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):
                 ses.gmode = EXPLORE

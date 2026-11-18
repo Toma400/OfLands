@@ -7,6 +7,7 @@ import std/strformat
 import std/strutils
 import parsetoml
 import resources
+import location
 import logging
 
 var MAP_GEN* = -1 # var used for resource draining (`addResources` procs)
@@ -46,6 +47,32 @@ proc parseResourcesFile* (olr_path: string): OrderedTable[int, Resource] =
                                      qual   = olr["resource"][res_id]["quality"].getInt(0), # OPTIONAL
                                      fuel   = olr["resource"][res_id]["fuel"].getInt(0)     # OPTIONAL
                                      )
+
+#################################################
+# LOCATIONS
+#################################################
+proc parseLocationOLDATA* (oldata_file: string): OrderedTable[int, LocationPrefab] =
+    # parses .oldata file and returns tile definitions in an OrderedTable
+    log |: fmt"Parsing location .oldata file..."
+    let oldata = parseFile(fmt"tilesets/{oldata_file}")
+    for cat in oldata.getTable.keys():
+        if cat == "tile":
+            for tile_key in oldata["tile"].getTable.keys():
+                # optional values
+                let lc_name = if "name"         in oldata["tile"][tile_key]: oldata["tile"][tile_key]["name"].getStr()         else: ""
+                let lc_scap = if "storage_size" in oldata["tile"][tile_key]: oldata["tile"][tile_key]["storage_size"].getInt() else: 0
+                var lc_loot : OrderedTable[int, tuple[low, high: int]]
+                if "storage" in oldata["tile"][tile_key]:
+                    log |: fmt"Parsing loot table for location: {lc_name}..."
+                    for res_id, res_val in oldata["tile"][tile_key]["storage"].getTable():
+                        lc_loot[parseInt(res_id)] = parseCountRange(res_val.getStr())
+                # initialises prefab, using default values if key not found
+                result[parseInt(tile_key)] = newLocationPrefab(
+                                                               lname   = lc_name,
+                                                               bcond   = oldata["tile"][tile_key]["bcond"].getStr(),
+                                                               res_cap = lc_scap,
+                                                               loot    = lc_loot,
+                                                               )
 
 #################################################
 # FACTIONS

@@ -4,6 +4,7 @@ import std/strutils
 import std/sequtils
 import std/tables
 import parsetoml
+import ../logging
 import os
 import pixie
 import nico
@@ -187,8 +188,10 @@ proc registerPalettes* (cref: var OrderedTable[BaseCols, int], map: string, loc:
     # ensures the correct indexes exist
     #setPalette(basePalette() + getPalette(map) + getPalette(loc) + getPalette(fac) + getPalette(gui) + getPalette(sys)) # loads palettes, merge them and sets as currently used
     #setPalette(deduplicatePalette(basePalette() + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys)))# + getPalette(loc)))
-    setPalette(basePalette(cref) + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys))# + getPalette(loc))
+    let gpal = basePalette(cref) + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys)
+    setPalette(gpal)# + getPalette(loc))
     #setPalette(basePalette() + getPalette(map, fac, gui, sys, loc))
+    log |: fmt"Palettes registered! Total colour count: {gpal.size}/{maxPaletteSize}"
 
 proc useSpritesheet* (ix: Indexes) =
     # sets both palette and spritesheet together to be used

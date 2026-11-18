@@ -4,6 +4,8 @@ import std/tables
 import questionable
 # OL imports
 import core/settlement
+import core/resources
+import core/location
 import core/entity
 import kingdom
 
@@ -154,6 +156,7 @@ proc addEntity* (t: var Tile, k: var Kingdom, er: EntityRole): bool =
     return false
 
 proc addLocation* (t: var Tile, k: var Kingdom, l: LocationPrefab, ix: int): bool =
+    # kingdom-specific binder, use `game.nim` proc for non-owned
     if not hasObject(t) and canExist(t, l):
         t.location = newLocation(l, ix, k.number).some
         k.locations.add(t.coords)

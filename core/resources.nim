@@ -1,3 +1,7 @@
+import std/tables
+import settlement
+import location
+
 type
   ResourceKind = enum
     COIN
@@ -46,6 +50,40 @@ proc newResource* (name: string, index: int, weight, qual, fuel: int): Resource 
     result.weight = weight
     result.qual   = qual
     result.fuel   = fuel
+
+#[ requires `ref object` to get rid of `var` ]#
+proc addResourceCheck* (lc: Location, res: Resource): bool =
+    let lw = lc.res_wgt
+    let rw = res.weight
+    if res.index notin lc.res: # avoids null pointing
+        lc.res[res.index] = 0
+    return lw + rw <= lc.res_cap
+
+proc addResourceCheck* (st: SettlementTile, res: Resource): bool =
+    let sc = storageCap(st)
+    let sw = st.res_wgt
+    let rw = res.weight
+    if res.index notin st.res: # avoids null pointing
+        st.res[res.index] = 0
+    return sw + rw <= sc
+
+proc addResource* (to: SettlementTile | Location, res: Resource, src: var int) =
+    # to  : SettlementTile/Location | object the resource is added to
+    # res : Resource                | resource added
+    # src : _var_ int               | source to be substracted from
+    if src > 0 or src < 0: # below 0 means map gen
+      if addResourceCheck(to, res):
+          src               -= 1
+          to.res[res.index] += 1
+          to.res_wgt += res.weight # adds weight of the resource
+
+proc addResources* (to: SettlementTile | Location, res: Resource, src: var int, am: int) =
+    # to  : SettlementTile/Location | object the resource is added to
+    # res : Resource                | resource added
+    # src : _var_ int               | source to be substracted from
+    # am  :       int               | amount of resource (iterative)
+    for _ in 1..am:
+      addResource(to, res, src)
 
 # List of resources for PTR map:
 #[

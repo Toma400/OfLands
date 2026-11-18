@@ -13,6 +13,7 @@ import nico
 import core/render/colours
 import core/settlement
 import core/resources
+import core/location
 import core/logging
 import core/entity
 import core/files
@@ -98,6 +99,26 @@ proc addSettlement* (map            : var Map,
                 addResources(tile, map.data.rdefs[res_id], MAP_GEN, res_am)
         k.settlems.add(sm) # binds Settlement to Kingdom
 
+proc addLocation* (m: var Map, t: var Tile, lp: LocationPrefab, ix: int): bool =
+    # proc for adding non-owned location
+    if not hasObject(t) and canExist(t, lp):
+        t.location = newLocation(lp, ix, 0).some
+        for it_ix, pool in lp.res_pool: # adds resources to unowned location
+            addResources(!(t.location), m.data.rdefs[it_ix], MAP_GEN, rand(pool.low..pool.high))
+        return true
+    return false
+
+proc addLocation* (rdefs: OrderedTable[int, Resource], t: var Tile, lp: LocationPrefab, ix: int): bool =
+    # TEMPORARY for more readable `parseOLM` use bc it doesn't have -Map-, but has rdefs
+    # proc for adding non-owned location
+    if not hasObject(t) and canExist(t, lp):
+        t.location = newLocation(lp, ix, 0).some
+        for it_ix, pool in lp.res_pool: # adds resources to unowned location
+            addResources(!(t.location), rdefs[it_ix], MAP_GEN, rand(pool.low..pool.high))
+        return true
+    t.location = Location.none # ???
+    return false
+
 proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
     # parses .oldata file and returns tile definitions in an OrderedTable
     let oldata = parseFile(fmt"tilesets/{oldata_file}")
@@ -117,20 +138,6 @@ proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
                                                            w_mv    = winter_mv,
                                                            #road_ac = (false, false, false, false)         # TODO | temporary
                                                            )
-
-proc parseLocationOLDATA (oldata_file: string): OrderedTable[int, LocationPrefab] =
-    # parses .oldata file and returns tile definitions in an OrderedTable
-    let oldata = parseFile(fmt"tilesets/{oldata_file}")
-    for cat in oldata.getTable.keys():
-        if cat == "tile":
-            for tile_key in oldata["tile"].getTable.keys():
-                # optional values
-                let lc_name = if "name" in oldata["tile"][tile_key]: oldata["tile"][tile_key]["name"].getStr() else: ""
-                # initialises prefab, using default values if key not found
-                result[parseInt(tile_key)] = newLocationPrefab(
-                                                               lname = lc_name,
-                                                               bcond = oldata["tile"][tile_key]["bcond"].getStr(),
-                                                               )
 
 proc parseOLM (olm: TomlValueRef): MapData =
     # - olm : .olm file parsed by `newMap` into TomlValueRef object
@@ -175,12 +182,23 @@ proc parseOLM (olm: TomlValueRef): MapData =
         for x, ix in row.getElems().pairs:
             # ix = tile index; x/y = coordinates
             if ix.getInt() != -1: # no location
-                result.mapping[(x, y)].location = newLocation(result.ldefs, ix.getInt()).some # todo: rest is using default 0, because this is probably how it should be?
-                                                                                # try to find out how to potentially edit this? but unaffiliation makes sense
-                if not canExist(result.mapping[(x, y)], !result.mapping[(x, y)].location): # if conditions are not met, location is axed to default
-                    result.mapping[(x, y)].location = Location.none
-                # also todo: make Tile have 'waterTile/landTile' that determines location placement, and location be `type` that determines
-                #            if placement is valid for particular type (e.g. `waterType` would only go to `waterTile` etc.)
+                let loc_ix = ix.getInt()
+                log |: fmt"Generating location. ID: {loc_ix}. Coordinates: {x}, {y}" # TODO: DEBUG
+                try:
+                    discard addLocation(result.rdefs, result.mapping[(x, y)], result.ldefs[loc_ix], loc_ix)
+                    # potentially the above could use bool to `none` the .location, instead of including
+                    # that in the proc itself (which makes it more bound to this specific place in code
+                    # and limits extendability of the proc)
+                except Exception as e:
+                    log |: fmt"Encountered issue with generation. Printing error: {e}"
+
+                # OLD, likely to-remove code:
+                # result.mapping[(x, y)].location = newLocation(result.ldefs, ix.getInt()).some # todo: rest is using default 0, because this is probably how it should be?
+                #                                                                 # try to find out how to potentially edit this? but unaffiliation makes sense
+                # if not canExist(result.mapping[(x, y)], !result.mapping[(x, y)].location): # if conditions are not met, location is axed to default
+                #     result.mapping[(x, y)].location = Location.none
+                # # also todo: make Tile have 'waterTile/landTile' that determines location placement, and location be `type` that determines
+                # #            if placement is valid for particular type (e.g. `waterType` would only go to `waterTile` etc.)
 
 proc parseSettlements (distribution: TomlValueRef): OrderedTable[int, seq[tuple [x, y: int]]] =
     # parses .olf's 'settlements' value, does not create settlements alone
