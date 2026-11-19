@@ -173,15 +173,22 @@ proc getPalette (img_path: string): Palette =
 #     echo "MERGED NUMBER: " & $needle
 
 proc `+` (p1, p2: Palette): Palette =
+    var ctable : seq[tuple[r, g, b: uint8]] # comparison table
     var needle = 0
     for i, dt in p1.data:
         if i >= p1.size: break
-        result.data[needle] = (dt.r, dt.g, dt.b)
-        needle += 1
+        let rgb = (dt.r, dt.g, dt.b)
+        if rgb notin ctable: # deduplicate system
+            add(ctable, rgb)
+            result.data[needle] = rgb
+            needle += 1
     for i, dt in p2.data:
         if i >= p2.size: break
-        result.data[needle] = (dt.r, dt.g, dt.b)
-        needle += 1
+        let rgb = (dt.r, dt.g, dt.b)
+        if rgb notin ctable: # deduplicate system
+            add(ctable, rgb)
+            result.data[needle] = rgb
+            needle += 1
     result.size = needle
     #todo: echo "MERGED NUMBER: " & $needle
 
@@ -189,7 +196,7 @@ proc registerPalettes* (cref: var OrderedTable[BaseCols, int], map, loc, fac, re
     # ensures the correct indexes exist
     #setPalette(basePalette() + getPalette(map) + getPalette(loc) + getPalette(fac) + getPalette(gui) + getPalette(sys)) # loads palettes, merge them and sets as currently used
     #setPalette(deduplicatePalette(basePalette() + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys)))
-    let gpal = basePalette(cref) + getPalette(map) + getPalette(fac) + getPalette(gui)# + getPalette(sys)#  + getPalette(res)# + getPalette(loc)))
+    let gpal = basePalette(cref) + getPalette(map) + getPalette(fac) + getPalette(res) + getPalette(gui) + getPalette(sys)# + getPalette(loc)#))
     setPalette(gpal)# + getPalette(loc))
     #setPalette(basePalette() + getPalette(map, fac, gui, sys, loc))
     log |: fmt"Palettes registered! Total colour count: {gpal.size}/{maxPaletteSize}"
