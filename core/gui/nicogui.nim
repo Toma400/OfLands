@@ -1,9 +1,13 @@
+import std/strformat
 import std/tables
+# other imports
+import questionable
 import nico/gui
 import nico
 # OL imports
 import ../render/colours
 import ../../game
+import ../settlement
 import main
 
 const
@@ -60,6 +64,31 @@ proc facmodeButton* (ses: var Session) =
     sprs(mmTerrain.ord,  x = bTURN_stX,  y = bMM_stY, dw = 1, dh = 1)
     sprs(mmFactions.ord, x = bMMFac_stX, y = bMM_stY, dw = 1, dh = 1)
     WORKAROUND_TEXT("Map Modes", bTURN_stX + 30, bMM_stY - 5)
+
+proc resourceGUI* (m: Map, ses: Session) =
+    if ses.fobj.state != -1: # actual tile with object is selected
+    # EVENTUALLY the above should also bounce against ownership! or entity overlapping the tile
+    # so that you don't know resources of locs/settlements of others
+    # can be helpful for debbuging rn though
+        var rs_cap : int
+        var rs_wgt : int
+        var rs_lst : OrderedTable[int, int] # list of resources
+        var spc    = 0                      # visual spacing (temp before proper listbox is made)
+        if ses.fobj.state == 1: # location
+            rs_cap = (!ses.fobj.loc).res_cap
+            rs_wgt = (!ses.fobj.loc).res_wgt
+            rs_lst = (!ses.fobj.loc).res
+        elif ses.fobj.state == 2: # settlement
+            rs_cap = storageCap((!ses.fobj.stile))
+            rs_wgt = (!ses.fobj.stile).res_wgt
+            rs_lst = (!ses.fobj.stile).res
+
+        WORKAROUND_TEXT("Storage", bTURN_stX, bTURN_stY - 370, 4)
+        WORKAROUND_TEXT(fmt"{rs_wgt} / {rs_cap}", bTURN_stX, bTURN_stY - 340)
+        for rs_ix, rs_cnt in rs_lst: # this goes forever, so eventually listbox must descope to have particular [range..range]
+          # and ranges be moved by buttons (range could probably be held by the same tuple? and be resetted each time loc/stile swaps? in ol.nim)
+          WORKAROUND_TEXT(fmt"{m.data.rdefs[rs_ix].name}: {rs_cnt}", bTURN_stX, bTURN_stY - 310 + spc)
+          spc += 20 # separating resources vertically
 
 proc initGUITheme* () =
     # TODO: Important note, `Dark` mode has more fields that could be used for `Light` one - e.g.

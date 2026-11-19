@@ -14,9 +14,10 @@ type
     XMap  = 1
     XLoc  = 2
     XFac  = 3
-    XGUI  = 4
-    XSys  = 5
-    XGrid = 6
+    XRes  = 4
+    XGUI  = 5
+    XSys  = 6
+    XGrid = 7
   BaseCols* = enum # if you edit any values here, make sure to also adjust `basePalette.COLS`
     # base OL colours
     CTEXT = "text"
@@ -184,11 +185,11 @@ proc `+` (p1, p2: Palette): Palette =
     result.size = needle
     #todo: echo "MERGED NUMBER: " & $needle
 
-proc registerPalettes* (cref: var OrderedTable[BaseCols, int], map: string, loc: string, fac: string, gui: string, sys: string) =
+proc registerPalettes* (cref: var OrderedTable[BaseCols, int], map, loc, fac, res, gui, sys: string) =
     # ensures the correct indexes exist
     #setPalette(basePalette() + getPalette(map) + getPalette(loc) + getPalette(fac) + getPalette(gui) + getPalette(sys)) # loads palettes, merge them and sets as currently used
-    #setPalette(deduplicatePalette(basePalette() + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys)))# + getPalette(loc)))
-    let gpal = basePalette(cref) + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys)
+    #setPalette(deduplicatePalette(basePalette() + getPalette(map) + getPalette(fac) + getPalette(gui) + getPalette(sys)))
+    let gpal = basePalette(cref) + getPalette(map) + getPalette(fac) + getPalette(gui)# + getPalette(sys)#  + getPalette(res)# + getPalette(loc)))
     setPalette(gpal)# + getPalette(loc))
     #setPalette(basePalette() + getPalette(map, fac, gui, sys, loc))
     log |: fmt"Palettes registered! Total colour count: {gpal.size}/{maxPaletteSize}"
@@ -199,6 +200,7 @@ proc useSpritesheet* (ix: Indexes) =
       of XMap:  setSpritesheet(XMap.ord)
       of XLoc:  setSpritesheet(XLoc.ord)
       of XFac:  setSpritesheet(XFac.ord)
+      of XRes:  setSpritesheet(XRes.ord)
       of XGUI:  setSpritesheet(XGUI.ord)
       of XSys:  setSpritesheet(XSys.ord)
       of XGrid: setSpritesheet(XGrid.ord)

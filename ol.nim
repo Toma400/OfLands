@@ -11,6 +11,7 @@ import nico
 import core/render/colours
 import core/gui/nicogui
 import core/settlement # temp for checking when clicking
+import core/location   # as above, but is it temp tho??
 import core/gui/main
 import core/logging
 import core/system
@@ -59,6 +60,7 @@ proc gameInit() =
                      map = fmt"tilesets/{mvp.data.tterrain}",
                      loc = fmt"tilesets/{mvp.data.tlocs}",
                      fac = fmt"tilesets/{mvp.data.tfacs}",
+                     res = fmt"tilesets/{mvp.data.tres}",
                      sys = fmt"tilesets/{mvp.data.tsys}",
                      gui = "gui/gui.png"
     )
@@ -66,9 +68,10 @@ proc gameInit() =
         loadSpritesheet(XMap.ord,  fmt"tilesets/{mvp.data.tterrain}",  TL,  TL) # 1 | map
         loadSpritesheet(XLoc.ord,  fmt"tilesets/{mvp.data.tlocs}",     TL,  TL) # 2 | locations
         loadSpritesheet(XFac.ord,  fmt"tilesets/{mvp.data.tfacs}",     TL,  TL) # 3 | factions
-        loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 4 | gui
-        loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 5 | system
-        loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 6 | grid
+        loadSpritesheet(XRes.ord,  fmt"tilesets/{mvp.data.tres}",      TL,  TL) # 4 | factions
+        loadSpritesheet(XGUI.ord,  "gui/gui.png",                      TL,  TL) # 5 | gui
+        loadSpritesheet(XSys.ord,  fmt"tilesets/{mvp.data.tsys}",      TL,  TL) # 6 | system
+        loadSpritesheet(XGrid.ord, "gui/grid.png",                    960, 960) # 7 | grid
     log |: "Loading fonts..."
     loadFont(1, "gui/font.png"); setFont(1)      # font setup
     log |: "All initial resources loaded successfully"
@@ -88,6 +91,7 @@ proc turn() =
     passTime(mvp, ses, 12) # progresses hours 12 hours
 
 proc gameGUI() =
+    resourceGUI(mvp, ses)
     turnButton(turn)
     facmodeButton(ses)
 
@@ -107,16 +111,13 @@ proc gameUpdate(dt: float32) =
             if isPxWithinMap(mvp, mouse()):
               let tl = mvp.data.mapping[getCellCoords(mvp, mouse())]
               if hasObject(tl):
+                  ses.fobj = (0, tl.location, tl.settile) # 0 = pending
                   if tl.settile.isSome:
-                      let stl = (!tl.settile)
-                      echo fmt"{stl.res_wgt}/{storageCap(stl)}"
-                      for it_id, it_am in stl.res:
-                        echo fmt"- {mvp.data.rdefs[it_id].name} : {it_am}"
+                      ses.fobj.state = 2
                   elif tl.location.isSome:
-                      let stl = (!tl.location)
-                      echo fmt"{stl.res_wgt}/{stl.res_cap}"
-                      for it_id, it_am in stl.res:
-                        echo fmt"- {mvp.data.rdefs[it_id].name} : {it_am}"
+                      ses.fobj.state = 1
+              else:
+                  ses.fobj = (-1, Location.none, SettlementTile.none)
 
         elif ses.gmode == INIT:
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):

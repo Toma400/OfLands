@@ -26,12 +26,12 @@ const MV* = 30 # map view size (default = 30)
 
 type
   GameMode* = enum # modes used by session to filter through actions (e.g. for I/O to not focus on tile if you are now doing building)
-    INIT            # init mode     | evoked when player does not have any settlements nor entities (before game)
-    EXPLORE         # default mode  | clicking on tile focuses on it and allow management if tile belongs to you)
-    ROUTE           # route mode    | clicking adds route node
-    TRAVEL          # travel mode   | clicking directs entity to particular cell
-    TRADE           # trade mode    | clicking sets destination for trade
-    BUILDING        # building mode | clicking adds a construction plan
+    INIT            # init mode     | evoked when player does not have any settlements nor entities (before game) / todo: check current usage
+    EXPLORE         # default mode  | clicking on tile focuses on it and allow management if tile belongs to you) / todo: check current usage
+    ROUTE           # route mode    | clicking adds route node / todo: check current usage
+    TRAVEL          # travel mode   | clicking directs entity to particular cell / todo: check current usage
+    TRADE           # trade mode    | clicking sets destination for trade / todo: check current usage
+    BUILDING        # building mode | clicking adds a construction plan / todo: check current usage
   MapMode* = enum # modes used by session to showcase different view on map
     TERRAIN         # terrain mode | standard visualisation of everything
     FACTIONS        # faction mode | shows reaches of faction control by banners (todo: also colouring) on settlements/locs (todo: also for areas?)
@@ -53,6 +53,9 @@ type
     time*     : tuple[year, month, day, hour: int]
   Session* = object # game object, to store session data
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
+    fobj*  : tuple[state : int, # object pointer (-1 = no focus; 1 - loc; 2 - stile)
+                   loc   : Option[Location],
+                   stile : Option[SettlementTile]]
     gmode* : GameMode
     mmode* : MapMode
     tick*  : int        # serves as a counter of each frame (used for some events)
@@ -190,7 +193,7 @@ proc parseOLM (olm: TomlValueRef): MapData =
                     # that in the proc itself (which makes it more bound to this specific place in code
                     # and limits extendability of the proc)
                 except Exception as e:
-                    log |: fmt"Encountered issue with generation. Printing error: {e}"
+                    log |: fmt"Encountered issue with generation. Printing error: {e.msg}"
 
                 # OLD, likely to-remove code:
                 # result.mapping[(x, y)].location = newLocation(result.ldefs, ix.getInt()).some # todo: rest is using default 0, because this is probably how it should be?
@@ -351,3 +354,6 @@ proc newSession* (): Session =
     result.mmode = TERRAIN
     result.tick  = 1
     result.bdb   = -1 # no selection (default)
+    result.fobj  = (-1, # no focus (per -1, -1 above)
+                    Location.none,
+                    SettlementTile.none)
