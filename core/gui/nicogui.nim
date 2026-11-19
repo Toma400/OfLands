@@ -85,10 +85,18 @@ proc resourceGUI* (m: Map, ses: Session) =
 
         WORKAROUND_TEXT("Storage", bTURN_stX, bTURN_stY - 370, 4)
         WORKAROUND_TEXT(fmt"{rs_wgt} / {rs_cap}", bTURN_stX, bTURN_stY - 340)
+        if len(rs_lst) > 0:
+          WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325, 2)
         for rs_ix, rs_cnt in rs_lst: # this goes forever, so eventually listbox must descope to have particular [range..range]
           # and ranges be moved by buttons (range could probably be held by the same tuple? and be resetted each time loc/stile swaps? in ol.nim)
-          WORKAROUND_TEXT(fmt"{m.data.rdefs[rs_ix].name}: {rs_cnt}", bTURN_stX, bTURN_stY - 310 + spc)
-          spc += 20 # separating resources vertically
+          let rs = m.data.rdefs[rs_ix]
+          useSpritesheet(XRes)
+          sprs(rs.index, x = bTURN_stX - 30, y = bTURN_stY - 310 + spc + 6, dw = 1, dh = 1) # +1 bc asset is 32 so it centers it (34-32 = 2, 1 up, 1 down)
+          useSpritesheet(XGUI) # comeback?
+          WORKAROUND_TEXT(fmt"{rs.name}: {rs_cnt}", bTURN_stX, bTURN_stY - 310 + spc)
+          spc += 34 # separating resources vertically
+        if len(rs_lst) > 0:
+          WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325 + spc, 2)
 
 proc initGUITheme* () =
     # TODO: Important note, `Dark` mode has more fields that could be used for `Light` one - e.g.
