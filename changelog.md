@@ -8,16 +8,17 @@ Versions:
 - Configurator recognises Of Lands version and informs you if it's outdated regarding
   latest released one
 - Settlements
-  - Resources can be stored on settlement tile (no GUI implementation yet)
-    - Excess resources are cut according to their order
+  - Resources can be stored on settlement tile and viewed
 - Locations
-  - Resources can be stored on location tile (only Tiled exporter for now)
+  - Resources can be stored on location tile and viewed
   - Unowned locations can have loot pool to generate randomly resources with
 - Resources
   - Reworked their system to use numerical ID **| mapbreaking**
     - `ID` field is now out of use
     - change for more uniform/bug-free format that doesn't affect translations
-  - Added weight field, so they can't overflow tile storage cap
+  - Have weight field, so they can't overflow tile storage cap
+- Time
+  - Moved starting hour from 1 to 10 and prepared day 6-hours phases system
 - Technical
   - Added logging system
 

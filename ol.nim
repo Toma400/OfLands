@@ -88,7 +88,7 @@ proc gameInit() =
     # echo settlement_count
 
 proc turn() =
-    passTime(mvp, ses, 12) # progresses hours 12 hours
+    passTime(mvp, ses, TURN_HOUR) # progresses time with hours set in `time.nim`
 
 proc gameGUI() =
     resourceGUI(mvp, ses)
@@ -107,7 +107,7 @@ proc gameUpdate(dt: float32) =
             if ses.focus != getCellCoords(mvp, mouse()):
                 ses.focus = getCellCoords(mvp, mouse())
             else: ses.focus = (-1, -1)
-            # TODO: temporary for resource checking
+
             if isPxWithinMap(mvp, mouse()):
               let tl = mvp.data.mapping[getCellCoords(mvp, mouse())]
               if hasObject(tl):

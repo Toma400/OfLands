@@ -2,12 +2,19 @@ import std/tables
 import std/math
 import ../game
 
+const TURN_HOUR* = 6
+
 type
   Seasons* = enum
     SPRING
     SUMMER
     AUTUMN
     WINTER
+  DayPhase* = enum
+    NIGHT   # eating
+    MORNING
+    DAY     # producing
+    EVENING
 const Month* = {
     1:  "January",
     2:  "February",
@@ -64,3 +71,13 @@ proc getSeason* (month: int): Seasons =
     elif month in 3..5:       return SPRING
     elif month in 6..8:       return SUMMER
     elif month in 9..11:      return AUTUMN
+
+proc getDayPhase* (hour: int): DayPhase =
+    if   hour < 4:  return NIGHT
+    elif hour < 10: return MORNING
+    elif hour < 16: return DAY
+    elif hour < 22: return EVENING
+    else:           return NIGHT # 22-24
+
+proc getDayPhase* (map: Map): DayPhase =
+    return getDayPhase(map.time.hour)

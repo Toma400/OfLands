@@ -10,18 +10,20 @@ import resources
 import location
 import logging
 
-var MAP_GEN* = -1 # var used for resource draining (`addResources` procs)
+const START_HOUR = 10 # game starts at daytime
+
+var MAP_GEN*  = -1 # var used for resource draining (`addResources` procs)
 
 proc parseDate* (olm: TomlValueRef): tuple[year, month, day, hour: int] =
     if olm.hasKey("start_date"):
         let dates = olm["start_date"].getElems()
         if len(dates) >= 3:
-            return (year: dates[0].getInt(), month: dates[1].getInt(), day: dates[2].getInt(), hour: 1)
+            return (year: dates[0].getInt(), month: dates[1].getInt(), day: dates[2].getInt(), hour: START_HOUR)
         elif len(dates) == 2:
-            return (year: dates[0].getInt(), month: dates[1].getInt(), day: 1,                 hour: 1)
+            return (year: dates[0].getInt(), month: dates[1].getInt(), day: 1,                 hour: START_HOUR)
         elif len(dates) == 1:
-            return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: 1)
-    return (year: 1, month: 1, day: 1, hour: 1)
+            return (year: dates[0].getInt(), month: 1,                 day: 1,                 hour: START_HOUR)
+    return (year: 1, month: 1, day: 1, hour: START_HOUR)
 
 proc parseCountRange* (cr: string): tuple[low, high: int] =
     let crp = cr.split("-")

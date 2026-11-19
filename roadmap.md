@@ -6,26 +6,8 @@ Ideas for versioning:
 - 0.2.x - game-breaking, technical revamps
 - 0.3.x - actual gameplay introduction
 
-### 0.1.1.
-- locations' changes
-  - conversion to `ref object` format and adjusting any collections so they don't use
-    copy etc. but rather direct to one particular place with pointer
-  - order resources by index instead of order of inputting? for consistency
-    - remove `0s`
-- visible feedback of stored resources that wraps up so it doesn't overflow GUI
-  - check for some GUI elements in Nico
-- ensuring proper parsing of `files.nim elements`
-  - optional/required should be properly set up, so they are actually following their
-    rules from modding doc
-- debloat of the code, making more map data/files optional
-  - use `files.nim` to debloat `game.nim`
-- Tamriel map expansion
-  - continuing High Rock kingdoms/landmass
-  - registering more resources
-
 ### 0.1.2.
 - Of Lands' doc, edited and adjusted to new goals, having split off technical section
-- resource limits (straight for now, but code to be extendable with upgrades)
 - locations' resources producing (to see increase of items, and then reaching the cap)
   - GUI
     - any management GUI would only appear in case of owning settlement
@@ -36,9 +18,15 @@ Ideas for versioning:
     - automatic one could unswitch or something (registering different context)
       - could have `[x] tick` GUI for enabling unswitch
 - system for faction owned locations
+- visible icon for `DayPhase`?
+- listbox for resources instead of placeholder
+- order resources by index instead of order of inputting
 - exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
   - laptop: provide "vanilla" map for release
 - technical
+  - ensuring proper parsing of `files.nim elements`
+    - optional/required should be properly set up, so they are actually following their
+      rules from modding doc
   - map versioning? for now simple == equaling, later on could work like IoA dependency
 
 ### 0.1.3.
