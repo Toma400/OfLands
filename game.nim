@@ -50,6 +50,7 @@ type
     data*     : MapData
     move*     : (int, int)                         # cell move from (0,0)
     kingdoms* : OrderedTable[int, Kingdom]         # kingdoms used in game, searchable by index (should start from 1 upwards)
+    locs*     : seq[Location]                      # Locations for production/cost reference
     time*     : tuple[year, month, day, hour: int]
   Session* = object # game object, to store session data
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
@@ -111,38 +112,32 @@ proc addLocation* (m: var Map, t: var Tile, lp: LocationPrefab, ix: int): bool =
         return true
     return false
 
-proc addLocation* (rdefs: OrderedTable[int, Resource], t: var Tile, lp: LocationPrefab, ix: int): bool =
+proc addLocation* (rdefs: OrderedTable[int, Resource], ls: var seq[Location], t: var Tile, lp: LocationPrefab, ix: int): bool =
     # TEMPORARY for more readable `parseOLM` use bc it doesn't have -Map-, but has rdefs
     # proc for adding non-owned location
     if not hasObject(t) and canExist(t, lp):
         t.location = newLocation(lp, ix, 0).some
+        (!(t.location)).prod = @[(0, 1, 10)] # TODO: temporary one coin production for testing *for everything*
         for it_ix, pool in lp.res_pool: # adds resources to unowned location
             addResources(!(t.location), rdefs[it_ix], MAP_GEN, rand(pool.low..pool.high))
+        ls.add(!(t.location))
         return true
     t.location = Location.none # ???
     return false
 
-proc parseTerrainOLDATA (oldata_file: string): OrderedTable[int, TilePrefab] =
-    # parses .oldata file and returns tile definitions in an OrderedTable
-    let oldata = parseFile(fmt"tilesets/{oldata_file}")
-    for cat in oldata.getTable.keys():
-        if cat == "tile":
-            for tile_key in oldata["tile"].getTable.keys():
-                # optional values
-                let winter_ix = if "winter_tile"    in oldata["tile"][tile_key]: oldata["tile"][tile_key]["winter_tile"].getInt()    else: -1
-                let winter_mv = if "winter_mv_cost" in oldata["tile"][tile_key]: oldata["tile"][tile_key]["winter_mv_cost"].getInt() else: -1
-                let tl_name   = if "name"           in oldata["tile"][tile_key]: oldata["tile"][tile_key]["name"].getStr()           else: ""
-                # initialises prefab, using default values if key not found
-                result[parseInt(tile_key)] = newTilePrefab(
-                                                           tname   = tl_name,
-                                                           mv_cost = oldata["tile"][tile_key]["mv_cost"].getInt(),
-                                                           tbase   = oldata["tile"][tile_key]["tbase"].getStr(),
-                                                           w_ix    = winter_ix,
-                                                           w_mv    = winter_mv,
-                                                           #road_ac = (false, false, false, false)         # TODO | temporary
-                                                           )
+proc productionPhase* (m: var Map) =
+    for l in m.locs:
+      l.prod_ct += 1 # ups the turn counter
+      for r in l.prod:
+        # TODO: current system allows only for -one item- because it resets the counter anyway
+        # this should be adjusted as the production pipeline gets more complex, alongside
+        # all the additional requirements that will come, but for now should be left as is
+        # for simplicity sake
+        if l.prod_ct >= r.turns:
+            l.prod_ct = 0
+            addResources(l, m.data.rdefs[r.res], MAP_GEN, r.count)
 
-proc parseOLM (olm: TomlValueRef): MapData =
+proc parseOLM (olm: TomlValueRef, ls: var seq[Location]): MapData =
     # - olm : .olm file parsed by `newMap` into TomlValueRef object
     # check keys before we proceed
     for k in ["tileset_terrain", "tileset_locations", "tileset_factions", "tileset_system", "data_terrain", "data_locations", "terrain"]:
@@ -188,7 +183,7 @@ proc parseOLM (olm: TomlValueRef): MapData =
                 let loc_ix = ix.getInt()
                 log |: fmt"Generating location. ID: {loc_ix}. Coordinates: {x}, {y}" # TODO: DEBUG
                 try:
-                    discard addLocation(result.rdefs, result.mapping[(x, y)], result.ldefs[loc_ix], loc_ix)
+                    discard addLocation(result.rdefs, ls, result.mapping[(x, y)], result.ldefs[loc_ix], loc_ix)
                     # potentially the above could use bool to `none` the .location, instead of including
                     # that in the proc itself (which makes it more bound to this specific place in code
                     # and limits extendability of the proc)
@@ -318,7 +313,7 @@ proc newMap* (olm_file: string, player_kingdom: tuple[nb: int, nm: string]): Map
     let olm         = parseFile(fmt"maps/{olm_file}")
     let pix         = if player_kingdom.nb > 0: player_kingdom.nb else: 1 # checks for positive number
 
-    result.data     = parseOLM(olm)
+    result.data     = parseOLM(olm, result.locs)
     result.kingdoms = parseFactions(getFactionFile(olm), result, pix, player_kingdom.nm)
     result.move     = getInitialCoords(olm, result.kingdoms[pix])
     result.time     = parseDate(olm)

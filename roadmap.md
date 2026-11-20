@@ -7,27 +7,39 @@ Ideas for versioning:
 - 0.3.x - actual gameplay introduction
 
 ### 0.1.2.
-- Of Lands' doc, edited and adjusted to new goals, having split off technical section
-- locations' resources producing (to see increase of items, and then reaching the cap)
-  - GUI
+- pre-planning
+  - Of Lands' doc, edited and adjusted to new goals, having split off technical section
+- release MVP
+  - faction owned locations (+ Tiled export)
+  - production of resources
+    - Tiled export
+  - GUI additions
+    - limiting resource showcasing to owned settlements/locations (todo note for 0.1.3,
+      or entity standing on it)
     - any management GUI would only appear in case of owning settlement
-    - resource count requires either ownership _or_ entity standing on it? (semi-fog
-      of war)
-  - possibly boolean on `active/inactive` for location
-    - switchable manually? and switchable automatically if cap is reached
-    - automatic one could unswitch or something (registering different context)
-      - could have `[x] tick` GUI for enabling unswitch
-- system for faction owned locations
-- visible icon for `DayPhase`?
-- listbox for resources instead of placeholder
-- order resources by index instead of order of inputting
-- exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
-  - laptop: provide "vanilla" map for release
-- technical
-  - ensuring proper parsing of `files.nim elements`
-    - optional/required should be properly set up, so they are actually following their
-      rules from modding doc
-  - map versioning? for now simple == equaling, later on could work like IoA dependency
+    - possibly boolean on `active/inactive` for location
+      - switchable manually? and switchable automatically if cap is reached
+      - automatic one could unswitch or something (registering different context)
+        - could have `[x] tick` GUI for enabling unswitch
+- scope creep
+  - visible icon for each DayPhase
+    - daytime icon for resource producing (and if drain below implemented, nighttime
+      icon for drainage)
+  - resources drained from settlements (food/fuel)
+    - categorisation of items so they can be bundled
+    - showcase of category in item list? so you can see drain value and what items are
+      drained
+    - button for prioritised item from category??
+    - for now, no penalty for reaching bottom
+  - listbox for resources instead of placeholder
+  - technicals
+    - order resources by index instead of order of inputting
+    - exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
+      - laptop: provide "vanilla" map for release
+    - ensuring proper parsing of `files.nim elements`
+      - optional/required should be properly set up, so they are actually following their
+        rules from modding doc
+    - map versioning? for now simple == equaling, later on could work like IoA dependency
 
 ### 0.1.3.
 - entities' movement

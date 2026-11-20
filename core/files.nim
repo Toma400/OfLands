@@ -9,6 +9,7 @@ import parsetoml
 import resources
 import location
 import logging
+import ../map
 
 const START_HOUR = 10 # game starts at daytime
 
@@ -31,6 +32,31 @@ proc parseCountRange* (cr: string): tuple[low, high: int] =
       of 1: return (parseInt(crp[0].strip()), parseInt(crp[0].strip()))
       of 2: return (parseInt(crp[0].strip()), parseInt(crp[1].strip()))
       else: log |: fmt"Incorrect count range: {cr}"; return (0, 0)
+
+#################################################
+# FILES
+#################################################
+proc parseTerrainOLDATA* (oldata_file: string): OrderedTable[int, TilePrefab] =
+    # parses .oldata file and returns tile definitions in an OrderedTable
+    log |: fmt"Parsing terrain file: {oldata_file}"
+    let oldata = parseFile(fmt"tilesets/{oldata_file}")
+    for cat in oldata.getTable.keys():
+        if cat == "tile":
+            for tile_key in oldata["tile"].getTable.keys():
+                log |: fmt"Analysing tile: {tile_key}" # TODO: should be DEBUG type
+                # optional values
+                let winter_ix = if "winter_tile"    in oldata["tile"][tile_key]: oldata["tile"][tile_key]["winter_tile"].getInt()    else: -1
+                let winter_mv = if "winter_mv_cost" in oldata["tile"][tile_key]: oldata["tile"][tile_key]["winter_mv_cost"].getInt() else: -1
+                let tl_name   = if "name"           in oldata["tile"][tile_key]: oldata["tile"][tile_key]["name"].getStr()           else: ""
+                # initialises prefab, using default values if key not found
+                result[parseInt(tile_key)] = newTilePrefab(
+                                                           tname   = tl_name,
+                                                           mv_cost = oldata["tile"][tile_key]["mv_cost"].getInt(),
+                                                           tbase   = oldata["tile"][tile_key]["tbase"].getStr(),
+                                                           w_ix    = winter_ix,
+                                                           w_mv    = winter_mv,
+                                                           #road_ac = (false, false, false, false)         # TODO | temporary
+                                                           )
 
 #################################################
 # RESOURCES

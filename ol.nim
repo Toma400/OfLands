@@ -89,6 +89,8 @@ proc gameInit() =
 
 proc turn() =
     passTime(mvp, ses, TURN_HOUR) # progresses time with hours set in `time.nim`
+    if getDayPhase(mvp) == DAY: # production time
+        productionPhase(mvp)
 
 proc gameGUI() =
     resourceGUI(mvp, ses)
@@ -106,8 +108,10 @@ proc gameUpdate(dt: float32) =
         if ses.gmode == EXPLORE:
             if ses.focus != getCellCoords(mvp, mouse()):
                 ses.focus = getCellCoords(mvp, mouse())
-            else: ses.focus = (-1, -1)
+            else:
+                ses.focus = (-1, -1)
 
+            ses.fobj = (-1, Location.none, SettlementTile.none) # defaults to reset (overwrites if not)
             if isPxWithinMap(mvp, mouse()):
               let tl = mvp.data.mapping[getCellCoords(mvp, mouse())]
               if hasObject(tl):
@@ -116,8 +120,6 @@ proc gameUpdate(dt: float32) =
                       ses.fobj.state = 2
                   elif tl.location.isSome:
                       ses.fobj.state = 1
-              else:
-                  ses.fobj = (-1, Location.none, SettlementTile.none)
 
         elif ses.gmode == INIT:
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):

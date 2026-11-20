@@ -1,8 +1,12 @@
 # Changelog
 Versions:
 - 0.1.x
+  - [0.1.2](#0.1.2)
   - [0.1.1](#0.1.1) 
   - [0.1.0](#0.1.0)
+
+### 0.1.2
+- Locations are able to produce resources now
 
 ### 0.1.1
 - Configurator recognises Of Lands version and informs you if it's outdated regarding

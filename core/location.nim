@@ -2,8 +2,8 @@ import std/strformat
 import std/strutils
 import std/tables
 import std/random
-import resources
 import logging
+import common
 randomize()
 
 type
@@ -20,15 +20,17 @@ type
     res_cap*  : int                    # resources' weight cap
     res_pool* : OrderedTable[int, tuple[low, high: int]] # unowned pool
   Location* = ref object
-    index*   : int                     # location tile index
+    index*   : int                # location tile index
     name*    : string
     bcond*   : BuildingConditions
-    res*     : OrderedTable[int, int]  # resources stored (resource ID, amount)
-    res_cap* : int                     # resources' weight cap
-    res_wgt* : int                     # resources' weight (for easy access, overridden when res added/removed)
-    owner*   : int                     # 0 for unowned, otherwise takes kingdom index (1-n) used by the Map object
+    res*     : ResStorage         # resources stored (resource ID, amount)
+    res_cap* : int                # resources' weight cap
+    res_wgt* : int                # resources' weight (for easy access, overridden when res added/removed)
+    prod*    : Production         # production data
+    prod_ct* : int                # production counter (based on `prod.turns`)
+    owner*   : int                # 0 for unowned, otherwise takes kingdom index (1-n) used by the Map object
     # todo: settlement ownership?
-    walls*   : int                     # 0 for no walls, 1 for pallisade, 2 for stone wall | todo: .oldata should be able to overwrite this
+    walls*   : int                # 0 for no walls, 1 for pallisade, 2 for stone wall | todo: .oldata should be able to overwrite this
 
 proc `$`* (l: Location): string =
     return $l.index
