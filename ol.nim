@@ -93,7 +93,7 @@ proc turn() =
         productionPhase(mvp)
 
 proc gameGUI() =
-    resourceGUI(mvp, ses)
+    resourceGUI(mvp, ses, player)
     turnButton(turn)
     facmodeButton(ses)
 

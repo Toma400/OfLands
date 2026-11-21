@@ -1,6 +1,6 @@
 # Tiled integration
 Of Lands supports making maps with Tiled software, through its JavaScript plugin
-that can be used to export maps into Of Lands' formats (`olm`, `olf`, `oldata`).
+that can be used to export maps into Of Lands' formats (`olm`, `olf`, `olr`, `oldata`).
 
 Table of contents:
 - [Setting up layer and tilesets](#setting-up-layers-and-tilesets)
@@ -23,6 +23,17 @@ Table of contents:
 ### Setting up layers and tilesets
 Of Lands functions upon multiple layers and tilesets, although not every single one
 of them are essential.
+
+<!--
+#### --- Prerequisites ---
+There are some necessary data that you need to include since version 0.1.2 to your map
+when making it. Head to `Map > Properties` and add the `compatibility` field, with string
+type. Then, put exact version number you aim your map to be compatible with - it should
+follow exactly the official numbering pattern (e.g. `0.1.2`).  
+In the future, the compatibility field may be expanded with more functionalities, but
+for the time being it is made in most primitive way to check for exact match. This way
+the game ensures the map was properly exported with all required data.
+-->
 
 #### --- Landscape and locations ---
 Landscape and location layers and tilesets are required for the game to start. They are
@@ -180,8 +191,8 @@ ore section (ignored line)
                                       playing this particular faction (optional);
                                       see also relevant note on `0, 0` coords [here](#----starting-coordinates----)
 
-### Additional map metadata
-Additionally to the above, you can also set some data to the map itself. You can enter
+### Additional map metadata 
+In addition to the above, you can also set some data to the map itself. You can enter
 it by clicking on `Map > Map Properties`.
 
 #### --- Starting coordinates ---

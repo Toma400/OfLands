@@ -9,6 +9,9 @@ Versions:
 - Locations are able to produce resources now (based on .oldata files)
   - production pools let multiple resources be created in varied rate
   - after reaching storage capacity, the production stops until freed
+  - only owned locations can produce resources
+- Resources
+  - looking at resource list is now gated behind ownership of location/settlement
 - GUI
   - resource list formatting has been polished
 

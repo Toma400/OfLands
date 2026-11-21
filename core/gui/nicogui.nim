@@ -72,11 +72,13 @@ proc facmodeButton* (ses: var Session) =
     sprs(mmFactions.ord, x = bMMFac_stX, y = bMM_stY, dw = 1, dh = 1)
     WORKAROUND_TEXT("Map Modes", bTURN_stX + 30, bMM_stY - 5)
 
-proc resourceGUI* (m: Map, ses: Session) =
+proc resourceGUI* (m: Map, ses: Session, player: int) =
+    # player : int | player faction number
     if ses.fobj.state != -1: # actual tile with object is selected
     # EVENTUALLY the above should also bounce against ownership! or entity overlapping the tile
     # so that you don't know resources of locs/settlements of others
     # can be helpful for debbuging rn though
+        var owner  : int
         var rs_cap : int
         var rs_wgt : int
         var rs_lst : OrderedTable[int, int] # list of resources
@@ -85,27 +87,30 @@ proc resourceGUI* (m: Map, ses: Session) =
             rs_cap = (!ses.fobj.loc).res_cap
             rs_wgt = (!ses.fobj.loc).res_wgt
             rs_lst = (!ses.fobj.loc).res
+            owner  = (!ses.fobj.loc).owner
         elif ses.fobj.state == 2: # settlement
             rs_cap = storageCap((!ses.fobj.stile))
             rs_wgt = (!ses.fobj.stile).res_wgt
             rs_lst = (!ses.fobj.stile).res
+            owner  = (!ses.fobj.stile).settlem.owner
 
-        WORKAROUND_TEXT("Storage", bTURN_stX, bTURN_stY - 370, 4)
-        WORKAROUND_TEXT(fmt"{rs_wgt} / {rs_cap}", bTURN_stX, bTURN_stY - 340)
-        if len(rs_lst) > 0:
-          WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325, 2)
-        for rs_ix, rs_cnt in rs_lst: # this goes forever, so eventually listbox must descope to have particular [range..range]
-          # and ranges be moved by buttons (range could probably be held by the same tuple? and be resetted each time loc/stile swaps? in ol.nim)
-          let rs = m.data.rdefs[rs_ix]
-          useSpritesheet(XRes)
-          sprs(rs.index, x = bTURN_stX - 30, y = bTURN_stY - 310 + spc + 6, dw = 1, dh = 1) # +1 bc asset is 32 so it centers it (34-32 = 2, 1 up, 1 down)
-          useSpritesheet(XGUI) # comeback?
-          WORKAROUND_TEXT(fmt"{rs.name}", bTURN_stX - 85, bTURN_stY - 310 + spc, ta=LEFT)
-          WORKAROUND_TEXT(fmt"{rs_cnt}",  bTURN_stX + 90, bTURN_stY - 310 + spc)
-          #WORKAROUND_TEXT(fmt"{rs.name}: {rs_cnt}", bTURN_stX, bTURN_stY - 310 + spc)
-          spc += 34 # separating resources vertically
-        if len(rs_lst) > 0:
-          WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325 + spc, 2)
+        if owner == player: # gates viewing resources by ownership by player | TODO: should also (partially) show if entity stands on it [0.1.4 todo]
+            WORKAROUND_TEXT("Storage", bTURN_stX, bTURN_stY - 370, 4)
+            WORKAROUND_TEXT(fmt"{rs_wgt} / {rs_cap}", bTURN_stX, bTURN_stY - 340)
+            if len(rs_lst) > 0:
+              WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325, 2)
+            for rs_ix, rs_cnt in rs_lst: # this goes forever, so eventually listbox must descope to have particular [range..range]
+              # and ranges be moved by buttons (range could probably be held by the same tuple? and be resetted each time loc/stile swaps? in ol.nim)
+              let rs = m.data.rdefs[rs_ix]
+              useSpritesheet(XRes)
+              sprs(rs.index, x = bTURN_stX - 30, y = bTURN_stY - 310 + spc + 6, dw = 1, dh = 1) # +1 bc asset is 32 so it centers it (34-32 = 2, 1 up, 1 down)
+              useSpritesheet(XGUI) # comeback?
+              WORKAROUND_TEXT(fmt"{rs.name}", bTURN_stX - 85, bTURN_stY - 310 + spc, ta=LEFT)
+              WORKAROUND_TEXT(fmt"{rs_cnt}",  bTURN_stX + 90, bTURN_stY - 310 + spc)
+              #WORKAROUND_TEXT(fmt"{rs.name}: {rs_cnt}", bTURN_stX, bTURN_stY - 310 + spc)
+              spc += 34 # separating resources vertically
+            if len(rs_lst) > 0:
+              WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325 + spc, 2)
 
 proc initGUITheme* () =
     # TODO: Important note, `Dark` mode has more fields that could be used for `Light` one - e.g.

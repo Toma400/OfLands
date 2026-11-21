@@ -1,5 +1,6 @@
 import std/strformat
 import std/strutils
+import std/sequtils
 import std/random
 import std/tables
 import std/files
@@ -48,9 +49,9 @@ type
     size*     : (int, int)                        # size             | (width, length)
   Map* = object
     data*     : MapData
-    move*     : (int, int)                         # cell move from (0,0)
-    kingdoms* : OrderedTable[int, Kingdom]         # kingdoms used in game, searchable by index (should start from 1 upwards)
-    locs*     : seq[Location]                      # Locations for production/cost reference
+    move*     : (int, int)                               # cell move from (0,0)
+    kingdoms* : OrderedTable[int, Kingdom]               # kingdoms used in game, searchable by index (should start from 1 upwards)
+    locs*     : OrderedTable[tuple[x, y: int], Location] # Locations for production/cost reference
     time*     : tuple[year, month, day, hour: int]
   Session* = object # game object, to store session data
     focus* : (int, int) # coordinates of tile that is currently highlighed | (-1, -1) are default (no tile)
@@ -112,33 +113,34 @@ proc addLocation* (m: var Map, t: var Tile, lp: LocationPrefab, ix: int): bool =
         return true
     return false
 
-proc addLocation* (rdefs: OrderedTable[int, Resource], ls: var seq[Location], t: var Tile, lp: LocationPrefab, ix: int): bool =
+proc addLocation* (rdefs: OrderedTable[int, Resource], ls: var OrderedTable[tuple[x, y: int], Location], t: var Tile, lp: LocationPrefab, ix: int): bool =
     # TEMPORARY for more readable `parseOLM` use bc it doesn't have -Map-, but has rdefs
     # proc for adding non-owned location
     if not hasObject(t) and canExist(t, lp):
         t.location = newLocation(lp, ix, 0).some
         for it_ix, pool in lp.res_pool: # adds resources to unowned location
             addResources(!(t.location), rdefs[it_ix], MAP_GEN, rand(pool.low..pool.high))
-        ls.add(!(t.location))
+        ls[t.coords] = !(t.location)
         return true
     t.location = Location.none # ???
     return false
 
 proc productionPhase* (m: var Map) =
-    for l in m.locs:
-      for p_id, r in l.prod:
-        # null pointer safeguard, we can afford this being built here (makes it flexible for any post-gen production additions?)
-        if p_id notin l.prod_ct:
-            l.prod_ct[p_id] = 0
-        # p_id is production ID, signifying particular resource/counter
-        l.prod_ct[p_id] += 1 # ups the turn counter
-        # if the production counter is reached, perform production
-        if l.prod_ct[p_id] >= r.turns:
-          if addResourceCheck(l, m.data.rdefs[r.res]): # keeps the counter from resetting if storage full (= quicker next production)
-              l.prod_ct[p_id] = 0
-              addResources(l, m.data.rdefs[r.res], MAP_GEN, r.count)
+    for _, l in m.locs:
+      if l.owner != 0: # disables production for unowned locations
+          for p_id, r in l.prod:
+            # ^ p_id is production ID, signifying particular resource/counter operation
+            # null pointer safeguard, we can afford this being built here (makes it flexible for any post-gen production additions?)
+            if p_id notin l.prod_ct:
+                l.prod_ct[p_id] = 0
+            if addResourceCheck(l, m.data.rdefs[r.res]): # stops production if storage full (= keeps counter from resetting/quicker to get to next production)
+                l.prod_ct[p_id] += 1 # ups the turn counter
+                # if the production counter is reached, perform production
+                if l.prod_ct[p_id] >= r.turns:
+                    l.prod_ct[p_id] = 0
+                    addResources(l, m.data.rdefs[r.res], MAP_GEN, r.count)
 
-proc parseOLM (olm: TomlValueRef, ls: var seq[Location]): MapData =
+proc parseOLM (olm: TomlValueRef, ls: var OrderedTable[tuple[x, y: int], Location]): MapData =
     # - olm : .olm file parsed by `newMap` into TomlValueRef object
     # check keys before we proceed
     for k in ["tileset_terrain", "tileset_locations", "tileset_factions", "tileset_system", "data_terrain", "data_locations", "terrain"]:
@@ -209,6 +211,15 @@ proc parseSettlements (distribution: TomlValueRef): OrderedTable[int, seq[tuple 
                     result[ix.getInt()].add((x, y))
                 else: result[ix.getInt()] = @[(x, y)]
 
+proc parseLocations (distribution: TomlValueRef, map: var Map, factions: seq[int]) =
+    # todo: kinda redundant with `parseSettlements`, so eventually could be merged for more efficient parsing?
+    for y, row in distribution.getElems().pairs:
+        for x, ix in row.getElems().pairs:
+            let fix = ix.getInt() # faction index
+            if fix != -1: # no settlement
+              if fix + 1 in factions and (x, y) in map.locs: # +1 because map uses 0..n-1, while factions start at 1
+                  map.locs[(x, y)].owner = fix + 1 # assigning ownership
+
 proc parseFactions* (ffile: string, map: var Map, player_k_nb: int, player_k_nm: string): OrderedTable[int, Kingdom] =
     # parses .olf file and creates table of kingdoms
     # if player number doesn't match existing kingdom, default one (`def`) is made
@@ -240,6 +251,8 @@ proc parseFactions* (ffile: string, map: var Map, player_k_nb: int, player_k_nm:
 
             if olf.hasKey("map") and olf.hasKey("settlement"):
                 if olf["map"].hasKey("settlements"):
+                    parseLocations(olf["map"]["settlements"], map, toSeq(keys(result)))
+
                     let settlement_library = parseSettlements(olf["map"]["settlements"])
                     for index in olf["settlement"].getTable.keys():
                         let ix = parseInt(index)

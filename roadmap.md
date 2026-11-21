@@ -10,10 +10,7 @@ Ideas for versioning:
 - pre-planning
   - Of Lands' doc, edited and adjusted to new goals, having split off technical section
 - release MVP
-  - faction owned locations (+ Tiled export)
   - GUI additions
-    - limiting resource showcasing to owned settlements/locations (todo note for 0.1.3,
-      or entity standing on it)
     - any management GUI would only appear in case of owning settlement
     - possibly boolean on `active/inactive` for location
       - switchable manually? and switchable automatically if cap is reached
@@ -23,6 +20,7 @@ Ideas for versioning:
         produce Y (might be level of micromanagement necessitating the alternative
         GUI subsections system...)
 - scope creep
+  - ensure faction owned locations show on FACTION map mode differently?
   - visible icon for each DayPhase
     - daytime icon for resource producing (and if drain below implemented, nighttime
       icon for drainage)
@@ -32,7 +30,6 @@ Ideas for versioning:
       drained
     - button for prioritised item from category??
     - for now, no penalty for reaching bottom
-  - listbox for resources instead of placeholder
   - technicals
     - order resources by index instead of order of inputting
     - exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
@@ -70,9 +67,12 @@ Ideas for versioning:
     - management system prioritising city feast over "below level" one? (to save food)
   - lack of payment could queue but lower the morale? (what morale would be used for
     outside of army?)
+- listbox for resources instead of placeholder
 
 ### 0.1.4
 - for now thought as scope-creep fallback for 0.1.3
+- adding possibility to view storage if owned entity stands on loc/settlement of
+  another faction (no management menu should be possible still)
 
 ### 0.2.x.
 - loading bar (0.2.0)
