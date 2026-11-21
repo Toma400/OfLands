@@ -117,7 +117,6 @@ proc addLocation* (rdefs: OrderedTable[int, Resource], ls: var seq[Location], t:
     # proc for adding non-owned location
     if not hasObject(t) and canExist(t, lp):
         t.location = newLocation(lp, ix, 0).some
-        (!(t.location)).prod[0] = (0, 1, 10) # TODO: temporary one coin production for testing *for everything*
         for it_ix, pool in lp.res_pool: # adds resources to unowned location
             addResources(!(t.location), rdefs[it_ix], MAP_GEN, rand(pool.low..pool.high))
         ls.add(!(t.location))

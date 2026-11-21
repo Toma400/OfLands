@@ -11,8 +11,6 @@ Ideas for versioning:
   - Of Lands' doc, edited and adjusted to new goals, having split off technical section
 - release MVP
   - faction owned locations (+ Tiled export)
-  - production of resources
-    - Tiled export
   - GUI additions
     - limiting resource showcasing to owned settlements/locations (todo note for 0.1.3,
       or entity standing on it)

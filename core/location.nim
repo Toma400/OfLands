@@ -19,6 +19,7 @@ type
     bcond*    : BuildingConditions
     res_cap*  : int                    # resources' weight cap
     res_pool* : OrderedTable[int, tuple[low, high: int]] # unowned pool
+    prod*     : Production                               # production data
   Location* = ref object
     index*   : int                # location tile index
     name*    : string
@@ -51,12 +52,13 @@ proc defaultLocationPrefab* (): LocationPrefab =
     result.bcond   = BuildingConditions.NONE
     result.res_cap = 0
 
-proc newLocationPrefab* (bcond: string, lname: string = "", res_cap: int, loot: OrderedTable[int, tuple[low, high: int]]): LocationPrefab =
+proc newLocationPrefab* (bcond: string, lname: string = "", res_cap: int, loot: OrderedTable[int, tuple[low, high: int]], prod: Production): LocationPrefab =
     new(result)
     result.name     = lname
     result.bcond    = getBuildingCondition(bcond)
     result.res_cap  = res_cap
     result.res_pool = loot
+    result.prod     = prod
 
 proc newLocation* (lp: LocationPrefab, ix: int, owner: int = 0, walls: int = 0): Location =
     # use -addLocation- found in game.nim/map.nim, this is only helper for it! (should be merged when new directory system is made)
@@ -67,6 +69,7 @@ proc newLocation* (lp: LocationPrefab, ix: int, owner: int = 0, walls: int = 0):
     result.bcond   = lp.bcond
     result.res_cap = lp.res_cap
     result.res_wgt = 0
+    result.prod    = lp.prod
     result.owner   = owner
     result.walls   = walls
     # adding resources to unowned location requires `addLocation` in game.nim

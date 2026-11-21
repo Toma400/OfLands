@@ -9,6 +9,7 @@ import parsetoml
 import resources
 import location
 import logging
+import common
 import ../map
 
 const START_HOUR = 10 # game starts at daytime
@@ -87,19 +88,32 @@ proc parseLocationOLDATA* (oldata_file: string): OrderedTable[int, LocationPrefa
         if cat == "tile":
             for tile_key in oldata["tile"].getTable.keys():
                 # optional values
-                let lc_name = if "name"         in oldata["tile"][tile_key]: oldata["tile"][tile_key]["name"].getStr()         else: ""
                 let lc_scap = if "storage_size" in oldata["tile"][tile_key]: oldata["tile"][tile_key]["storage_size"].getInt() else: 0
+                # not optional value, but useful for debugging
+                let lc_name = if "name"         in oldata["tile"][tile_key]: oldata["tile"][tile_key]["name"].getStr()         else: ""
+
                 var lc_loot : OrderedTable[int, tuple[low, high: int]]
                 if "storage" in oldata["tile"][tile_key]:
-                    log |: fmt"Parsing loot table for location: {lc_name}..."
+                    log |: fmt"Parsing loot table for location: {tile_key} ({lc_name})..."
                     for res_id, res_val in oldata["tile"][tile_key]["storage"].getTable():
                         lc_loot[parseInt(res_id)] = parseCountRange(res_val.getStr())
+
+                var lc_prod : Production
+                if "production" in oldata["tile"][tile_key]:
+                    log |: fmt"Parsing production table for location: {tile_key} ({lc_name})..."
+                    for prod_id, prod_data in oldata["tile"][tile_key]["production"].getTable():
+                        let prod_id_parsed = parseInt(prod_id.split(" | ")[0])
+                        let prod_data_seq  = getElems(prod_data)
+                        lc_prod[prod_id_parsed] = (res   : prod_data_seq[0].getInt(), # resource ID
+                                                   turns : prod_data_seq[1].getInt(), # turns needed to produce
+                                                   count : prod_data_seq[2].getInt()) # resource count produced
                 # initialises prefab, using default values if key not found
                 result[parseInt(tile_key)] = newLocationPrefab(
-                                                               lname   = lc_name,
+                                                               lname   = oldata["tile"][tile_key]["name"].getStr(),
                                                                bcond   = oldata["tile"][tile_key]["bcond"].getStr(),
                                                                res_cap = lc_scap,
                                                                loot    = lc_loot,
+                                                               prod    = lc_prod,
                                                                )
 
 #################################################

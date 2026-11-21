@@ -6,7 +6,9 @@ Versions:
   - [0.1.0](#0.1.0)
 
 ### 0.1.2
-- Locations are able to produce resources now
+- Locations are able to produce resources now (based on .oldata files)
+  - production pools let multiple resources be created in varied rate
+  - after reaching storage capacity, the production stops until freed
 
 ### 0.1.1
 - Configurator recognises Of Lands version and informs you if it's outdated regarding
