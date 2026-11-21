@@ -6,5 +6,5 @@ import std/tables
 
 type
   # aliases for shared data types
-  Production* = seq[tuple[res, turns, count: int]] # used to determine (current, simplified) resource rate
-  ResStorage* = OrderedTable[int, int]             # resource storage used by Location and SettlementTile
+  Production* = OrderedTable[int, tuple[res, turns, count: int]] # used to determine (current, simplified) resource rate
+  ResStorage* = OrderedTable[int, int]                           # resource storage used by Location and SettlementTile

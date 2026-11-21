@@ -27,7 +27,7 @@ type
     res_cap* : int                # resources' weight cap
     res_wgt* : int                # resources' weight (for easy access, overridden when res added/removed)
     prod*    : Production         # production data
-    prod_ct* : int                # production counter (based on `prod.turns`)
+    prod_ct* : Table[int, int]    # production counter : production ID, counter | compared in production proc to `prod[ID].turns`
     owner*   : int                # 0 for unowned, otherwise takes kingdom index (1-n) used by the Map object
     # todo: settlement ownership?
     walls*   : int                # 0 for no walls, 1 for pallisade, 2 for stone wall | todo: .oldata should be able to overwrite this

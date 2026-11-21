@@ -117,7 +117,7 @@ proc addLocation* (rdefs: OrderedTable[int, Resource], ls: var seq[Location], t:
     # proc for adding non-owned location
     if not hasObject(t) and canExist(t, lp):
         t.location = newLocation(lp, ix, 0).some
-        (!(t.location)).prod = @[(0, 1, 10)] # TODO: temporary one coin production for testing *for everything*
+        (!(t.location)).prod[0] = (0, 1, 10) # TODO: temporary one coin production for testing *for everything*
         for it_ix, pool in lp.res_pool: # adds resources to unowned location
             addResources(!(t.location), rdefs[it_ix], MAP_GEN, rand(pool.low..pool.high))
         ls.add(!(t.location))
@@ -127,14 +127,15 @@ proc addLocation* (rdefs: OrderedTable[int, Resource], ls: var seq[Location], t:
 
 proc productionPhase* (m: var Map) =
     for l in m.locs:
-      l.prod_ct += 1 # ups the turn counter
-      for r in l.prod:
-        # TODO: current system allows only for -one item- because it resets the counter anyway
-        # this should be adjusted as the production pipeline gets more complex, alongside
-        # all the additional requirements that will come, but for now should be left as is
-        # for simplicity sake
-        if l.prod_ct >= r.turns:
-            l.prod_ct = 0
+      for p_id, r in l.prod:
+        # null pointer safeguard, we can afford this being built here (makes it flexible for any post-gen production additions?)
+        if p_id notin l.prod_ct:
+            l.prod_ct[p_id] = 0
+        # p_id is production ID, signifying particular resource/counter
+        l.prod_ct[p_id] += 1 # ups the turn counter
+        # if the production counter is reached, perform production
+        if l.prod_ct[p_id] >= r.turns:
+            l.prod_ct[p_id] = 0
             addResources(l, m.data.rdefs[r.res], MAP_GEN, r.count)
 
 proc parseOLM (olm: TomlValueRef, ls: var seq[Location]): MapData =

@@ -283,6 +283,38 @@ var olmMapFormat = {
                 locdata = locdata + "bcond        = " + String.raw`"${tile.property('bcond')}"` + "\n";
                 locdata = locdata + "storage_size = " + loc_storage                             + "\n";
 
+                if (loc_storage > 0 && ("production" in tile_data)) {
+                    var prlines  = tile.property("production").split("\n"); // lines
+                    var prlist   = [];
+                    for (var line = 0; line < prlines.length; ++line) {
+                        var prcont = prlines[line].split(":"); // separates resource ID from counter/count
+                        // ^ line w/o ":" has len==1 and is treated as comment (ignored)
+                        if (prcont.length == 2) {
+                            var tmp = prcont[0].split("|")
+                            var key = tmp[0].trim();                      // ID
+                            var val = prcont[1].split("/");               // counter/count value...
+                            var ctr = val[0].trim();                      // ...no matter the length, first item
+                            var cnt = (val.length > 1) ? val[1].trim()    // ...defaults to 1 if not provided (multiple '/' are skipped like comments)
+                                                       : "1";
+                            // comment
+                            var mct = (tmp.length == 2) ? tmp[1].trim()         : ""; // main comment (after ID)
+                            var sct = (val.length > 2)  ? " / " + val[2].trim() : ""; // side comment (after counters)
+                            var cmt = (mct != "" || sct != "") ? ` | ${mct}${sct}`    // fused comment
+                                                               : "";
+                            prlist.push(`"${line}${cmt}" = [${key}, ${ctr}, ${cnt}]`);
+                        }
+                    }
+                    if (prlist.length > 0) { // if any production is set, produce file
+                        locdata = locdata + "production = { ";
+                        for (var prq = 0; prq < prlist.length; ++prq) {
+                            locdata = locdata + prlist[prq];
+                            if (prq + 1 < prlist.length) { // checks for next entry, adds "," if expected
+                                locdata = locdata + ", ";
+                            }
+                        }
+                        locdata = locdata + " }\n";
+                    }
+                }
                 if (loc_storage > 0 && ("storage" in tile_data)) {
                     var res_dict = {};                                   // resources dict (ID / value)
                     var stlines  = tile.property("storage").split("\n"); // lines

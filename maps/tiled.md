@@ -111,7 +111,25 @@ number 0.
   - `submerged` - can be placed on both land and water tiles
   - `air`   - can be placed on tiles that do not obstruct sky (most of them)
   - `all`   - can be anywhere
-- `storage_size` - size of the storage (optional) 
+- `storage_size` - size of the storage (optional)
+- `production` - produced goods (optional, works only if storage_size > 0)
+  - syntax similar to [settlement's `tile_resources`](#----settlement----), but
+    it doesn't take coordinates _and_ has different value syntax
+  - value syntax is: `daycount / resource count`, where `/ resource count`
+    defaults to 1 if not provided; daycount is more important as it basically
+    tells the game if the location produces resource everyday (1 or lower)
+    or if it requires multiple days to yield resource
+  - each line is separate production pool, meaning you can have two production
+    systems for the same resource (as shown below for coins)
+  - any additional `/` marks the comment, but only first additional comment is
+    translated into .oldata file (exporter combines ID comment and counter
+    comments, so you can use it to signify production item and additional
+    circumstances like done below)
+  - example syntax:
+```toml
+0 | coin = 1 / 10
+0 | coin = 7 / 100 / earns 100 coins each seven days (Sunday higher earnings)
+```
 - `storage` - contents appearing in unowned locations
   - working in similar way to [settlement's `tile_resources`](#----settlement----), but
     without taking coordinates and affecting only unowned places
