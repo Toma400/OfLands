@@ -19,6 +19,9 @@ Ideas for versioning:
       - switchable manually? and switchable automatically if cap is reached
       - automatic one could unswitch or something (registering different context)
         - could have `[x] tick` GUI for enabling unswitch
+      - could also be set per resource? so you could disable production of X, but still
+        produce Y (might be level of micromanagement necessitating the alternative
+        GUI subsections system...)
 - scope creep
   - visible icon for each DayPhase
     - daytime icon for resource producing (and if drain below implemented, nighttime
@@ -40,6 +43,8 @@ Ideas for versioning:
     - map versioning? for now simple == equaling, later on could work like IoA dependency
 
 ### 0.1.3.
+- entities' rework?
+  - separate tileset/.ole file? separating it from system
 - entities' movement
   - system for 'planning' the move and calculating cost/turn count
   - per-tile differences in speed
@@ -65,6 +70,9 @@ Ideas for versioning:
     - management system prioritising city feast over "below level" one? (to save food)
   - lack of payment could queue but lower the morale? (what morale would be used for
     outside of army?)
+
+### 0.1.4
+- for now thought as scope-creep fallback for 0.1.3
 
 ### 0.2.x.
 - loading bar (0.2.0)

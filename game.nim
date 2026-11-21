@@ -134,8 +134,9 @@ proc productionPhase* (m: var Map) =
         l.prod_ct[p_id] += 1 # ups the turn counter
         # if the production counter is reached, perform production
         if l.prod_ct[p_id] >= r.turns:
-            l.prod_ct[p_id] = 0
-            addResources(l, m.data.rdefs[r.res], MAP_GEN, r.count)
+          if addResourceCheck(l, m.data.rdefs[r.res]): # keeps the counter from resetting if storage full (= quicker next production)
+              l.prod_ct[p_id] = 0
+              addResources(l, m.data.rdefs[r.res], MAP_GEN, r.count)
 
 proc parseOLM (olm: TomlValueRef, ls: var seq[Location]): MapData =
     # - olm : .olm file parsed by `newMap` into TomlValueRef object

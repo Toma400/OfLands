@@ -18,6 +18,10 @@ type
     # map modes
     mmTerrain  = 16
     mmFactions = 17
+  tAlign = enum # text alignment
+    CENTERED
+    LEFT
+    RIGHT
 
 var
   # buttons
@@ -40,11 +44,14 @@ var
   bMM_fheight = bMM_size                         # container height (button height)
   bMMFac_stX  = bTURN_stX + bMM_size + bMM_space # second button X coords (starting X, first button, spacing)
 
-proc WORKAROUND_TEXT (text: string, x, y: int | Pint, size : int = 3) =
+proc WORKAROUND_TEXT (text: string, x, y: int | Pint, size : int = 3, ta : tAlign = CENTERED) =
     # proc that is meant to be replaced with Nico rework on GUI blitting - things like buttons should be able to have text size adjusted
     # but until then, we will just blit text on top of empty GUI objects and call it a day
     useColour(CTFLT) # guess what, we use NicoGUI's colours even
-    printc(text, x = x + 100, y = y + 15, size)
+    case ta:
+      of LEFT     : print(text,  x = x + 100, y = y + 15, size)
+      of CENTERED : printc(text, x = x + 100, y = y + 15, size)
+      of RIGHT    : printr(text, x = x + 100, y = y + 15, size)
 
 proc turnButton* (proced: proc) =
     if G.beginWindow("", bTURN_stX, bTURN_stY, bTURN_szX, bTURN_szY, bTURN_on):
@@ -93,7 +100,9 @@ proc resourceGUI* (m: Map, ses: Session) =
           useSpritesheet(XRes)
           sprs(rs.index, x = bTURN_stX - 30, y = bTURN_stY - 310 + spc + 6, dw = 1, dh = 1) # +1 bc asset is 32 so it centers it (34-32 = 2, 1 up, 1 down)
           useSpritesheet(XGUI) # comeback?
-          WORKAROUND_TEXT(fmt"{rs.name}: {rs_cnt}", bTURN_stX, bTURN_stY - 310 + spc)
+          WORKAROUND_TEXT(fmt"{rs.name}", bTURN_stX - 85, bTURN_stY - 310 + spc, ta=LEFT)
+          WORKAROUND_TEXT(fmt"{rs_cnt}",  bTURN_stX + 90, bTURN_stY - 310 + spc)
+          #WORKAROUND_TEXT(fmt"{rs.name}: {rs_cnt}", bTURN_stX, bTURN_stY - 310 + spc)
           spc += 34 # separating resources vertically
         if len(rs_lst) > 0:
           WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325 + spc, 2)
