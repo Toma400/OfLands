@@ -6,16 +6,6 @@ Ideas for versioning:
 - 0.2.x - game-breaking, technical revamps
 - 0.3.x - actual gameplay introduction
 
-### 0.1.2.
-- scope creep
-  - visible icon for each DayPhase
-    - daytime icon for resource producing (and if drain below implemented, nighttime
-      icon for drainage)
-  - technicals
-    - order resources by index instead of order of inputting
-    - exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
-      - laptop: provide "vanilla" map for release
-
 ### 0.1.3.
 - **theme**: "entity movement"
 - pre-planning
@@ -26,9 +16,24 @@ Ideas for versioning:
     - system for 'planning' the move and calculating cost/turn count
     - per-tile differences in speed
   - claimage of unowned locations
+  - order resources by index instead of order of inputting
 - scope creep
+  - settlements: settlement tile can be named? to signify districts etc.
+    - `tile_resources` could be probably repurposed even for multiple elements, e.g.
+      metadata with buildings too, and resources only after particular syntax?
+    - ```
+      EXAMPLE:
+      
+      [X, Y | "District name"]
+      > Buildings
+      building : metadata
+      > Resources
+      resource : count-range
+      ```
   - ensure faction owned locations show on FACTION map mode differently?
-  - technicals 
+  - technicals
+    - exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
+      - laptop: provide "vanilla" map for release
     - map versioning? for now simple == equaling, later on could work like IoA dependency
     - ensuring proper parsing of `files.nim elements`
       - optional/required should be properly set up, so they are actually following their
@@ -53,10 +58,12 @@ Ideas for versioning:
 
 ### 0.1.5
 - **theme**: "consumption / resource usage"
-- food/money consumption
+- food/fuel/money consumption
   - categorisation of items so they can be picked from diverse pool
     - showcase of category in item list? so you can see drain value and what items are
       drained
+    - ID pointer from map properties to the coin item (by default 0?); used as a tax
+      for settlements and payment? for military entities
   - settlement consumption (food/fuel)
     - button for prioritised item from category
     - for now, no penalty for reaching bottom

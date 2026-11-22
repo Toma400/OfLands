@@ -137,8 +137,6 @@ proc drawSidebar(map: Map) =
     spr(8,  H+sidbr_padding,      0+sidbr_padding+TL*3)
     spr(9,  H+sidbr_padding+TL,   0+sidbr_padding+TL*3)
     spr(9,  H+sidbr_padding+TL*2, 0+sidbr_padding+TL*3)
-    # time
-    printc(fmt"{map.time.day} {Month[map.time.month]} {map.time.year}, {map.time.hour}", x = H+TL*5, y = H-TL*2, 3)
 
 proc drawFocus (map: Map, ses: Session, player_nb: int) =
     useColour(CTEXT) # black

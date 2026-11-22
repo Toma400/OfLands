@@ -15,7 +15,12 @@ Versions:
   - looking at resource list is now gated behind ownership of location/settlement
 - GUI
   - clicking on GUI doesn't cancel cell overview anymore
-  - resource list formatting has been polished
+  - day phase identifier added, indicating what time is it visually
+  - resource list improvements
+    - production switch has been added
+    - formatting has been changed to follow vertical alignment
+    - produced items are now prioritised in order
+    - storage horizontal lines are now showing consistently
 
 ### 0.1.1
 - Configurator recognises Of Lands version and informs you if it's outdated regarding

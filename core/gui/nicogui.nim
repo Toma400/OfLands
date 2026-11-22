@@ -9,6 +9,7 @@ import nico
 import ../render/colours
 import ../../game
 import ../settlement
+import ../time
 import main
 
 const
@@ -17,6 +18,7 @@ const
 type
   GUIIcons = enum # helper that directs to `gui.png` indexes for particular icons
     # decor
+    dcEmpty  =  7
     dcStart  = 12
     dcMid    = 13
     dcEnd    = 14
@@ -25,19 +27,26 @@ type
     mmTerrain  = 16
     mmFactions = 17
     # production
-    pdEnabled  = 18
-    pdDisabled = 19
+    pdEnabled  = 20
+    pdDisabled = 21
   tAlign = enum # text alignment
     CENTERED
     LEFT
     RIGHT
+
+let DTmarkers = {
+    DAY     : (ix: 24, name: "Day"),
+    MORNING : (ix: 25, name: "Morning"),
+    EVENING : (ix: 26, name: "Evening"),
+    NIGHT   : (ix: 27, name: "Night")
+}.toTable()
 
 var
   # buttons
   bTURN_padX = TL*2 # padding X
   # -- start coordinates
   bTURN_stX : Pint = MW + bTURN_padX
-  bTURN_stY : Pint = H - TL*4
+  bTURN_stY : Pint = H - TL*4 - 20 # -20 to accomodate dayphase indicator
   bRES_stX  : Pint = bTURN_stX + 120
   bRES_stY  : Pint = bTURN_stY - 60 - 310 + 6 # () is bMM_stY
   # -- size
@@ -64,12 +73,17 @@ proc WORKAROUND_TEXT (text: string, x, y: int | Pint, size : int = 3, ta : tAlig
       of CENTERED : printc(text, x = x + 100, y = y + 15, size)
       of RIGHT    : printr(text, x = x + 100, y = y + 15, size)
 
-proc turnButton* (proced: proc) =
+proc turnButton* (map: Map, proced: proc) =
     if G.beginWindow("", bTURN_stX, bTURN_stY, bTURN_szX, bTURN_szY, bTURN_on):
         if G.button("", bTURN_stX, bTURN_stY, bTURN_szX, bTURN_szY): # End Turn
             proced()
         G.endArea()
     WORKAROUND_TEXT("End Turn", bTURN_stX, bTURN_stY)
+    # time
+    printc(fmt"{map.time.day} {Month[map.time.month]} {map.time.year}, {map.time.hour}", x = H+TL*5, y = H-TL*2 - 20, 3) # -20 to accomodate dayphase indicator
+    useSpritesheet(XGUI)
+    sprs(dcEmpty.ord,                    x = H+TL*5 - 30, y = H-TL*2, dw = 2, dh = 2)
+    sprs(DTmarkers[getDayPhase(map)].ix, x = H+TL*5 - 30, y = H-TL*2, dw = 2, dh = 2)
 
 proc facmodeButton* (ses: var Session) =
     if G.beginWindow("", bTURN_stX, bMM_stY, bMM_fwidth, bMM_fheight, bTURN_on):

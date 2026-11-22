@@ -94,7 +94,7 @@ proc turn() =
 
 proc gameGUI() =
     resourceGUI(mvp, ses, player)
-    turnButton(turn)
+    turnButton(mvp, turn)
     facmodeButton(ses)
 
 proc gameUpdate(dt: float32) =
