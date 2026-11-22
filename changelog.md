@@ -10,9 +10,11 @@ Versions:
   - production pools let multiple resources be created in varied rate
   - after reaching storage capacity, the production stops until freed
   - only owned locations can produce resources
+  - resource production can be disabled with button
 - Resources
   - looking at resource list is now gated behind ownership of location/settlement
 - GUI
+  - clicking on GUI doesn't cancel cell overview anymore
   - resource list formatting has been polished
 
 ### 0.1.1

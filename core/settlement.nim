@@ -18,6 +18,8 @@ type
     coords*  : tuple[x, y: int]
     res*     : ResStorage       # resources stored (resource ID, amount)
     res_wgt* : int              # resources' weight (for easy access, overridden when res added/removed)
+    prod_rs* : Table[int, bool] # production resource sheet : resource ID, enabled/disabled | used for disabling/enabling production/other metadata in the future
+    # ^ todo: should be adjusted further, but currently is used as empty placeholder to avoid null pointer in -nicogui-
   Settlement* = ref object
     name*  : string
     tier*  : SettlementTier

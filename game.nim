@@ -133,7 +133,10 @@ proc productionPhase* (m: var Map) =
             # null pointer safeguard, we can afford this being built here (makes it flexible for any post-gen production additions?)
             if p_id notin l.prod_ct:
                 l.prod_ct[p_id] = 0
-            if addResourceCheck(l, m.data.rdefs[r.res]): # stops production if storage full (= keeps counter from resetting/quicker to get to next production)
+            # below:
+            # - stops production if storage full (= keeps counter from resetting/quicker to get to next production)
+            # - checks if production is active (`prod_rs` field)
+            if l.prod_rs[r.res] and addResourceCheck(l, m.data.rdefs[r.res]):
                 l.prod_ct[p_id] += 1 # ups the turn counter
                 # if the production counter is reached, perform production
                 if l.prod_ct[p_id] >= r.turns:

@@ -9,16 +9,6 @@ Ideas for versioning:
 ### 0.1.2.
 - pre-planning
   - Of Lands' doc, edited and adjusted to new goals, having split off technical section
-- release MVP
-  - GUI additions
-    - any management GUI would only appear in case of owning settlement
-    - possibly boolean on `active/inactive` for location
-      - switchable manually? and switchable automatically if cap is reached
-      - automatic one could unswitch or something (registering different context)
-        - could have `[x] tick` GUI for enabling unswitch
-      - could also be set per resource? so you could disable production of X, but still
-        produce Y (might be level of micromanagement necessitating the alternative
-        GUI subsections system...)
 - scope creep
   - ensure faction owned locations show on FACTION map mode differently?
   - visible icon for each DayPhase

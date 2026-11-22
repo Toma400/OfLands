@@ -28,7 +28,8 @@ type
     res_cap* : int                # resources' weight cap
     res_wgt* : int                # resources' weight (for easy access, overridden when res added/removed)
     prod*    : Production         # production data
-    prod_ct* : Table[int, int]    # production counter : production ID, counter | compared in production proc to `prod[ID].turns`
+    prod_ct* : Table[int, int]    # production counter        : production ID, counter        | compared in production proc to `prod[ID].turns`
+    prod_rs* : Table[int, bool]   # production resource sheet : resource ID, enabled/disabled | used for disabling/enabling production/other metadata in the future
     owner*   : int                # 0 for unowned, otherwise takes kingdom index (1-n) used by the Map object
     # todo: settlement ownership?
     walls*   : int                # 0 for no walls, 1 for pallisade, 2 for stone wall | todo: .oldata should be able to overwrite this
@@ -72,7 +73,9 @@ proc newLocation* (lp: LocationPrefab, ix: int, owner: int = 0, walls: int = 0):
     result.prod    = lp.prod
     result.owner   = owner
     result.walls   = walls
-    # adding resources to unowned location requires `addLocation` in game.nim
+    for _, pdata in result.prod: # setting up production resource sheet
+        result.prod_rs[pdata.res] = true # all defaults to true
+    # todo, old comment to figure out: adding resources to unowned location requires `addLocation` in game.nim
 
 proc newLocation* (oldata: OrderedTable[int, LocationPrefab], ix: int): Location =
     # converted that yields singular loc data from LocationPrefab table

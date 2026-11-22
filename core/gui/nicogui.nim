@@ -1,4 +1,5 @@
 import std/strformat
+import std/sequtils
 import std/tables
 # other imports
 import questionable
@@ -15,9 +16,17 @@ const
   SW = W - MW # sidebar width
 type
   GUIIcons = enum # helper that directs to `gui.png` indexes for particular icons
+    # decor
+    dcStart  = 12
+    dcMid    = 13
+    dcEnd    = 14
+    dcSingle = 15
     # map modes
     mmTerrain  = 16
     mmFactions = 17
+    # production
+    pdEnabled  = 18
+    pdDisabled = 19
   tAlign = enum # text alignment
     CENTERED
     LEFT
@@ -29,6 +38,8 @@ var
   # -- start coordinates
   bTURN_stX : Pint = MW + bTURN_padX
   bTURN_stY : Pint = H - TL*4
+  bRES_stX  : Pint = bTURN_stX + 120
+  bRES_stY  : Pint = bTURN_stY - 60 - 310 + 6 # () is bMM_stY
   # -- size
   bTURN_szX : Pint = W - MW - 2*(bTURN_padX) # window width - map area - padding from both sides
   bTURN_szY : Pint = 50
@@ -72,44 +83,68 @@ proc facmodeButton* (ses: var Session) =
     sprs(mmFactions.ord, x = bMMFac_stX, y = bMM_stY, dw = 1, dh = 1)
     WORKAROUND_TEXT("Map Modes", bTURN_stX + 30, bMM_stY - 5)
 
+proc resourceCard (m: Map, rs_ix: int, rs_cnt: int, spc: var int, prod_rs: ptr Table[int, bool]) =
+    # used for single resource card, since their entries will repeat
+    # rs_ix  : int | index of resource
+    # rs_cnt : int | resource count / amount in storage
+    # spc    : int | Y spacing      / Y position on GUI
+    # prod_rs      | production sheet
+    let rs = m.data.rdefs[rs_ix] # Resource object
+
+    useSpritesheet(XRes)
+    sprs(rs.index, x = bTURN_stX - 30, y = bTURN_stY - 310 + spc + 6, dw = 1, dh = 1) # +1 bc asset is 32 so it centers it (34-32 = 2, 1 up, 1 down)
+    useSpritesheet(XGUI) # comeback?
+    WORKAROUND_TEXT(fmt"{rs.name}", bTURN_stX - 85, bTURN_stY - 310 + spc, ta=LEFT)
+    WORKAROUND_TEXT(fmt"{rs_cnt}",  bTURN_stX + 90, bTURN_stY - 310 + spc)
+    # production enabling
+    if rs_ix in prod_rs[]:
+        var bY : Pint = bTURN_stY - 310 + spc + 6  # dumb var needed for Nico, including spacing
+        let ps = prod_rs[][rs_ix]                    # production state (enabled/disabled)
+        let ac = if ps: pdEnabled else: pdDisabled # bool indicator
+        # sprs(dcSingle.ord, x = bTURN_stX + 120, y = bTURN_stY - 310 + spc + 6, dw = 1, dh = 1)
+        if G.beginWindow("", bRES_stX, bY, bMM_size, bMM_size, bTURN_on):
+            if G.button("", bRES_stX, bY, bMM_size, bMM_size):
+                prod_rs[][rs_ix] = not prod_rs[][rs_ix]
+            G.endArea()
+        sprs(ac.ord, x = bRES_stX, y = bY, dw = 1, dh = 1)
+    spc += 34 # separating resources vertically
+
 proc resourceGUI* (m: Map, ses: Session, player: int) =
     # player : int | player faction number
     if ses.fobj.state != -1: # actual tile with object is selected
     # EVENTUALLY the above should also bounce against ownership! or entity overlapping the tile
     # so that you don't know resources of locs/settlements of others
     # can be helpful for debbuging rn though
-        var owner  : int
-        var rs_cap : int
-        var rs_wgt : int
-        var rs_lst : OrderedTable[int, int] # list of resources
-        var spc    = 0                      # visual spacing (temp before proper listbox is made)
+        var owner   : int
+        var rs_cap  : int
+        var rs_wgt  : int
+        var rs_lst  : OrderedTable[int, int]  # list of resources
+        var spc     = 0                       # visual spacing (temp before proper listbox is made)
+        var prod_rs : ptr Table[int, bool]    # production sheet
         if ses.fobj.state == 1: # location
-            rs_cap = (!ses.fobj.loc).res_cap
-            rs_wgt = (!ses.fobj.loc).res_wgt
-            rs_lst = (!ses.fobj.loc).res
-            owner  = (!ses.fobj.loc).owner
+            rs_cap  = (!ses.fobj.loc).res_cap
+            rs_wgt  = (!ses.fobj.loc).res_wgt
+            rs_lst  = (!ses.fobj.loc).res
+            owner   = (!ses.fobj.loc).owner
+            prod_rs = addr (!ses.fobj.loc).prod_rs
         elif ses.fobj.state == 2: # settlement
-            rs_cap = storageCap((!ses.fobj.stile))
-            rs_wgt = (!ses.fobj.stile).res_wgt
-            rs_lst = (!ses.fobj.stile).res
-            owner  = (!ses.fobj.stile).settlem.owner
+            rs_cap  = storageCap((!ses.fobj.stile))
+            rs_wgt  = (!ses.fobj.stile).res_wgt
+            rs_lst  = (!ses.fobj.stile).res
+            owner   = (!ses.fobj.stile).settlem.owner
+            prod_rs = addr (!ses.fobj.stile).prod_rs # empty, temporarily w/o systems so that there's no nullpointers
 
         if owner == player: # gates viewing resources by ownership by player | TODO: should also (partially) show if entity stands on it [0.1.4 todo]
             WORKAROUND_TEXT("Storage", bTURN_stX, bTURN_stY - 370, 4)
             WORKAROUND_TEXT(fmt"{rs_wgt} / {rs_cap}", bTURN_stX, bTURN_stY - 340)
-            if len(rs_lst) > 0:
+            if len(rs_lst) > 0 or len(prod_rs[]) > 0:
               WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325, 2)
             for rs_ix, rs_cnt in rs_lst: # this goes forever, so eventually listbox must descope to have particular [range..range]
               # and ranges be moved by buttons (range could probably be held by the same tuple? and be resetted each time loc/stile swaps? in ol.nim)
-              let rs = m.data.rdefs[rs_ix]
-              useSpritesheet(XRes)
-              sprs(rs.index, x = bTURN_stX - 30, y = bTURN_stY - 310 + spc + 6, dw = 1, dh = 1) # +1 bc asset is 32 so it centers it (34-32 = 2, 1 up, 1 down)
-              useSpritesheet(XGUI) # comeback?
-              WORKAROUND_TEXT(fmt"{rs.name}", bTURN_stX - 85, bTURN_stY - 310 + spc, ta=LEFT)
-              WORKAROUND_TEXT(fmt"{rs_cnt}",  bTURN_stX + 90, bTURN_stY - 310 + spc)
-              #WORKAROUND_TEXT(fmt"{rs.name}: {rs_cnt}", bTURN_stX, bTURN_stY - 310 + spc)
-              spc += 34 # separating resources vertically
-            if len(rs_lst) > 0:
+                resourceCard(m, rs_ix, rs_cnt, spc, prod_rs)
+            for rs_ix, _ in prod_rs[]: # iterating over produced resources which are not stored (count=0)
+                if rs_ix notin rs_lst: resourceCard(m, rs_ix, 0, spc, prod_rs)
+            if len(rs_lst) > 0 or len(prod_rs[]) > 0:
               WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325 + spc, 2)
 
 proc initGUITheme* () =
