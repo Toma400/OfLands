@@ -37,9 +37,9 @@ var mvp : Map
 var ses : Session
 try: # put into try/except so that errors can be caught in logs
     mvp = newMap(olm_file       = map_fl,
-                   player_kingdom = (nb: player,
-                                     nm: getSectionValue(cfg, "", "kingdom")),
-                   )
+                 player_kingdom = (nb: player,
+                                   nm: getSectionValue(cfg, "", "kingdom")),
+                 )
     ses = newSession()
 except Exception as exc:
     dumpLog(log, exc.msg); quit() # continues with crash
@@ -128,16 +128,17 @@ proc gameUpdate(dt: float32) =
             if addEntity(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], SETTLER):
                 ses.gmode = EXPLORE
     if mousebtnpr(1): # middle click
-        discard addSettlement(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player])
+        discard #addSettlement(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player])
     if mousebtnpr(2): # right click
-        if ses.bdb == -1:
-            let tile = mvp.data.mapping[getCellCoords(mvp, mouse())]
-            if isSome(tile.location):
-                ses.bdb = (!tile.location).index
-        else:
-            let loc_pf = mvp.data.ldefs[ses.bdb]
-            discard addLocation(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], loc_pf, ses.bdb)
-            ses.bdb = -1
+        discard
+        # if ses.bdb == -1:
+        #     let tile = mvp.data.mapping[getCellCoords(mvp, mouse())]
+        #     if isSome(tile.location):
+        #         ses.bdb = (!tile.location).index
+        # else:
+        #     let loc_pf = mvp.data.ldefs[ses.bdb]
+        #     discard addLocation(mvp.data.mapping[getCellCoords(mvp, mouse())], mvp.kingdoms[player], loc_pf, ses.bdb)
+        #     ses.bdb = -1
     if roa:
         updateRoads(mvp)
     # TODO: MUSIC!!

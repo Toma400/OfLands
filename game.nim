@@ -326,7 +326,7 @@ proc getInitialCoords (olm: TomlValueRef, p_kingdom: Kingdom): (int, int) =
 proc newMap* (olm_file: string, player_kingdom: tuple[nb: int, nm: string]): Map =
     # - olm_file  : .olm file containing tileset and tile data
     # - map_index : int | index 0 is for GUI/menu
-    log |: fmt"Parsing map file: {olm_file} | Player ID: {player_kingdom.nb} ({player_kingdom.nm})" # TODO: eventually move to -files-
+    log |: fmt"Parsing map file: {olm_file} | Player ID: {player_kingdom.nb} ({player_kingdom.nm})" # TODO: .nm here is wrong before .olm parsing
     let olm         = parseFile(fmt"maps/{olm_file}")
     let pix         = if player_kingdom.nb > 0: player_kingdom.nb else: 1 # checks for positive number
 

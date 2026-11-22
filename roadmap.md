@@ -17,6 +17,8 @@ Ideas for versioning:
     - per-tile differences in speed
   - claimage of unowned locations
   - order resources by index instead of order of inputting
+  - fixes
+    - [#15: Missing SSL .dll file](https://github.com/Toma400/OfLands/issues/15)
 - scope creep
   - settlements: settlement tile can be named? to signify districts etc.
     - `tile_resources` could be probably repurposed even for multiple elements, e.g.

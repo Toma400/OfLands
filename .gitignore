@@ -4,12 +4,14 @@
 /maps/Of Lands (Main).tsx
 /maps/Resources.tsx
 /maps/Locations.tsx
+/maps/Entities.tsx
 /maps/Settlements.tsx
 /maps/ol.tiled-project
 /maps/ol.tiled-session
 /music/*
 /tilesets/example.ase
 /_temp
+/img.png
 OfLands.exe
 OfLandsConfigurator.exe
 OfLands.zip
@@ -23,6 +25,7 @@ rcedit-x64.exe
 tilesets/example_too_complex_ig.png
 tilesets/road_palette.png
 tilesets/transparency_cleaner.exe
+tilesets/outtakes.png
 # PTR specific
 tilesets/factions_ptr.png
 tilesets/ptr_locs.png

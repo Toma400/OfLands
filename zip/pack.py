@@ -33,6 +33,9 @@ FILES = [
     "oflands.ini",
     "ol.ico",
     "ol.png",
+    "cacert.pem",            # required for Configurator
+    "libcrypto-1_1-x64.dll", # required for Configurator
+    "libssl-1_1-x64.dll",    # required for Configurator
     "SDL2.dll",
     "SDL2_image.dll",
 ]
