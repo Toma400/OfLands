@@ -139,11 +139,14 @@ proc resourceGUI* (m: Map, ses: Session, player: int) =
             WORKAROUND_TEXT(fmt"{rs_wgt} / {rs_cap}", bTURN_stX, bTURN_stY - 340)
             if len(rs_lst) > 0 or len(prod_rs[]) > 0:
               WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325, 2)
-            for rs_ix, rs_cnt in rs_lst: # this goes forever, so eventually listbox must descope to have particular [range..range]
-              # and ranges be moved by buttons (range could probably be held by the same tuple? and be resetted each time loc/stile swaps? in ol.nim)
+            # this list can go forever, so eventually listbox must descope to have particular [range..range]
+            # ...and ranges be moved by buttons (range could probably be held by the same tuple? and be resetted each time loc/stile swaps? in ol.nim)
+            for rs_ix, _ in prod_rs[]: # iterating over produced resources first (including not stored ones)
+                let rs_cnt = if rs_ix in rs_lst: rs_lst[rs_ix] else: 0
                 resourceCard(m, rs_ix, rs_cnt, spc, prod_rs)
-            for rs_ix, _ in prod_rs[]: # iterating over produced resources which are not stored (count=0)
-                if rs_ix notin rs_lst: resourceCard(m, rs_ix, 0, spc, prod_rs)
+            for rs_ix, rs_cnt in rs_lst:
+                if rs_ix notin prod_rs[]: # checks if it didn't show up already in prod_rs cycle
+                    resourceCard(m, rs_ix, rs_cnt, spc, prod_rs)
             if len(rs_lst) > 0 or len(prod_rs[]) > 0:
               WORKAROUND_TEXT("----------------------------------", bTURN_stX, bTURN_stY - 325 + spc, 2)
 

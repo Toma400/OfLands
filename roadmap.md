@@ -7,62 +7,71 @@ Ideas for versioning:
 - 0.3.x - actual gameplay introduction
 
 ### 0.1.2.
-- pre-planning
-  - Of Lands' doc, edited and adjusted to new goals, having split off technical section
 - scope creep
-  - ensure faction owned locations show on FACTION map mode differently?
   - visible icon for each DayPhase
     - daytime icon for resource producing (and if drain below implemented, nighttime
       icon for drainage)
-  - resources drained from settlements (food/fuel)
-    - categorisation of items so they can be bundled
-    - showcase of category in item list? so you can see drain value and what items are
-      drained
-    - button for prioritised item from category??
-    - for now, no penalty for reaching bottom
   - technicals
     - order resources by index instead of order of inputting
     - exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
       - laptop: provide "vanilla" map for release
+
+### 0.1.3.
+- **theme**: "entity movement"
+- pre-planning
+  - Of Lands' doc, edited and adjusted to new goals, having split off technical section
+- mvp
+  - entities' rework, separate tileset/.ole file so it's no longer under system files
+  - entities' movement
+    - system for 'planning' the move and calculating cost/turn count
+    - per-tile differences in speed
+  - claimage of unowned locations
+- scope creep
+  - ensure faction owned locations show on FACTION map mode differently?
+  - technicals 
+    - map versioning? for now simple == equaling, later on could work like IoA dependency
     - ensuring proper parsing of `files.nim elements`
       - optional/required should be properly set up, so they are actually following their
         rules from modding doc
-    - map versioning? for now simple == equaling, later on could work like IoA dependency
-
-### 0.1.3.
-- entities' rework?
-  - separate tileset/.ole file? separating it from system
-- entities' movement
-  - system for 'planning' the move and calculating cost/turn count
-  - per-tile differences in speed
-- claimage of unowned locations
-- entity storage
-- ability for entity to take resources from same-faction tile
-- ability for entity to drop resources onto same-faction tile
-- automation `possible 0.1.4 feature split if 0.1.3 scope is deemed too big`
-  - system for 'planning' the automated routes
-  - automating the movement?
-  - automating the pickup?
-  - automating the drop?
-  - handling the errors (e.g. no resources to take, reaching cap on delivery place)
-- entities production in cities?? `possible 0.1.4 too`
-  - requires location producing food
-  - would test the pipeline of (automating) delivery > hiring from resources produced
-  - would test ability to increase delivery by increasingly more entities involved
-- food/money consumption? `possible 0.1.4 too`
-  - entity having health bar/food needs, restored upon eating food periodically
-  - management system of automatically feasting if below particular level?
-  - degrading health with starvation? slower movement? perishing upon reaching 0 hp?
-  - question: should food be restored w/o cost in cities, or with lesser cost?
-    - management system prioritising city feast over "below level" one? (to save food)
-  - lack of payment could queue but lower the morale? (what morale would be used for
-    outside of army?)
-- listbox for resources instead of placeholder
 
 ### 0.1.4
-- for now thought as scope-creep fallback for 0.1.3
-- adding possibility to view storage if owned entity stands on loc/settlement of
-  another faction (no management menu should be possible still)
+- **theme**: "entity-settlement interaction"
+- mvp
+  - adding possibility to view storage if owned entity stands on loc/settlement of
+    another faction (no management menu should be possible still)
+  - entity storage
+  - ability for entity to take resources from same-faction tile
+  - ability for entity to drop resources onto same-faction tile
+- scope creep
+  - automation `to consider how achievable for 0.1.x, freely move to 0.1.5 also if needed`
+    - system for 'planning' the automated routes
+    - automating the movement?
+    - automating the pickup?
+    - automating the drop?
+    - handling the errors (e.g. no resources to take, reaching cap on delivery place)
+  - listbox for resources instead of placeholder
+
+### 0.1.5
+- **theme**: "consumption / resource usage"
+- food/money consumption
+  - categorisation of items so they can be picked from diverse pool
+    - showcase of category in item list? so you can see drain value and what items are
+      drained
+  - settlement consumption (food/fuel)
+    - button for prioritised item from category
+    - for now, no penalty for reaching bottom
+  - entity consumption
+    - entity having health bar/food needs, restored upon eating food periodically
+    - management system of automatically feasting if below particular level?
+    - degrading health with starvation? slower movement? perishing upon reaching 0 hp?
+    - question: should food be restored w/o cost in cities, or with lesser cost?
+      - management system prioritising city feast over "below level" one? (to save food)
+    - lack of payment could queue but lower the morale? (what morale would be used for
+      outside of army?)
+- entities hiring in cities?
+  - requires location producing food (<- really?)
+  - would test the pipeline of (automating) delivery > hiring from resources produced
+  - would test ability to increase delivery by increasingly more entities involved
 
 ### 0.2.x.
 - loading bar (0.2.0)
