@@ -38,6 +38,8 @@ Ideas for versioning:
     - ensuring proper parsing of `files.nim elements`
       - optional/required should be properly set up, so they are actually following their
         rules from modding doc
+  - configurator
+    - location counter for factions?
 
 ### 0.1.4
 - **theme**: "entity-settlement interaction"
