@@ -88,11 +88,17 @@ var olmMapFormat = {
                                 var coords    = []; // coords pointer
                                 var cord_dict = {}; // coords-specific dict (nested into `res_dict`)
                                 for (var ln = 0; ln < res_lines.length; ++ln) {
-                                    if (res_lines[ln].startsWith("[") && res_lines[ln].endsWith("]")) {
+                                    if ((res_lines[ln].startsWith("[")) && (res_lines[ln].includes("]"))) { // header
                                         if (coords.length == 2) { // each new coords round resets the dict
                                             cord_dict = {}
                                         }
-                                        var coords_clean = res_lines[ln].replace(" ", "").replace("[", "").replace("]", "");
+                                        var coords_str = ""; // empty string, iterator below will catch
+                                        for (var i = 0; i < res_lines[ln].length; ++i) {
+                                            if (res_lines[ln][i] == "[")      { continue; } // skips opening
+                                            else if (res_lines[ln][i] == "]") { break; }    // ends the iteration - any following text is skipped
+                                            else { coords_str = coords_str + res_lines[ln][i]; } // all characters within [ ] brackets are saved
+                                        }
+                                        var coords_clean = coords_str.replace(" ", "");
                                         var coords_spl   = coords_clean.split(",");
                                         if (coords_spl.length == 2) { // correct count
                                             coords = coords_spl;

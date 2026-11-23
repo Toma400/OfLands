@@ -50,11 +50,34 @@ Ideas for versioning:
     - ```
       EXAMPLE:
       
-      [X, Y | "District name"]
+      [X, Y] District Name | commentary
+      ..commentary1
       > Buildings
+      ..commentary2
       building : metadata
       > Resources
+      ..commentary3
       resource : count-range
+      ```
+    - Idea on how to convert this into current system with little key swaps - it could
+      include commentary as well
+    - ```toml
+      [settlement.385]
+      kingdom = 19
+      name    = "Elinhir"
+      tier    = "city"
+      [settlement.385."310__162"] # commentary from [] block??
+      # commentary1 caught?
+      district_name = "Orange Road"
+      [settlement.385."310__162".buildings]
+      # commentary2 caught?
+      fields = "data"
+      [settlement.385."310__162".resources]
+      # commentary3 caught?
+      0 = "120-150" # septim
+      10 = "9-12" # coal
+      20 = "10-12" # meat
+      23 = "4-7" # bread
       ```
   - ensure faction owned locations show on FACTION map mode differently?
   - technicals
@@ -85,6 +108,9 @@ Ideas for versioning:
     - automating the pickup?
     - automating the drop?
     - handling the errors (e.g. no resources to take, reaching cap on delivery place)
+    - blocking non-same-faction interaction (trade will be established later, but would
+      include not obvious "agreed" exchange, but haggling/requests of resources, which
+      could be denied)
 
 ### 0.1.5
 - **theme**: "consumption / resource usage"
