@@ -17,8 +17,32 @@ Ideas for versioning:
     - per-tile differences in speed
   - claimage of unowned locations
   - order resources by index instead of order of inputting
-  - fixes
-    - [#15: Missing SSL .dll file](https://github.com/Toma400/OfLands/issues/15)
+  - GUI
+    - introduce tabs, switching context from tile overview to entity list
+    - have 'entity focus' that would use `ptr Entity | None` that would mean selection
+      of entity and change GUI to have unique "entity management"
+    - add entity movement menu/mode for planning it
+    - resource/entity list should be reworked to imitate listbox more closely (arrows)
+    - ```py
+      SettlementTile/Location = object
+        res_s : seq[int]
+      # ^ prod_rs + res_stored, only IDs, with duplicates removed
+      # bonus points of the above? the order of seq *is* your view order
+      # so you can sort it easily during addition/post addition, unlike Table types you iterate over currently
+      lbox  : tuple[low: int, high: int] # listbox range, should be at max 0..len(res_s)-1
+      var mv # for context, remember you have variable that spaces out elements by adding their height to it
+      # visualisation
+      draw("-------", y)
+      if lbox.low > 0: drawButton(" ^ ", y, var mv) # one that pushes listbox up | should add its height to `mv`
+      for item_ix in res_s[lbox.low..lbox.high]:
+        resourceCard(y, var mv) # each resource card adds its height to `mv`
+      if lbox.high < len(res_s): drawButton(" V ", y, var mv) # one that pushes listbox down | should add its height to `mv`
+      draw("-------", y+mv)
+      ```
+    - the above can make all OrderedTable storing resources/production easily movable to
+      just Table format, since the order would be decided on seq level
+  - Configurator enabling possibility to start as new faction (use of `Lord Britain` lol,
+    but also yielding you settler entity to place as easier test)
 - scope creep
   - settlements: settlement tile can be named? to signify districts etc.
     - `tile_resources` could be probably repurposed even for multiple elements, e.g.
@@ -37,6 +61,9 @@ Ideas for versioning:
     - exporter: separate Tamriel map from pack, so no-map version can be uploaded upon release
       - laptop: provide "vanilla" map for release
     - map versioning? for now simple == equaling, later on could work like IoA dependency
+      - should be checked by Configurator to only list compatible maps
+      - when loading by game, the error would be logged? maybe it could have pre-processing
+        stage where it would ask for confirmation with proceeding? so user would be warned?
     - ensuring proper parsing of `files.nim elements`
       - optional/required should be properly set up, so they are actually following their
         rules from modding doc
@@ -58,7 +85,6 @@ Ideas for versioning:
     - automating the pickup?
     - automating the drop?
     - handling the errors (e.g. no resources to take, reaching cap on delivery place)
-  - listbox for resources instead of placeholder
 
 ### 0.1.5
 - **theme**: "consumption / resource usage"
@@ -83,6 +109,17 @@ Ideas for versioning:
   - requires location producing food (<- really?)
   - would test the pipeline of (automating) delivery > hiring from resources produced
   - would test ability to increase delivery by increasingly more entities involved
+
+### 0.1.6?
+- buildings system for settlements (separate tab)
+- hiring of entities in settlements? (0.1.5/0.1.6)
+- builders able to create locations?
+
+### 0.1.7
+- production modifiers affecting time-rate/count-rate by reducing or disabling it
+  (e.g. winter disabling wheat farming?)
+  - special GUI markers for various reasons, and special production icon to indicate
+    slowed down/auto-disabled production
 
 ### 0.2.x.
 - loading bar (0.2.0)

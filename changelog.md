@@ -5,6 +5,11 @@ Versions:
   - [0.1.1](#0.1.1) 
   - [0.1.0](#0.1.0)
 
+### 0.1.3
+- fixes
+  - [#15: Missing SSL .dll file](https://github.com/Toma400/OfLands/issues/15) (backfilled
+    0.1.1/0.1.2 website archives to fix previous versions too)
+
 ### 0.1.2
 - Locations are able to produce resources now (based on .oldata files)
   - production pools let multiple resources be created in varied rate
