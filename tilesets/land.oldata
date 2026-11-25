@@ -1101,3 +1101,7 @@ tbase = "land"
 mv_cost = 25
 name = "Forest"
 tbase = "land"
+[tile.258]
+mv_cost = 20
+name = "Trees"
+tbase = "land"

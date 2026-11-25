@@ -27,6 +27,7 @@ FILES = [
     "tilesets/ptr_locs.png",      # temporary TES stuff
     "tilesets/factions_ptr.png",  # temporary TES stuff
     "tilesets/resources_ptr.png", # temporary TES stuff
+    "tilesets/entities_ptr.png",  # temporary TES stuff
     "tilesets/system.png",
     "OfLands.exe",
     "OfLandsConfigurator.exe",   # probably temporary
@@ -46,6 +47,7 @@ TILED_BACKUP = [
     "maps/Of Lands (Main).tsx",
     "maps/Roads.tsx",
     "maps/Resources.tsx",
+    "maps/Entities.tsx",
     # project files
     "maps/tamriel.tiled-project",
     "maps/tamriel.tiled-session",

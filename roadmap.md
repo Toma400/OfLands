@@ -43,6 +43,19 @@ Ideas for versioning:
       just Table format, since the order would be decided on seq level
   - Configurator enabling possibility to start as new faction (use of `Lord Britain` lol,
     but also yielding you settler entity to place as easier test)
+  - Tiled Exporter
+    - rework to separate app
+    - object allowing for easy .olm/.tmx -> object -> .olm/.tmx translations
+    - export and import options
+    - empty project setup
+    - GUI
+      - path (defaults to `tiled` folder)
+      - .tmx files list, option to convert to .olm (standard export)
+      - .olm files from `maps` folder, option to import them into .tmx
+      - new project setup
+        - map resolution (in tiles size), 32px tiles' size is used automatically
+        - necessary values
+        - optional tileset images to use
 - scope creep
   - settlements: settlement tile can be named? to signify districts etc.
     - `tile_resources` could be probably repurposed even for multiple elements, e.g.
