@@ -126,6 +126,27 @@ Ideas for versioning:
       could be denied)
 
 ### 0.1.5
+- **theme**: cultures
+- cultures introduced
+
+### 0.1.6
+- **theme**: buildings
+- buildings system for settlements (separate tab)
+  - production systems related
+- overhaul of settlements to accommodate different look depending on culture
+- culture pools
+  - entities to hire in settlements
+  - locations to be built by builders
+  - settlement buildings to be constructed
+- entities hiring in cities?
+  - requires location producing food (<- really?)
+  - would test the pipeline of (automating) delivery > hiring from resources produced
+  - would test ability to increase delivery by increasingly more entities involved
+- builders able to create locations
+  - "building site" stage so that you can "store" resources for the building to get made?
+    (so that builders can build stuff they can't store resources for as one entity)
+
+### 0.1.7
 - **theme**: "consumption / resource usage"
 - food/fuel/money consumption
   - categorisation of items so they can be picked from diverse pool
@@ -144,33 +165,23 @@ Ideas for versioning:
       - management system prioritising city feast over "below level" one? (to save food)
     - lack of payment could queue but lower the morale? (what morale would be used for
       outside of army?)
-- entities hiring in cities?
-  - requires location producing food (<- really?)
-  - would test the pipeline of (automating) delivery > hiring from resources produced
-  - would test ability to increase delivery by increasingly more entities involved
-
-### 0.1.6?
-- buildings system for settlements (separate tab)
-- hiring of entities in settlements? (0.1.5/0.1.6)
-- builders able to create locations?
-
-### 0.1.7
-- production modifiers affecting time-rate/count-rate by reducing or disabling it
-  (e.g. winter disabling wheat farming?)
-  - special GUI markers for various reasons, and special production icon to indicate
-    slowed down/auto-disabled production
 
 ### 0.2.x.
 - loading bar (0.2.0)
 - tile system rework?? think this through and _fully_ finalise design doc/planning
   before that to have clear road forward (0.2.0)
+  - regions introduced?
+  - production modifiers affecting time-rate/count-rate by reducing or disabling it
+  (e.g. winter disabling wheat farming?)
+    - special GUI markers for various reasons, and special production icon to indicate
+      slowed down/auto-disabled production
 - importable .olm/.olr/.olf? (0.2.1 - after all map-specific pieces are done)
   - cheatsheet generator for resources/factions in Tiled?
 - resolution adjustability (0.2.2)
 - road performance improvements (0.2.3)
 - ... (0.2.4+)
 
-### 0.3.x.
+### 0.3.x.?
 - culture contextuality (locations/settlements/entities per culture?)
 - [settlement buildings/system drawing them correctly]
   - limits on buildings per tier

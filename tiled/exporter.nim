@@ -32,6 +32,11 @@ type
     #     system
     #     : string # type
     # ]
+    # TSX-exclusive --- translating firstgid??
+    # tsx_paths: tuple[
+    #   locations : tuple[id, path: string],
+    #   roads     : tuple[id, path: string] # are they needed??
+    # ]
   FileType = enum
     TMXfile # Tiled's map file
     TSXfile # Tiled's tileset file
@@ -97,14 +102,6 @@ proc parseTMX (file: string) : IntermediateMap =
         height : parseInt(attr(xmlFile, "height"))
     )
 
-    # echo xmlFile
-    # echo "----"
-    # echo tag(xmlFile) == "map"
-    # echo attr(xmlFile, "orientation")
-    # for i, v in attrs(xmlFile):
-    #     echo i & ":" & v
-    # echo "width" in attrs(xmlFile)
-
     # let xmlMain = tag(xmlMain) == "map"
     # let xmlMainAttrs = xmlMain.attrs # nextlayerid="14" nextobjectid="4"?????
     # things for emptyProject:
@@ -120,8 +117,14 @@ proc exportOLM (imap: IntermediateMap) =
 proc exportTMX (imap: IntermediateMap) =
     discard
 
-proc newProject (): IntermediateMap =
-    discard
+proc newProject (size : tuple[width, height: int],
+                 name : string): IntermediateMap =
+    result.size = size
+    result.name = name
+    result.properties: ( # SHOULD BE SELECTED EVENTUALLY
+        start_coords : "",
+        start_date   : "",
+    )
 
 #### TEMPORARY QUICK CONVERTING ####
 let til_map = parseTMX("../maps/tamriel.tmx")
